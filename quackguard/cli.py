@@ -17,6 +17,7 @@ from .io_utils import write_json
 from .iteration import iterate
 from .plugin_registry import load_manifest, register_manifest
 from .plugin_report import write_plugins_page
+from .regression import regress
 from .storage import Store
 from .versioning import activate, rollback
 
@@ -28,6 +29,7 @@ PARAMETERS = {
     "evaluate": ["inputs", "outputs", "references", "out"],
     "plugins": ["out"],
     "plugin-state": ["plugin-id", "plugin-version", "state", "out"],
+    "regress": ["rules", "config", "input", "references", "baseline", "out"],
 }
 ERROR_HINTS = {
     "invalid_jsonl": "检查JSONL行号与JSON字段；合法记录仍会保留。",
@@ -38,6 +40,7 @@ ERROR_HINTS = {
     "io_error": "检查文件路径与读写权限后重试；已完成任务记录会保留。",
     "invalid_plugin_manifest": "修正插件清单字段与input_schema_version后重试。",
     "unknown_plugin": "先用plugins --manifest注册插件，再切换启用状态。",
+    "regression_failed": "查看regression_report.json中的失败检查项；先修复根因再重跑，勿改基线数据。",
 }
 PRODUCT_PARAMETERS = {
     "compare": ["old", "new", "input", "references", "out"],
@@ -57,6 +60,7 @@ INPUT_PARAMETERS = {
     "rollback": "to",
     "plugins": "manifest",
     "plugin-state": "plugin_id",
+    "regress": "rules",
 }
 
 
@@ -110,6 +114,33 @@ def parser():
         "--reason",
         default="",
         help="可选：回滚原因",
+    )
+    regress_parser = commands.choices["regress"]
+    regress_parser.add_argument(
+        "--branches",
+        default=None,
+        help="可选：自建规则分支用例JSONL",
+    )
+    regress_parser.add_argument(
+        "--annotation-tasks",
+        default=None,
+        help="可选：标注任务JSONL",
+    )
+    regress_parser.add_argument(
+        "--annotation-targets",
+        default=None,
+        help="可选：标注目标JSONL",
+    )
+    regress_parser.add_argument(
+        "--annotation-references",
+        default=None,
+        help="可选：标注金标JSONL",
+    )
+    regress_parser.add_argument(
+        "--fault-timeout",
+        type=float,
+        default=1.0,
+        help="可选：插件故障测试超时秒数，默认1.0",
     )
     retry = commands.add_parser("retry", help="重试失败的旧任务")
     retry.add_argument("--task-id", required=True, help="要重试的失败任务ID")
@@ -244,6 +275,21 @@ def execute(args, store):
             expect_hash=args.expect_hash,
             out_path=args.out,
             reason=args.reason,
+        )
+    if args.command == "regress":
+        return regress(
+            args.rules,
+            args.config,
+            args.input,
+            args.references,
+            args.baseline,
+            args.out,
+            branches_path=args.branches,
+            annotation_tasks_path=args.annotation_tasks,
+            annotation_targets_path=args.annotation_targets,
+            annotation_references_path=args.annotation_references,
+            fault_timeout=args.fault_timeout,
+            store=store,
         )
     raise AuditError("unsupported_command", args.command)
 
