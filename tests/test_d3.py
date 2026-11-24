@@ -246,7 +246,7 @@ CASES = [
     # F01 实拍证据完整性
     {"rule": "R001", "materials": [M("m1")], "docs": {"m1": doc(four_edges_visible=True)}, "label": "pass", "appl": "applicable", "note": "主视图四边界可见"},
     {"rule": "R001", "materials": [M("m1")], "docs": {"m1": doc(four_edges_visible=False)}, "label": "reject", "appl": "applicable", "note": "主视图裁去边界"},
-    {"rule": "R001", "materials": [M("m1")], "docs": {"m1": doc()}, "context": {"m1": {"face_id": None, "source_type": "photo", "is_standard_front_view": True}}, "label": "reject", "appl": "applicable", "note": "未提交主面主视图"},
+    {"rule": "R001", "materials": [M("m1")], "docs": {"m1": doc()}, "context": {"m1": {"face_id": None, "source_type": "photo", "is_standard_front_view": True}}, "label": "ambiguous", "appl": "applicable", "note": "面信息未知，无法确认是否提交主视图"},
     {"rule": "R001", "materials": [M("m1")], "docs": {"m1": doc()}, "label": "ambiguous", "appl": "applicable", "note": "边界不可确认"},
 
     {"rule": "R002", "materials": [M("m1")], "metadata": {"required_faces": ["front"]}, "label": "pass", "appl": "applicable", "note": "检查面已覆盖"},

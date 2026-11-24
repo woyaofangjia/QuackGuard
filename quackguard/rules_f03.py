@@ -239,6 +239,8 @@ def r018(task, materials, params):
     en_values, en_unreadable, en_missing_c, en_missing_i = _label_values(
         materials, "product_name_en"
     )
+    cn_values = [value for value in cn_values if as_text(value) is not None]
+    en_values = [value for value in en_values if as_text(value) is not None]
     if cn_values and en_values:
         return applicable_result(
             "pass", "rule_satisfied", "双语版同时提供产品名称与Product Name字段。", evidence

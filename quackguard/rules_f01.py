@@ -33,9 +33,17 @@ def _all_evidence(materials):
 
 
 def r001(task, materials, params):
-    fronts = [m for m in materials if face_of(m, task) == "front"]
+    faces = [(material, face_of(material, task)) for material in materials]
+    fronts = [material for material, face in faces if face == "front"]
     evidence = _all_evidence(materials)
     if not fronts:
+        if any(face is None for _, face in faces):
+            return applicable_result(
+                "ambiguous",
+                "evidence_insufficient",
+                "材料检查面信息未知，无法确认是否提交包装主视图。",
+                evidence,
+            )
         return applicable_result(
             "reject", "rule_violation", "未提交可见包装主面的主视图。", evidence
         )
@@ -70,8 +78,18 @@ def r002(task, materials, params):
         return unknown_result("required_faces缺失或非法，无法判断检查面覆盖。")
     submitted = {face_of(material, task) for material in materials}
     submitted.discard(None)
+    unknown_face = any(face is None for face in (face_of(material, task) for material in materials))
     missing = [face for face in required if face not in submitted]
     if missing:
+        if unknown_face:
+            return applicable_result(
+                "ambiguous",
+                "evidence_insufficient",
+                "存在检查面信息未知的材料，无法确认是否缺少检查面："
+                + "、".join(missing)
+                + "。",
+                evidence,
+            )
         return applicable_result(
             "reject",
             "rule_violation",
@@ -96,28 +114,39 @@ def r003(task, materials, params):
         for document in material.get("documents", []):
             evidence.append(evidence_doc(material, document))
             for page in document.get("pages", []):
-                if page["status"] == "value":
-                    pages[page["printed_page_number"]] = material
-                elif page["status"] == "unreadable":
+                number = page.get("printed_page_number")
+                if page.get("status") == "value" and type(number) is int:
+                    pages[number] = material
+                elif page.get("status") == "unreadable":
                     unreadable = True
-    if unreadable:
-        return applicable_result(
-            "ambiguous", "evidence_insufficient", "证明页码不可读，无法核对齐全性。", evidence
-        )
     expected = set(range(1, total + 1))
     present = set(pages)
     if present - expected:
         return applicable_result(
             "reject", "rule_violation", "证明页码超出1至N范围。", evidence
         )
-    if expected - present:
+    missing = expected - present
+    if missing:
+        if unreadable:
+            return applicable_result(
+                "ambiguous",
+                "evidence_insufficient",
+                "存在不可读页码，无法确认缺页："
+                + "、".join(str(number) for number in sorted(missing))
+                + "。",
+                evidence,
+            )
         return applicable_result(
             "reject",
             "rule_violation",
             "证明缺页：缺少第"
-            + "、".join(str(number) for number in sorted(expected - present))
+            + "、".join(str(number) for number in sorted(missing))
             + "页。",
             evidence,
+        )
+    if unreadable:
+        return applicable_result(
+            "ambiguous", "evidence_insufficient", "证明页码不可读，无法核对齐全性。", evidence
         )
     return applicable_result(
         "pass", "rule_satisfied", "证明第1至N页均已提交且页码可核对。", evidence
@@ -225,22 +254,22 @@ def r005(task, materials, params):
 def r006(task, materials, params):
     evidence = [evidence_material(material) for material in materials]
     sources = [source_of(material, task) for material in materials]
-    known = [source for source in sources if source]
-    if not known:
+    known = [source for source in sources if source and source != "unknown"]
+    if sources and not known:
         return applicable_result(
             "ambiguous",
             "evidence_insufficient",
             "材料来源类型未知，无法确认是否为实拍证据。",
             evidence,
         )
-    if all(source in ("design", "render") for source in known):
+    if known and all(source in ("design", "render") for source in known):
         return applicable_result(
             "reject",
             "rule_violation",
             "材料仅包含设计稿或渲染图，批次号/序列号不能作为证据。",
             evidence,
         )
-    if any(source in ("design", "render", "unknown") for source in known):
+    if any(source is None or source == "unknown" for source in sources):
         return applicable_result(
             "ambiguous",
             "evidence_insufficient",
