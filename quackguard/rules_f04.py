@@ -31,17 +31,21 @@ def _has_model(document):
 
 def r019(task, materials, params):
     evidence = _evidence(materials)
-    fronts = {id(material) for material in materials if face_of(material, task) == "front"}
+    faces = {id(material): face_of(material, task) for material in materials}
+    fronts = {key for key, face in faces.items() if face == "front"}
     if not fronts:
         return applicable_result(
             "ambiguous", "evidence_insufficient", "正面视图未提交，无法判断主型号位置。", evidence
         )
-    found_front = found_other = unreadable_front = False
+    found_front = found_other = unreadable_front = missing_complete = False
+    unknown_face_has_model = False
     for material in materials:
         for document in material.get("documents", []):
             if _has_model(document):
                 if id(material) in fronts:
                     found_front = True
+                elif faces[id(material)] is None:
+                    unknown_face_has_model = True
                 else:
                     found_other = True
             elif (
@@ -52,9 +56,22 @@ def r019(task, materials, params):
                 )
             ):
                 unreadable_front = True
+            if (
+                field_raw(document, "main_model")[0] == "missing"
+                and id(material) in fronts
+                and document.get("inspection_complete") is True
+            ):
+                missing_complete = True
     if found_front:
         return applicable_result(
             "pass", "rule_satisfied", "主型号位于包装正面。", evidence
+        )
+    if unknown_face_has_model:
+        return applicable_result(
+            "ambiguous",
+            "evidence_insufficient",
+            "检查面信息未知的材料中出现主型号，无法确认是否在正面。",
+            evidence,
         )
     if found_other:
         return applicable_result(
@@ -64,30 +81,40 @@ def r019(task, materials, params):
         return applicable_result(
             "ambiguous", "evidence_insufficient", "正面主型号读不清。", evidence
         )
+    if missing_complete:
+        return applicable_result(
+            "reject", "rule_violation", "完整清晰的正视图中未标明主型号字段。", evidence
+        )
     return applicable_result(
-        "reject", "rule_violation", "正面未发现主型号字段。", evidence
+        "ambiguous", "evidence_insufficient", "正面检查范围不完整，无法定位主型号。", evidence
     )
 
 
 def r020(task, materials, params):
     evidence = _evidence(materials)
-    found_body = found_other = unreadable = False
+    found_body = found_other = unreadable = missing_complete = False
+    body_seen = False
     for material in materials:
         for document in material.get("documents", []):
             status, _ = field_raw(document, "serial_number")
             carrier = carrier_of(document, material)
+            is_body = carrier == "product_body" or material.get("role") == "product_photos"
+            if is_body:
+                body_seen = True
             if status == "value":
-                if carrier == "product_body" or material.get("role") == "product_photos":
+                if is_body:
                     found_body = True
                 else:
                     found_other = True
             elif status == "unreadable":
                 unreadable = True
+            elif status == "missing" and document.get("inspection_complete") is True:
+                missing_complete = True
     if found_body:
         return applicable_result(
             "pass", "rule_satisfied", "序列号位于商品本体。", evidence
         )
-    if found_other:
+    if found_other and not body_seen:
         return applicable_result(
             "reject",
             "rule_violation",
@@ -98,8 +125,22 @@ def r020(task, materials, params):
         return applicable_result(
             "ambiguous", "evidence_insufficient", "序列号位置读不清。", evidence
         )
+    if found_other:
+        return applicable_result(
+            "reject",
+            "rule_violation",
+            "序列号仅出现在外包装或说明纸上，商品本体未标明。",
+            evidence,
+        )
+    if missing_complete and body_seen:
+        return applicable_result(
+            "reject", "rule_violation", "完整清晰的本体视图中未标明序列号。", evidence
+        )
     return applicable_result(
-        "reject", "rule_violation", "未发现序列号字段。", evidence
+        "ambiguous",
+        "evidence_insufficient",
+        "未提交商品本体视图，无法确认序列号是否固定在本体上。",
+        evidence,
     )
 
 
@@ -108,11 +149,13 @@ def r021(task, materials, params):
     same_label_docs = []
     model_docs = []
     code_docs = []
+    label_seen = False
     unreadable = missing_incomplete = False
     for material in materials:
         for document in material.get("documents", []):
             if carrier_of(document, material) not in LABEL_CARRIERS:
                 continue
+            label_seen = True
             model_status = field_raw(document, "model")[0]
             code_status = field_raw(document, "material_code")[0]
             if model_status == "value" and code_status == "value":
@@ -153,6 +196,10 @@ def r021(task, materials, params):
         return applicable_result(
             "ambiguous", "evidence_insufficient", "检查范围不完整，无法确认是否缺少字段。", evidence
         )
+    if not label_seen:
+        return applicable_result(
+            "ambiguous", "evidence_insufficient", "未提交可核对的包装标签视图。", evidence
+        )
     return applicable_result(
         "reject", "rule_violation", "型号与材料编号未同时标明，或不在同一标签。", evidence
     )
@@ -166,22 +213,23 @@ def r022(task, materials, params):
             "ambiguous", "evidence_insufficient", "package_longest_edge_mm缺失或非法，无法判断附签例外。", evidence
         )
     threshold = params.get("attached_tag_threshold_mm", 80)
-    code_value = code_unreadable = code_missing_complete = False
-    carrier = None
+    code_carriers = set()
+    code_unreadable = code_missing_complete = label_seen = False
     for material in materials:
         for document in material.get("documents", []):
-            if carrier_of(document, material) not in LABEL_CARRIERS:
+            carrier = carrier_of(document, material)
+            if carrier not in LABEL_CARRIERS:
                 continue
+            label_seen = True
             status, _ = field_raw(document, "material_code")
             if status == "value":
-                code_value = True
-                carrier = carrier_of(document, material)
+                code_carriers.add(carrier)
             elif status == "unreadable":
                 code_unreadable = True
             elif status == "missing" and document.get("inspection_complete") is True:
                 code_missing_complete = True
-    if code_value:
-        if edge >= threshold and carrier == "attached_tag":
+    if code_carriers:
+        if edge >= threshold and "outer_package" not in code_carriers:
             return applicable_result(
                 "reject",
                 "rule_violation",
@@ -199,24 +247,42 @@ def r022(task, materials, params):
         return applicable_result(
             "reject", "rule_violation", "完整清晰范围内缺少材料编号字段。", evidence
         )
+    if not label_seen:
+        return applicable_result(
+            "ambiguous", "evidence_insufficient", "未提交可核对的包装标签视图。", evidence
+        )
     return applicable_result(
-        "reject", "rule_violation", "未标明材料编号字段。", evidence
+        "ambiguous", "evidence_insufficient", "检查范围不完整，无法核对材料编号位置。", evidence
     )
 
 
 def r023(task, materials, params):
     evidence = _evidence(materials)
     relevant = []
+    label_seen = fields_unclear = False
     for material in materials:
         for document in material.get("documents", []):
             if carrier_of(document, material) not in LABEL_CARRIERS:
                 continue
-            if (
-                field_raw(document, "model")[0] == "value"
-                and field_raw(document, "material_code")[0] == "value"
-            ):
+            label_seen = True
+            model_status = field_raw(document, "model")[0]
+            code_status = field_raw(document, "material_code")[0]
+            if model_status == "value" and code_status == "value":
                 relevant.append(document)
+            elif model_status == "unreadable" or code_status == "unreadable":
+                fields_unclear = True
     if not relevant:
+        if fields_unclear:
+            return applicable_result(
+                "ambiguous",
+                "evidence_insufficient",
+                "标签字段读不清，无法确认切线是否穿过承载字段的标签。",
+                evidence,
+            )
+        if not label_seen:
+            return applicable_result(
+                "ambiguous", "evidence_insufficient", "未提交可核对的包装标签视图。", evidence
+            )
         return applicable_result(
             "pass", "rule_satisfied", "没有同时承载型号与材料编号的标签，切线约束未触发。", evidence
         )
@@ -270,7 +336,7 @@ def r024(task, materials, params):
             "ambiguous", "evidence_insufficient", "标志中心点位置不可确认。", evidence
         )
     return applicable_result(
-        "reject", "rule_violation", "标准正视图中未发现练习标志中心点。", evidence
+        "ambiguous", "evidence_insufficient", "标准正视图未提供可测量的标志中心点。", evidence
     )
 
 

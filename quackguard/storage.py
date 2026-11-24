@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS tasks (
     status TEXT NOT NULL,
     error_code TEXT,
     created_at TEXT NOT NULL,
-    finished_at TEXT
+    finished_at TEXT,
+    retry_of TEXT
 );
 CREATE TABLE IF NOT EXISTS runs (
     run_id TEXT PRIMARY KEY,
@@ -43,7 +44,8 @@ CREATE TABLE IF NOT EXISTS runs (
     status TEXT NOT NULL,
     error_code TEXT,
     started_at TEXT NOT NULL,
-    finished_at TEXT
+    finished_at TEXT,
+    arguments_json TEXT
 );
 CREATE TABLE IF NOT EXISTS versions (
     build_id TEXT NOT NULL REFERENCES builds(build_id),
@@ -54,6 +56,12 @@ CREATE TABLE IF NOT EXISTS versions (
     sha256 TEXT NOT NULL,
     is_active INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (build_id, rule_id, rule_version)
+);
+CREATE TABLE IF NOT EXISTS build_failures (
+    build_id TEXT NOT NULL REFERENCES builds(build_id),
+    line_number INTEGER NOT NULL,
+    error TEXT NOT NULL,
+    PRIMARY KEY (build_id, line_number, error)
 );
 CREATE TABLE IF NOT EXISTS plugins (
     plugin_id TEXT NOT NULL,
@@ -78,6 +86,29 @@ class Store:
         self.db = sqlite3.connect(self.path)
         self.db.row_factory = sqlite3.Row
         self.db.executescript(SCHEMA)
+        self._migrate()
+
+    def _migrate(self):
+        """兼容旧库：补列并保证每个失败任务最多只有一个重试后继。"""
+        for table, column, kind in (
+            ("tasks", "retry_of", "TEXT"),
+            ("runs", "arguments_json", "TEXT"),
+        ):
+            columns = {
+                row["name"]
+                for row in self.db.execute(f"PRAGMA table_info({table})")
+            }
+            if column not in columns:
+                self.db.execute(
+                    f"ALTER TABLE {table} ADD COLUMN {column} {kind}"
+                )
+        self.db.execute(
+            """
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_tasks_retry_of
+            ON tasks(retry_of) WHERE retry_of IS NOT NULL
+            """
+        )
+        self.db.commit()
 
     def close(self):
         self.db.close()
@@ -154,27 +185,47 @@ class Store:
         )
         self.db.commit()
 
-    def start_task(self, command):
+    def add_build_failures(self, build_id, failures):
+        self.db.executemany(
+            """
+            INSERT OR IGNORE INTO build_failures (
+                build_id, line_number, error
+            ) VALUES (?, ?, ?)
+            """,
+            [
+                (build_id, int(item["line"]), str(item["error"]))
+                for item in failures
+            ],
+        )
+        self.db.commit()
+
+    def start_task(self, command, retry_of=None):
         task_id = uuid.uuid4().hex
         self.db.execute(
             """
             INSERT INTO tasks (
-                task_id, command, status, error_code, created_at, finished_at
-            ) VALUES (?, ?, ?, ?, ?, ?)
+                task_id, command, status, error_code, created_at,
+                finished_at, retry_of
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
-            (task_id, command, "running", None, now(), None),
+            (task_id, command, "running", None, now(), None, retry_of),
         )
         self.db.commit()
         return task_id
 
-    def start_run(self, task_id, command, input_path, output_path):
+    def start_run(self, task_id, command, input_path, output_path, arguments=None):
         run_id = uuid.uuid4().hex
+        encoded = (
+            json.dumps(arguments, ensure_ascii=False, sort_keys=True)
+            if arguments is not None
+            else None
+        )
         self.db.execute(
             """
             INSERT INTO runs (
                 run_id, task_id, command, input_path, output_path,
-                status, error_code, started_at, finished_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                status, error_code, started_at, finished_at, arguments_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 run_id,
@@ -186,10 +237,27 @@ class Store:
                 None,
                 now(),
                 None,
+                encoded,
             ),
         )
         self.db.commit()
         return run_id
+
+    def get_task(self, task_id):
+        return self.db.execute(
+            "SELECT * FROM tasks WHERE task_id = ?", (task_id,)
+        ).fetchone()
+
+    def latest_run(self, task_id):
+        return self.db.execute(
+            "SELECT * FROM runs WHERE task_id = ? ORDER BY rowid DESC LIMIT 1",
+            (task_id,),
+        ).fetchone()
+
+    def retry_successor(self, task_id):
+        return self.db.execute(
+            "SELECT * FROM tasks WHERE retry_of = ? LIMIT 1", (task_id,)
+        ).fetchone()
 
     def finish(self, task_id, run_id, status, error_code=None):
         finished_at = now()

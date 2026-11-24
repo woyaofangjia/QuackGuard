@@ -15,8 +15,9 @@ import unittest
 from pathlib import Path
 
 from quackguard.artifacts import build, load_policy
-from quackguard.contracts import prediction_errors, read_rows
+from quackguard.contracts import annotation_errors, prediction_errors, read_rows
 from quackguard.inference import review_task
+from quackguard.model_gateway import ModelGateway
 from quackguard.rule_engine import REGISTRY, applicability
 from quackguard.rule_facts import (
     field_missing as fm,
@@ -336,7 +337,7 @@ CASES = [
     {"rule": "R020", "materials": [M("p", "product_photos")], "docs": {"p": doc(fields={"serial_number": fv("S1")})}, "label": "pass", "appl": "applicable", "note": "序列号在本体"},
     {"rule": "R020", "materials": [M("m1")], "docs": {"m1": doc(fields={"serial_number": fv("S1")})}, "label": "reject", "appl": "applicable", "note": "序列号在外包装"},
     {"rule": "R020", "materials": [M("p", "product_photos")], "docs": {"p": doc(fields={"serial_number": fu()})}, "label": "ambiguous", "appl": "applicable"},
-    {"rule": "R020", "materials": [M("p", "product_photos")], "label": "reject", "appl": "applicable", "note": "无序列号"},
+    {"rule": "R020", "materials": [M("p", "product_photos")], "docs": {"p": doc()}, "label": "reject", "appl": "applicable", "note": "完整本体视图无序列号"},
 
     {"rule": "R021", "materials": [M("m1")], "docs": {"m1": doc(fields={"model": fv("EDU-753"), "material_code": fv("QLAB-1")}, fields_on_same_label=True)}, "label": "pass", "appl": "applicable", "note": "同标签"},
     {"rule": "R021", "materials": [M("m1")], "docs": {"m1": doc(fields={"model": fv("EDU-753"), "material_code": fv("QLAB-1")}, fields_on_same_label=False)}, "label": "reject", "appl": "applicable", "note": "分标签"},
@@ -395,8 +396,8 @@ CASES = [
     {"rule": "R032", "materials": [M("m1")], "docs": {"m1": doc(texts={"indoor_only": fv("仅室内")})}, "label": "pass", "appl": "applicable"},
     {"rule": "R032", "materials": [M("m1")], "docs": {"m1": doc(texts={"indoor_only": fu()})}, "label": "ambiguous", "appl": "applicable"},
 
-    {"rule": "R033", "materials": [M("m1")], "docs": {"m1": doc(texts={"step1": fv("1"), "step2": fv("2"), "step3": fv("3")})}, "label": "pass", "appl": "applicable"},
-    {"rule": "R033", "materials": [M("m1")], "docs": {"m1": doc(texts={"step1": fv("1"), "step2": fv("2")})}, "label": "reject", "appl": "applicable", "note": "步骤缺失"},
+    {"rule": "R033", "materials": [M("m1")], "docs": {"m1": doc(texts={"step1": fv("1 连接底座"), "step2": fv("2 固定主体"), "step3": fv("3 检查连接")})}, "label": "pass", "appl": "applicable"},
+    {"rule": "R033", "materials": [M("m1")], "docs": {"m1": doc(texts={"step1": fv("1 连接底座"), "step2": fv("2 固定主体")})}, "label": "reject", "appl": "applicable", "note": "步骤缺失"},
     {"rule": "R033", "materials": [M("m1")], "docs": {"m1": doc(texts={"step1": fu()})}, "label": "ambiguous", "appl": "applicable"},
 
     {"rule": "R034", "materials": [M("m1")], "metadata": {"declared_detachable_in_storage": True}, "docs": {"m1": doc(texts={"non_removable_in_use": fv("使用时不可拆卸"), "removable_in_storage": fv("收纳时可拆卸")})}, "label": "pass", "appl": "applicable"},
@@ -722,6 +723,76 @@ class D3Test(unittest.TestCase):
                 )
                 self.assertEqual(output["execution_status"], "completed")
                 self.assertNotIn(output.get("reason_code"), {None, "execution_error"})
+
+    def test_annotation_errors_reject_wrong_material_page_and_reversed_bbox(self):
+        task = {"audit_unit_id": "u", "materials": [M("m1")]}
+        target = {
+            "annotation_id": "a1",
+            "audit_unit_id": "u",
+            "material_id": "m1",
+            "page_index": 1,
+        }
+        row = {
+            "annotation_id": "a1",
+            "audit_unit_id": "u",
+            "material_id": "m1",
+            "page_index": 1,
+            "value": "型号：EDU-753",
+            "status": "value",
+            "label": "pass",
+            "bbox": [0.1, 0.1, 0.5, 0.5],
+        }
+        self.assertEqual(annotation_errors(row, target, task), [])
+        self.assertIn(
+            "annotation_wrong_target",
+            annotation_errors(dict(row, material_id="m2"), target, task),
+        )
+        foreign = dict(target, material_id="m2")
+        self.assertIn(
+            "annotation_material_page_not_in_input",
+            annotation_errors(dict(row, material_id="m2"), foreign, task),
+        )
+        self.assertIn(
+            "annotation_material_page_not_in_input",
+            annotation_errors(dict(row, page_index=2), target, task),
+        )
+        self.assertIn(
+            "annotation_bbox",
+            annotation_errors(dict(row, bbox=[0.5, 0.1, 0.1, 0.5]), target, task),
+        )
+        self.assertIn(
+            "annotation_bbox",
+            annotation_errors(dict(row, bbox=[0.1, 0.1, 1.5, 0.5]), target, task),
+        )
+
+    def test_pdf_material_uses_document_content_part(self):
+        with tempfile.TemporaryDirectory(prefix="quackguard-pdf-") as folder:
+            root = Path(folder)
+            (root / "m.pdf").write_bytes(b"%PDF-1.4\n")
+            task = {
+                "audit_unit_id": "u1",
+                "rule_id": "R001",
+                "rule_version": "3.0",
+                "materials": [{
+                    "material_id": "m1",
+                    "role": "certificate_pages",
+                    "relative_path": "m.pdf",
+                    "media_type": "application/pdf",
+                    "page_index": 1,
+                }],
+            }
+            gateway = ModelGateway("vision", "http://example.invalid")
+            messages = gateway.messages("prompt", task, root / "tasks.jsonl")
+            documents = [
+                part for part in messages[0]["content"] if part["type"] == "file"
+            ]
+            self.assertEqual(len(documents), 1)
+            self.assertEqual(documents[0]["file"]["filename"], "m.pdf")
+            self.assertTrue(
+                documents[0]["file"]["file_data"].startswith(
+                    "data:application/pdf;base64,"
+                )
+            )
 
     def test_production_modules_isolated_from_public_data(self):
         forbidden = ("audit_gold", "references", "03_公开开发集", "case_name")

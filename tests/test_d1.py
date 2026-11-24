@@ -35,12 +35,12 @@ class D1Test(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
-    def cli(self, *args):
+    def run_cli(self, *args):
         env = os.environ.copy()
         for key in ("OPENAI_BASE_URL", "OPENAI_API_KEY", "PLUGIN_TIMEOUT_SECONDS", "QUACKGUARD_DB"):
             env.pop(key, None)
         env["PYTHONDONTWRITEBYTECODE"] = "1"
-        result = subprocess.run(
+        return subprocess.run(
             [sys.executable, "-B", str(ROOT / "run.py"), *map(str, args)],
             cwd=ROOT,
             env=env,
@@ -48,6 +48,9 @@ class D1Test(unittest.TestCase):
             encoding="utf-8",
             capture_output=True,
         )
+
+    def cli(self, *args):
+        result = self.run_cli(*args)
         self.assertEqual(result.returncode, 0, result.stderr)
         return json.loads(result.stdout)
 
@@ -152,6 +155,61 @@ class D1Test(unittest.TestCase):
             source = (ROOT / "quackguard" / name).read_text(encoding="utf-8")
             self.assertNotIn("references", source, name)
             self.assertNotIn("audit_gold", source, name)
+
+    def test_retry_is_idempotent_and_keeps_old_record(self):
+        database = self.dir / "retry.db"
+        baseline = self.dir / "retry_baseline"
+        self.build(baseline, database)
+        output = self.dir / "never.jsonl"
+
+        failed = self.run_cli(
+            "--db", database, "infer",
+            "--input", SAMPLE / "inputs" / "tasks.jsonl",
+            "--artifacts", self.dir / "missing-artifacts",
+            "--out", output,
+        )
+        self.assertEqual(failed.returncode, 2, failed.stdout)
+
+        connection = sqlite3.connect(database)
+        connection.row_factory = sqlite3.Row
+        original = connection.execute(
+            "SELECT * FROM tasks WHERE command='infer' AND status='failed'"
+        ).fetchone()
+        self.assertIsNotNone(original)
+        connection.close()
+
+        first = self.run_cli("--db", database, "retry", "--task-id", original["task_id"])
+        self.assertEqual(first.returncode, 2, first.stdout)
+
+        connection = sqlite3.connect(database)
+        connection.row_factory = sqlite3.Row
+        successor = connection.execute(
+            "SELECT * FROM tasks WHERE retry_of=?", (original["task_id"],)
+        ).fetchone()
+        self.assertIsNotNone(successor)
+        self.assertEqual(successor["status"], "failed")
+        self.assertEqual(
+            connection.execute(
+                "SELECT status FROM tasks WHERE task_id=?", (original["task_id"],)
+            ).fetchone()["status"],
+            "failed",
+        )
+        connection.close()
+
+        second = self.run_cli("--db", database, "retry", "--task-id", original["task_id"])
+        self.assertEqual(second.returncode, 0, second.stderr)
+        payload = json.loads(second.stdout)
+        self.assertEqual(payload["status"], "existing")
+        self.assertEqual(payload["task_id"], successor["task_id"])
+
+        connection = sqlite3.connect(database)
+        self.assertEqual(
+            connection.execute(
+                "SELECT count(*) FROM tasks WHERE retry_of=?", (original["task_id"],)
+            ).fetchone()[0],
+            1,
+        )
+        connection.close()
 
     def test_annotation_arithmetic_fixtures(self):
         tasks = read_rows(SAMPLE / "inputs" / "tasks.jsonl")

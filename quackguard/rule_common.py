@@ -58,7 +58,11 @@ def fval(document, name):
     if not isinstance(fields, dict):
         return MISSING
     value = fields.get(name)
-    if not isinstance(value, dict) or set(value) != {"status", "value"}:
+    if (
+        not isinstance(value, dict)
+        or not {"status", "value"} <= set(value)
+        or set(value) - {"status", "value", "bbox"}
+    ):
         return MISSING
     return value
 
@@ -68,7 +72,11 @@ def tval(document, name):
     if not isinstance(texts, dict):
         return MISSING
     value = texts.get(name)
-    if not isinstance(value, dict) or set(value) != {"status", "value"}:
+    if (
+        not isinstance(value, dict)
+        or not {"status", "value"} <= set(value)
+        or set(value) - {"status", "value", "bbox"}
+    ):
         return MISSING
     return value
 
@@ -174,6 +182,42 @@ def _dedupe(evidence):
     return unique[:1000]
 
 
+def valid_bbox(value):
+    """校验归一化xyxy框；非法或缺失返回None，不参与判定。"""
+    if not isinstance(value, (list, tuple)) or len(value) != 4:
+        return None
+    for item in value:
+        if type(item) not in (int, float):
+            return None
+        if not math.isfinite(item) or item < 0 or item > 1:
+            return None
+    if not (value[0] < value[2] and value[1] < value[3]):
+        return None
+    return [float(item) for item in value]
+
+
+def document_bbox(document):
+    bbox = valid_bbox(document.get("bbox"))
+    if bbox is not None:
+        return bbox
+    fields = document.get("fields")
+    boxes = []
+    if isinstance(fields, dict):
+        for item in fields.values():
+            if isinstance(item, dict):
+                box = valid_bbox(item.get("bbox"))
+                if box is not None:
+                    boxes.append(box)
+    if not boxes:
+        return None
+    return [
+        min(box[0] for box in boxes),
+        min(box[1] for box in boxes),
+        max(box[2] for box in boxes),
+        max(box[3] for box in boxes),
+    ]
+
+
 def evidence_doc(material, document, fact=None):
     payload = {
         "role": material.get("role"),
@@ -186,11 +230,15 @@ def evidence_doc(material, document, fact=None):
     }
     if fact:
         payload["fact"] = fact
-    return {
+    item = {
         "material_id": material["material_id"],
         "page_index": material["page_index"],
         "fact": json.dumps(payload, ensure_ascii=False),
     }
+    bbox = document_bbox(document)
+    if bbox is not None:
+        item["bbox"] = bbox
+    return item
 
 
 def evidence_material(material, fact=None):

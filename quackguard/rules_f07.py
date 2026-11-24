@@ -84,7 +84,7 @@ def r037(task, materials, params):
             "reject", "rule_violation", "完整清晰范围内缺少容量字段。", evidence
         )
     return applicable_result(
-        "reject", "rule_violation", "未标明容量字段。", evidence
+        "ambiguous", "evidence_insufficient", "未提交可核对的容量视图。", evidence
     )
 
 
@@ -129,7 +129,7 @@ def r038(task, materials, params):
             "reject", "rule_violation", "缺少净重或总重字段。", evidence
         )
     return applicable_result(
-        "reject", "rule_violation", "未同时标明净重和总重。", evidence
+        "ambiguous", "evidence_insufficient", "未提交可核对净重与总重的视图。", evidence
     )
 
 
@@ -183,7 +183,7 @@ def r039(task, materials, params):
             "reject", "rule_violation", "缺少高度区间端点。", evidence
         )
     return applicable_result(
-        "reject", "rule_violation", "未标明可调高度区间。", evidence
+        "ambiguous", "evidence_insufficient", "未提交可核对高度区间的视图。", evidence
     )
 
 
@@ -226,7 +226,7 @@ def r040(task, materials, params):
             "reject", "rule_violation", "缺少填充物百分比字段，不能把缺失当作零。", evidence
         )
     return applicable_result(
-        "reject", "rule_violation", "未标明三类填充物百分比。", evidence
+        "ambiguous", "evidence_insufficient", "未提交可核对填充物百分比的视图。", evidence
     )
 
 
@@ -234,22 +234,35 @@ def r041(task, materials, params):
     evidence = _evidence(materials)
     tolerance = params.get("tolerance_ratio", 0.01)
     front = back = None
-    unreadable = invalid = False
+    unreadable = invalid = missing_complete = False
     for material in materials:
         face = face_of(material, task)
         for document in material.get("documents", []):
             for key in ("front_weight", "back_weight", "net_weight", "weight"):
                 status, value = field_raw(document, key)
                 grams, state = _grams(status, value)
-                if state != "value":
-                    if state == "unreadable":
-                        unreadable = True
-                    elif state == "invalid":
-                        invalid = True
+                if state == "unreadable":
+                    unreadable = True
                     continue
-                if face == "front" or key == "front_weight":
+                if state == "invalid":
+                    invalid = True
+                    continue
+                if state == "missing":
+                    if document.get("inspection_complete") is True:
+                        missing_complete = True
+                    continue
+                if key == "front_weight" or (key == "weight" and face == "front"):
                     front = grams
-                elif face == "back" or key == "back_weight":
+                elif key == "back_weight" or (key == "weight" and face == "back"):
+                    back = grams
+                elif key == "net_weight":
+                    if face == "front":
+                        front = grams
+                    elif face == "back":
+                        back = grams
+                elif face == "front":
+                    front = grams
+                elif face == "back":
                     back = grams
     if invalid:
         return applicable_result(
@@ -274,8 +287,12 @@ def r041(task, materials, params):
         return applicable_result(
             "ambiguous", "evidence_insufficient", "正面或背面标称重量读不清。", evidence
         )
+    if missing_complete:
+        return applicable_result(
+            "reject", "rule_violation", "完整清晰范围内缺少正面或背面标称重量。", evidence
+        )
     return applicable_result(
-        "reject", "rule_violation", "未同时取得正面与背面标称重量。", evidence
+        "ambiguous", "evidence_insufficient", "未同时取得正面与背面标称重量。", evidence
     )
 
 
@@ -330,7 +347,7 @@ def r042(task, materials, params):
             "reject", "rule_violation", "完整清晰范围内缺少生产日期字段。", evidence
         )
     return applicable_result(
-        "reject", "rule_violation", "未标明生产日期字段。", evidence
+        "ambiguous", "evidence_insufficient", "未提交可核对生产日期的视图。", evidence
     )
 
 

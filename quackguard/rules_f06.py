@@ -25,9 +25,10 @@ def _compact(value):
 def r031(task, materials, params):
     evidence = _evidence(materials)
     target = "仅供练习使用"
-    found = wrong = unreadable = missing_complete = False
+    found = wrong = unreadable = missing_complete = doc_seen = False
     for material in materials:
         for document in material.get("documents", []):
+            doc_seen = True
             status, value = text_raw(document, "warning_practice")
             if status == "value":
                 if target in _compact(str(value)):
@@ -54,8 +55,12 @@ def r031(task, materials, params):
         return applicable_result(
             "reject", "rule_violation", "完整清晰范围内未出现仅供练习使用。", evidence
         )
+    if not doc_seen:
+        return applicable_result(
+            "ambiguous", "evidence_insufficient", "未提交可核对的包装视图。", evidence
+        )
     return applicable_result(
-        "reject", "rule_violation", "包装未出现仅供练习使用警示。", evidence
+        "ambiguous", "evidence_insufficient", "检查范围不完整，无法确认警示文案。", evidence
     )
 
 
@@ -91,21 +96,34 @@ def r032(task, materials, params):
 
 def r033(task, materials, params):
     evidence = _evidence(materials)
-    steps = {"step1": False, "step2": False, "step3": False}
-    unreadable = missing_complete = False
+    expected = {
+        "step1": "连接底座",
+        "step2": "固定主体",
+        "step3": "检查连接",
+    }
+    steps = {key: False for key in expected}
+    wrong = unreadable = missing_complete = doc_seen = False
     for material in materials:
         for document in material.get("documents", []):
-            for key in steps:
-                status, _ = text_raw(document, key)
+            doc_seen = True
+            for key, phrase in expected.items():
+                status, value = text_raw(document, key)
                 if status == "value":
-                    steps[key] = True
+                    if phrase in _compact(str(value)):
+                        steps[key] = True
+                    else:
+                        wrong = True
                 elif status == "unreadable":
                     unreadable = True
                 elif status == "missing" and document.get("inspection_complete") is True:
                     missing_complete = True
-    if all(steps.values()):
+    if all(steps.values()) and not wrong:
         return applicable_result(
             "pass", "rule_satisfied", "组装说明按顺序标明三个步骤。", evidence
+        )
+    if wrong:
+        return applicable_result(
+            "reject", "rule_violation", "组装步骤内容与规定不符，或次序颠倒。", evidence
         )
     if unreadable:
         return applicable_result(
@@ -116,8 +134,12 @@ def r033(task, materials, params):
         return applicable_result(
             "reject", "rule_violation", "组装步骤缺失、重复或次序颠倒。", evidence
         )
+    if not doc_seen:
+        return applicable_result(
+            "ambiguous", "evidence_insufficient", "未提交可核对的组装说明视图。", evidence
+        )
     return applicable_result(
-        "reject", "rule_violation", "组装说明未完整标明三个步骤。", evidence
+        "ambiguous", "evidence_insufficient", "检查范围不完整，无法核对组装步骤。", evidence
     )
 
 
@@ -127,9 +149,10 @@ def r034(task, materials, params):
         return applicable_result(
             "pass", "rule_satisfied", "未申报收纳状态可拆卸，本条未触发。", evidence
         )
-    use_ok = storage_ok = wrong = unreadable = missing_complete = False
+    use_ok = storage_ok = wrong = unreadable = missing_complete = doc_seen = False
     for material in materials:
         for document in material.get("documents", []):
+            doc_seen = True
             use_status, use_value = text_raw(document, "non_removable_in_use")
             storage_status, storage_value = text_raw(document, "removable_in_storage")
             if use_status == "value":
@@ -164,8 +187,12 @@ def r034(task, materials, params):
         return applicable_result(
             "reject", "rule_violation", "缺少使用时不可拆卸或收纳时可拆卸说明。", evidence
         )
+    if not doc_seen:
+        return applicable_result(
+            "ambiguous", "evidence_insufficient", "未提交可核对的说明视图。", evidence
+        )
     return applicable_result(
-        "reject", "rule_violation", "未给出收纳拆卸的两条例外说明。", evidence
+        "ambiguous", "evidence_insufficient", "检查范围不完整，无法核对拆卸例外说明。", evidence
     )
 
 
@@ -176,9 +203,10 @@ def r035(task, materials, params):
         return applicable_result(
             "pass", "rule_satisfied", "language_mode未指定中文/英文/双语，本条未触发。", evidence
         )
-    cn_ok = en_ok = cn_wrong = en_wrong = unreadable = missing_complete = False
+    cn_ok = en_ok = cn_wrong = en_wrong = unreadable = missing_complete = doc_seen = False
     for material in materials:
         for document in material.get("documents", []):
+            doc_seen = True
             cn_status, cn_value = text_raw(document, "keep_dry_cn")
             en_status, en_value = text_raw(document, "keep_dry_en")
             if cn_status == "value":
@@ -219,16 +247,21 @@ def r035(task, materials, params):
         return applicable_result(
             "reject", "rule_violation", "缺少语言声明要求的关键句。", evidence
         )
+    if not doc_seen:
+        return applicable_result(
+            "ambiguous", "evidence_insufficient", "未提交可核对的关键句视图。", evidence
+        )
     return applicable_result(
-        "reject", "rule_violation", "未提供语言声明要求的关键句。", evidence
+        "ambiguous", "evidence_insufficient", "检查范围不完整，无法核对关键句。", evidence
     )
 
 
 def r036(task, materials, params):
     evidence = _evidence(materials)
-    found = invert_only = unreadable = missing_complete = False
+    found = invert_only = unreadable = missing_complete = doc_seen = False
     for material in materials:
         for document in material.get("documents", []):
+            doc_seen = True
             not_status, not_value = text_raw(document, "do_not_invert")
             invert_status, invert_value = text_raw(document, "invert_phrase")
             if not_status == "value" and "请勿倒置" in _compact(str(not_value)):
@@ -243,20 +276,24 @@ def r036(task, materials, params):
         return applicable_result(
             "pass", "rule_satisfied", "完整出现请勿倒置，否定词保留。", evidence
         )
-    if invert_only:
-        return applicable_result(
-            "reject", "rule_violation", "仅显示请倒置或倒置，缺少否定词。", evidence
-        )
     if unreadable:
         return applicable_result(
             "ambiguous", "evidence_insufficient", "否定词被遮挡，无法辨认。", evidence
+        )
+    if invert_only:
+        return applicable_result(
+            "reject", "rule_violation", "仅显示请倒置或倒置，缺少否定词。", evidence
         )
     if missing_complete:
         return applicable_result(
             "reject", "rule_violation", "明确缺少请勿倒置否定词。", evidence
         )
+    if not doc_seen:
+        return applicable_result(
+            "ambiguous", "evidence_insufficient", "未提交可核对的警示视图。", evidence
+        )
     return applicable_result(
-        "reject", "rule_violation", "未出现请勿倒置警示。", evidence
+        "ambiguous", "evidence_insufficient", "检查范围不完整，无法确认否定词。", evidence
     )
 
 

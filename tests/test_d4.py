@@ -8,6 +8,7 @@ F03（字段完整性与格式）共 18 条规则逐条对齐规则原文：
 3. 未知信息（面信息、来源、字段缺失范围）不得直接判 reject；
 4. 构建矩阵 R001–R018 全部 implemented/ready，SOP 原文引用与规则文件一致。
 """
+import csv
 import json
 import tempfile
 import unittest
@@ -302,6 +303,27 @@ class D4Test(unittest.TestCase):
             self.assertIn("pass", labels[rule_id], rule_id)
             self.assertIn("reject", labels[rule_id], rule_id)
             self.assertIn("ambiguous", labels[rule_id], rule_id)
+
+    def test_build_ledger_covers_sixty_rules(self):
+        path = self.artifacts / "60条建设台账.csv"
+        self.assertTrue(path.is_file())
+        with path.open(encoding="utf-8", newline="") as handle:
+            rows = list(csv.DictReader(handle))
+        self.assertEqual(len(rows), 60)
+        self.assertEqual(
+            [row["rule_id"] for row in rows],
+            ["R%03d" % number for number in range(1, 61)],
+        )
+        for row in rows:
+            self.assertEqual(row["rule_version"], "3.0")
+            self.assertEqual(row["build_status"], "built")
+            self.assertEqual(len(row["artifact_sha256"]), 64)
+            self.assertEqual(row["trace_path"], "engine/rule_test_matrix.json")
+            self.assertTrue(row["shared_capabilities"])
+            self.assertEqual(row["manual_edit_count"], "0")
+        status = (self.artifacts / "status.html").read_text(encoding="utf-8")
+        self.assertIn("60条建设台账.csv", status)
+
 
 
 if __name__ == "__main__":

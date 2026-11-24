@@ -3,6 +3,7 @@ import math
 import re
 
 from .rule_common import (
+    document_bbox,
     normalize_material_code,
     normalize_model,
     normalize_text,
@@ -71,11 +72,15 @@ def _document_evidence(document):
         "attached_to_package": value["attached_to_package"],
         "fields": value["fields"],
     }
-    return {
+    item = {
         "material_id": material["material_id"],
         "page_index": material["page_index"],
         "fact": json.dumps(fact, ensure_ascii=False),
     }
+    bbox = document_bbox(value)
+    if bbox is not None:
+        item["bbox"] = bbox
+    return item
 
 
 def _material_evidence(material):

@@ -2,6 +2,7 @@ import json
 import re
 import time
 import uuid
+from pathlib import Path
 
 from .artifacts import load_policy
 from .b001 import applicability as b001_applicability
@@ -13,6 +14,7 @@ from .errors import AuditError
 from .facts import Fact
 from .io_utils import rows, write_jsonl
 from .model_gateway import ModelGateway
+from .report import write_review_page
 
 OUTPUT_FORMAT = (
     "返回固定行格式，不要JSON，不要代码围栏。"
@@ -183,6 +185,7 @@ def review_task(gateway, policy, task, input_path):
             error = exc
         else:
             error = AuditError("execution_error", str(exc) or type(exc).__name__)
+        traces.extend(getattr(error, "fact_traces", []))
         output.update(
             execution_status="error",
             label=None,
@@ -223,10 +226,13 @@ def infer(input_path, artifacts_path, out_path, base_url, api_key):
         traces.extend(task_traces)
     write_jsonl(out_path, outputs)
     write_jsonl(str(out_path) + ".trace.jsonl", traces)
+    review_path = Path(out_path).parent / "review.html"
+    write_review_page(review_path, policy, tasks, outputs, input_path)
     error_count = sum(row["execution_status"] == "error" for row in outputs)
     return {
         "command": "infer",
         "records": len(outputs),
         "execution_errors": error_count,
+        "review": str(review_path),
         "out": str(out_path),
     }

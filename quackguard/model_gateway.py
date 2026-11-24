@@ -25,7 +25,7 @@ class ModelGateway:
         content = [{"type": "text", "text": prompt}]
         for material in task["materials"]:
             media_type = material["media_type"]
-            if media_type not in ("image/png", "image/jpeg"):
+            if media_type not in ("image/png", "image/jpeg", "application/pdf"):
                 raise AuditError("unsupported_media_type", media_type)
             data = material_bytes(input_path, material)
             content.append({
@@ -36,10 +36,21 @@ class ModelGateway:
                 ),
             })
             encoded = base64.b64encode(data).decode("ascii")
-            content.append({
-                "type": "image_url",
-                "image_url": {"url": f"data:{media_type};base64,{encoded}"},
-            })
+            if media_type == "application/pdf":
+                # PDF 交给兼容文档输入的视觉模型，避免在网关层直接拒绝
+                filename = str(material.get("relative_path", "material.pdf")).rsplit("/", 1)[-1]
+                content.append({
+                    "type": "file",
+                    "file": {
+                        "filename": filename,
+                        "file_data": f"data:application/pdf;base64,{encoded}",
+                    },
+                })
+            else:
+                content.append({
+                    "type": "image_url",
+                    "image_url": {"url": f"data:{media_type};base64,{encoded}"},
+                })
         return [{"role": "user", "content": content}]
 
     def complete(self, messages):

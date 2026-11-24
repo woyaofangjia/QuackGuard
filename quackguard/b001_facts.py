@@ -1,5 +1,6 @@
 from .contracts import strict_loads
 from .errors import AuditError
+from .rule_common import valid_bbox
 
 LABEL_FIELDS = frozenset({"model", "material_code"})
 CERTIFICATE_FIELDS = frozenset({
@@ -21,12 +22,14 @@ FACT_PROMPT = """只提取当前一张材料图像中的可见事实，不审核
 每个document结构：
 {"voided":true|false|null,"inspection_complete":true|false,
  "carrier":"outer_package|attached_tag|null",
- "attached_to_package":true|false|null,"fields":{...}}。
+ "attached_to_package":true|false|null,"bbox":[x1,y1,x2,y2]|null,"fields":{...}}。
+bbox是该document内容区域在整页内的归一化坐标，未知时null，不猜测。
 仅清楚标注作废时voided=true；清楚未标注作废时false；无法确定时null。
 inspection_complete表示该文档规定检查区域是否完整清晰。
 包装或附签材料只提取标签，fields固定为model和material_code；
 证明文件fields固定为material_code、covered_models、valid_from、valid_to。
-每个字段结构为{"status":"value|unreadable|missing","value":...}。非value状态value必须为null。
+每个字段结构为{"status":"value|unreadable|missing","value":...}。非value状态value必须为null；
+可加"bbox":[x1,y1,x2,y2]给出该字段原文或遮挡区域的归一化框，未知则省略，不猜测。
 value状态保留字段值原文，不填字段名。covered_models是完整型号字符串数组，其余为字符串。缺失仅在完整清晰范围内确认不存在时使用。
 外包装上的标签carrier=outer_package；附签carrier=attached_tag。
 仅附签用attached_to_package表示是否同时清楚展示其与包装的固定连接；其他情况为null。
@@ -35,7 +38,11 @@ value状态保留字段值原文，不填字段名。covered_models是完整型�
 
 
 def _validate_field(name, value):
-    if not isinstance(value, dict) or set(value) != {"status", "value"}:
+    if not isinstance(value, dict):
+        raise ValueError(f"Invalid field structure: {name}")
+    if not {"status", "value"} <= set(value):
+        raise ValueError(f"Invalid field structure: {name}")
+    if set(value) - {"status", "value", "bbox"}:
         raise ValueError(f"Invalid field structure: {name}")
     if value["status"] not in {"value", "unreadable", "missing"}:
         raise ValueError(f"Invalid field status: {name}")
@@ -74,10 +81,13 @@ def parse_facts(raw, material):
         "attached_to_package",
         "fields",
     }
+    documents = []
     for document in value["documents"]:
+        allowed = required_document_fields | {"bbox"}
         if (
             not isinstance(document, dict)
-            or set(document) != required_document_fields
+            or not required_document_fields <= set(document)
+            or set(document) - allowed
         ):
             raise ValueError("Invalid document structure")
         if (
@@ -105,15 +115,25 @@ def parse_facts(raw, material):
             or set(document["fields"]) != expected_fields
         ):
             raise ValueError("Document fields do not match material role")
+        fields = {}
         for name, field in document["fields"].items():
             _validate_field(name, field)
+            item = {"status": field["status"], "value": field["value"]}
+            bbox = valid_bbox(field.get("bbox"))
+            if bbox is not None:
+                item["bbox"] = bbox
+            fields[name] = item
+        normalized = {name: document[name] for name in required_document_fields}
+        normalized["fields"] = fields
+        normalized["bbox"] = valid_bbox(document.get("bbox"))
+        documents.append(normalized)
 
     return {
         "material_id": material["material_id"],
         "page_index": material["page_index"],
         "role": role,
         "status": value["status"],
-        "documents": value["documents"],
+        "documents": documents,
     }
 
 
@@ -144,7 +164,9 @@ def extract_facts(gateway, task, input_path, trace_id):
                 break
             except (ValueError, KeyError, TypeError) as exc:
                 if attempt == 2:
-                    raise AuditError("invalid_model_output", str(exc)) from exc
+                    error = AuditError("invalid_model_output", str(exc))
+                    error.fact_traces = traces
+                    raise error from exc
                 prompt += (
                     "\n【严格JSON结构校验反馈，无标准答案】\n"
                     + str(exc)

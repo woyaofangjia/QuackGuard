@@ -1,98 +1,186 @@
-import json
-import re
+"""标注复用同一套视觉事实与审核结论。
 
+label 取自 review_task 的规则判定，value/status/bbox 取自同一批事实文档，
+不再单独让模型对整条规则下结论，避免事实与标注脱节。
+"""
 from .artifacts import load_policy
-from .contracts import annotation_errors, input_errors, strict_loads
+from .contracts import annotation_errors, input_errors
 from .errors import AuditError
+from .inference import review_task
 from .io_utils import rows, write_json, write_jsonl
 from .model_gateway import ModelGateway
-
-ANNOTATION_FORMAT = (
-    "只输出四行，不要代码围栏：第1行VALUE_JSON: JSON字符串或null；"
-    "第2行STATUS: value/unreadable/invalid_value；"
-    "第3行LABEL: pass/reject/ambiguous；"
-    "第4行BBOX: [x1,y1,x2,y2]。label是整条指定规则的审核结论。"
-    "value提取target要求的完整行，包括字段名；不可读必须null和unreadable。"
-    "BBOX为0至1归一化坐标。"
+from .rule_common import (
+    normalize_text,
+    parse_batch,
+    parse_date,
+    parse_quantity,
+    parse_support_url,
+    valid_bbox,
 )
 
+# 目标关键词 -> (事实字段, 回填原文时使用的字段名)，长关键词优先匹配
+TARGET_FIELDS = (
+    ("主型号", "main_model", "主型号"),
+    ("型号", "model", "型号"),
+    ("材料编号", "material_code", "材料编号"),
+    ("批次号", "batch_number", "批次号"),
+    ("序列号", "serial_number", "序列号"),
+    ("支持地址", "support_url", "支持地址"),
+    ("件数", "quantity", "件数"),
+    ("生产日期", "production_date", "生产日期"),
+    ("有效起始日", "valid_from", "有效起始日"),
+    ("有效截止日", "valid_to", "有效截止日"),
+    ("产品名称英文", "product_name_en", "产品名称英文"),
+    ("产品名称", "product_name", "产品名称"),
+)
 
-def parse_annotation(raw, target):
-    values = {}
-    pattern = r"^\s*(VALUE_JSON|STATUS|LABEL|BBOX)\s*[:：]\s*(.*?)\s*$"
-    for line in raw.splitlines():
-        match = re.match(pattern, line)
-        if match:
-            key, value = match.groups()
-            if key in values:
-                raise ValueError("Duplicate annotation field")
-            values[key] = value
+_STRICT_FORMATS = {
+    "material_code": lambda text: _material_code_ok(text),
+    "quantity": lambda text: parse_quantity(text) is not None,
+    "support_url": lambda text: parse_support_url(text) is not None,
+    "batch_number": lambda text: parse_batch(text) is not None,
+    "production_date": lambda text: parse_date(text) is not None,
+    "valid_from": lambda text: parse_date(text) is not None,
+    "valid_to": lambda text: parse_date(text) is not None,
+}
 
-    if set(values) != {"VALUE_JSON", "STATUS", "LABEL", "BBOX"}:
-        raise ValueError("Missing annotation fields")
-    output = {
-        key: target[key]
-        for key in ("annotation_id", "audit_unit_id", "material_id", "page_index")
-    }
-    output.update(
-        value=strict_loads(values["VALUE_JSON"]),
-        status=values["STATUS"],
-        label=values["LABEL"],
-        bbox=strict_loads(values["BBOX"]),
+_FULL_FRAME = [0.0, 0.0, 1.0, 1.0]
+
+
+def _material_code_ok(text):
+    if not isinstance(text, str):
+        return False
+    value = normalize_text(text)
+    return (
+        value.startswith("QLAB-")
+        and value[5:].isdigit()
+        and len(value[5:]) == 6
     )
-    return output
 
 
-def annotation_prompt(policy, task, target):
-    key = task["rule_id"] + "@" + task["rule_version"]
-    rule = policy["rules"].get(key)
-    if not rule:
-        raise AuditError("rule_artifact_not_built", key)
-    payload = json.dumps(
-        {"task": task, "annotation_target": target}, ensure_ascii=False
-    )
-    return "\n".join([
-        policy["general"],
-        policy["supplement"],
-        rule["rule_text"],
-        payload,
-        ANNOTATION_FORMAT,
-    ])
+def target_field(target):
+    text = target.get("target")
+    if not isinstance(text, str):
+        return None, None
+    for keyword, field, label in TARGET_FIELDS:
+        if keyword in text:
+            return field, label
+    return None, None
 
 
-def annotate_target(gateway, policy, task, target, input_path):
-    traces = []
-    try:
-        prompt = annotation_prompt(policy, task, target)
-        for attempt in (1, 2):
-            messages = gateway.messages(prompt, task, input_path)
-            raw = gateway.complete(messages)
-            traces.append({
-                "annotation_id": target["annotation_id"],
-                "attempt": attempt,
-                "response": raw,
-            })
-            try:
-                output = parse_annotation(raw, target)
-                errors = annotation_errors(output, target, task)
-                if errors:
-                    raise ValueError(str(errors))
-                return output, traces, None
-            except (ValueError, KeyError, TypeError) as exc:
-                if attempt == 2:
-                    raise AuditError("invalid_model_output", str(exc)) from exc
-                prompt += (
-                    "\n【公开格式校验反馈，无标准答案】\n"
-                    + str(exc)
-                    + "\n请重新输出指定四行。上次输出：\n"
-                    + raw
-                )
-    except (AuditError, ValueError, KeyError, TypeError, OSError) as exc:
-        if isinstance(exc, AuditError):
-            error = exc
+def _union_bbox(documents):
+    boxes = [valid_bbox(doc.get("bbox")) for doc in documents]
+    boxes = [box for box in boxes if box is not None]
+    if not boxes:
+        return list(_FULL_FRAME)
+    return [
+        min(box[0] for box in boxes),
+        min(box[1] for box in boxes),
+        max(box[2] for box in boxes),
+        max(box[3] for box in boxes),
+    ]
+
+
+def _select_document(facts, target, field):
+    for fact in facts:
+        if (
+            fact.get("material_id") != target.get("material_id")
+            or fact.get("page_index") != target.get("page_index")
+        ):
+            continue
+        documents = fact.get("documents")
+        if not isinstance(documents, list) or not documents:
+            return None, []
+        for document in documents:
+            fields = document.get("fields")
+            if isinstance(fields, dict) and field in fields:
+                return document, documents
+        return documents[0], documents
+    return None, []
+
+
+def _field_value(document, field):
+    fields = document.get("fields")
+    item = fields.get(field) if isinstance(fields, dict) else None
+    if not isinstance(item, dict):
+        return None, "unreadable", None
+    bbox = valid_bbox(item.get("bbox"))
+    status = item.get("status")
+    if status == "value":
+        raw = item.get("value")
+        if isinstance(raw, list):
+            text = "、".join(str(value) for value in raw)
+        elif isinstance(raw, str):
+            text = raw
         else:
-            error = AuditError("execution_error", str(exc) or type(exc).__name__)
-        return None, traces, error
+            return None, "unreadable", bbox
+        check = _STRICT_FORMATS.get(field)
+        if check is not None and not check(text):
+            return text, "invalid_value", bbox
+        return text, "value", bbox
+    return None, "unreadable", bbox
+
+
+def build_annotation_output(target, document, documents, review):
+    field, label = target_field(target)
+    if field:
+        text, status, bbox = _field_value(document, field)
+    else:
+        text, status, bbox = None, "unreadable", None
+    include_name = "包含字段名" in (target.get("target") or "")
+    if text is not None and include_name:
+        text = label + "：" + text
+    if bbox is None:
+        bbox = valid_bbox(document.get("bbox"))
+    if bbox is None:
+        bbox = _union_bbox(documents)
+    return {
+        "annotation_id": target["annotation_id"],
+        "audit_unit_id": target["audit_unit_id"],
+        "material_id": target["material_id"],
+        "page_index": target["page_index"],
+        "value": text,
+        "status": status,
+        "label": review["label"],
+        "bbox": bbox,
+    }
+
+
+def annotate_target(gateway, policy, task, target, input_path, review=None):
+    if review is None:
+        review = review_task(gateway, policy, task, input_path)
+    review_output, traces = review
+    fact_traces = [trace for trace in traces if "response" in trace]
+    if review_output.get("execution_status") != "completed":
+        error = AuditError(
+            review_output.get("error_code") or "execution_error",
+            review_output.get("reason"),
+        )
+        return None, fact_traces, error
+    facts = [
+        trace["parsed_facts"]
+        for trace in traces
+        if isinstance(trace.get("parsed_facts"), dict)
+    ]
+    field, _ = target_field(target)
+    if field is None:
+        return None, fact_traces, AuditError(
+            "unknown_annotation_target", target.get("target")
+        )
+    document, documents = _select_document(facts, target, field)
+    if document is None:
+        return None, fact_traces, AuditError(
+            "fact_target_missing", target.get("material_id")
+        )
+    output = build_annotation_output(target, document, documents, review_output)
+    errors = annotation_errors(output, target, task)
+    if errors:
+        return None, fact_traces, AuditError("invalid_annotation_output", str(errors))
+    return output, fact_traces, None
+
+
+def _optional_int(value):
+    return isinstance(value, int) and not isinstance(value, bool)
 
 
 def annotate(input_path, targets_path, artifacts_path, out_path, base_url, api_key):
@@ -114,25 +202,38 @@ def annotate(input_path, targets_path, artifacts_path, out_path, base_url, api_k
     outputs = []
     failures = []
     traces = []
+    reviews = {}
     for target in rows(targets_path):
-        if not isinstance(target, dict):
+        if not isinstance(target, dict) or not all(
+            target.get(key) not in (None, "")
+            for key in ("annotation_id", "audit_unit_id", "material_id")
+        ) or not _optional_int(target.get("page_index")):
             failures.append({
-                "annotation_id": None,
+                "annotation_id": (
+                    target.get("annotation_id")
+                    if isinstance(target, dict)
+                    else None
+                ),
                 "error_code": "invalid_annotation_target",
             })
             continue
-        annotation_id = target.get("annotation_id")
-        task = tasks.get(target.get("audit_unit_id"))
+        annotation_id = target["annotation_id"]
+        task = tasks.get(target["audit_unit_id"])
         if not task:
             failures.append({
                 "annotation_id": annotation_id,
                 "error_code": "unknown_audit_unit_id",
             })
             continue
-        output, target_traces, error = annotate_target(
-            gateway, policy, task, target, input_path
+        if task["audit_unit_id"] not in reviews:
+            reviews[task["audit_unit_id"]] = review_task(
+                gateway, policy, task, input_path
+            )
+            traces.extend(reviews[task["audit_unit_id"]][1])
+        output, _, error = annotate_target(
+            gateway, policy, task, target, input_path,
+            review=reviews[task["audit_unit_id"]],
         )
-        traces.extend(target_traces)
         if error:
             failures.append({
                 "annotation_id": annotation_id,

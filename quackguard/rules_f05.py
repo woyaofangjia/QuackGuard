@@ -47,10 +47,15 @@ def r025(task, materials, params):
             "pass", "rule_satisfied", "未申报使用圆标，本条未触发。", evidence
         )
     found_pass = found_reject = found_unknown = False
-    for material, document in _front_docs(materials, task):
+    front_docs = _front_docs(materials, task)
+    if not front_docs:
+        return applicable_result(
+            "ambiguous", "evidence_insufficient", "正面视图未提交，无法核对圆标。", evidence
+        )
+    for material, document in front_docs:
         present = _present(document, "hollow_circle")
         has_text = shval(document, "hollow_circle").get("interior_has_text")
-        if present is True and has_text is not True:
+        if present is True and has_text is False:
             found_pass = True
         elif present is True and has_text is True:
             found_reject = True
@@ -66,12 +71,8 @@ def r025(task, materials, params):
         return applicable_result(
             "reject", "rule_violation", "圆标不是闭合空心圆，或圆内存在文字。", evidence
         )
-    if found_unknown:
-        return applicable_result(
-            "ambiguous", "evidence_insufficient", "圆标因遮挡无法确认是否闭合空心。", evidence
-        )
     return applicable_result(
-        "reject", "rule_violation", "申报圆标但正面未展示空心圆标志。", evidence
+        "ambiguous", "evidence_insufficient", "圆标因遮挡无法确认是否闭合空心。", evidence
     )
 
 
@@ -83,14 +84,24 @@ def r026(task, materials, params):
             "pass", "rule_satisfied", "未申报使用三角点标，本条未触发。", evidence
         )
     found_pass = found_reject = found_unknown = False
-    for material, document in _front_docs(materials, task):
+    front_docs = _front_docs(materials, task)
+    if not front_docs:
+        return applicable_result(
+            "ambiguous", "evidence_insufficient", "正面视图未提交，无法核对三角点标。", evidence
+        )
+    for material, document in front_docs:
         triangle = _present(document, "triangle_border")
-        dot = _present(document, "dot_inside")
-        dot_count = shval(document, "dot_inside").get("count")
-        if triangle is True and dot is True and dot_count == 1:
+        dot_shape = shval(document, "dot_inside")
+        dot = dot_shape.get("present")
+        dot_count = dot_shape.get("count")
+        dot_inside = dot_shape.get("inside")
+        if triangle is True and dot is True and dot_count == 1 and dot_inside is not False:
             found_pass = True
-        elif triangle is False or dot is False or (
-            type(dot_count) is int and dot_count != 1
+        elif (
+            triangle is False
+            or dot is False
+            or dot_inside is False
+            or (type(dot_count) is int and dot_count != 1)
         ):
             found_reject = True
         else:
@@ -106,12 +117,8 @@ def r026(task, materials, params):
             "三角点标缺少三角形边框或框内实心点，或点数量/位置不符。",
             evidence,
         )
-    if found_unknown:
-        return applicable_result(
-            "ambiguous", "evidence_insufficient", "三角点标结构因遮挡无法确认。", evidence
-        )
     return applicable_result(
-        "reject", "rule_violation", "申报三角点标但正面未展示该标志结构。", evidence
+        "ambiguous", "evidence_insufficient", "三角点标结构因遮挡无法确认。", evidence
     )
 
 
@@ -174,7 +181,12 @@ def r028(task, materials, params):
             "pass", "rule_satisfied", "声明颜色非蓝/黄版，本条未触发。", evidence
         )
     found_pass = found_reject = found_unknown = False
-    for material, document in _front_docs(materials, task):
+    front_docs = _front_docs(materials, task)
+    if not front_docs:
+        return applicable_result(
+            "ambiguous", "evidence_insufficient", "正面视图未提交，无法核对标识区圆点。", evidence
+        )
+    for material, document in front_docs:
         present = _present(document, key)
         if present is True:
             found_pass = True
@@ -197,26 +209,43 @@ def r028(task, materials, params):
 
 def r029(task, materials, params):
     evidence = _evidence(materials)
-    total = 0
-    incomplete = False
-    for material, document in _front_docs(materials, task):
+    front_docs = _front_docs(materials, task)
+    if not front_docs:
+        return applicable_result(
+            "ambiguous", "evidence_insufficient", "正面视图未提交，无法核对星形数量。", evidence
+        )
+    complete_counts = {}
+    incomplete_count = unknown = False
+    for material, document in front_docs:
         star = shval(document, "star")
         present = star.get("present")
         count = star.get("count")
+        complete = document.get("inspection_complete") is True
+        key = id(material)
         if present is True and type(count) is int:
-            total += count
-        elif present is True:
-            total += 1
-        elif document.get("inspection_complete") is not True:
-            incomplete = True
-    if incomplete and total < 3:
-        return applicable_result(
-            "ambiguous", "evidence_insufficient", "主面未完整展示，不能认定星形数量。", evidence
-        )
-    if total == 3:
+            if complete:
+                complete_counts[key] = max(complete_counts.get(key, 0), count)
+            else:
+                incomplete_count = True
+        elif present is False and complete:
+            complete_counts[key] = max(complete_counts.get(key, 0), 0)
+        else:
+            unknown = True
+            if not complete:
+                incomplete_count = True
+    counts = set(complete_counts.values())
+    if counts == {3}:
         return applicable_result(
             "pass", "rule_satisfied", "正面恰好出现三个未作废实心星形标志。", evidence
         )
+    if 3 in counts or incomplete_count or unknown:
+        return applicable_result(
+            "ambiguous",
+            "evidence_insufficient",
+            "主面未完整展示或数量不可确认，不能认定星形数量。",
+            evidence,
+        )
+    total = max(complete_counts.values(), default=0)
     return applicable_result(
         "reject",
         "rule_violation",

@@ -46,6 +46,47 @@ def numbered_rows(path, required=True):
         raise AuditError("invalid_jsonl", str(exc)) from exc
 
 
+def numbered_rows_lenient(path):
+    """逐行解析JSONL，坏行不中断，返回 (记录, 失败清单)。
+
+    失败清单元素为 {"line": 行号, "error": 说明}，供构建隔离坏规则。
+    """
+    path = Path(path)
+    try:
+        if not path.exists():
+            if path.is_symlink():
+                raise AuditError("invalid_jsonl", "Broken symlink")
+            raise AuditError("invalid_jsonl", "Required file missing")
+        try:
+            text = regular_bytes(path).decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise AuditError("invalid_jsonl", "JSONL must be UTF-8") from exc
+    except (ContractError, OSError) as exc:
+        raise AuditError("invalid_jsonl", str(exc)) from exc
+
+    records = []
+    failures = []
+    for line_number, line in enumerate(text.split("\n"), 1):
+        line = line.rstrip("\r")
+        if not line.strip():
+            continue
+        if len(line.encode()) > MAX_LINE_BYTES:
+            failures.append({"line": line_number, "error": "Oversized JSONL line"})
+            continue
+        try:
+            value = strict_loads(line)
+        except ContractError as exc:
+            failures.append({
+                "line": line_number,
+                "error": f"{path.name}:{line_number}: {exc}",
+            })
+            continue
+        records.append((line_number, value))
+        if len(records) > MAX_RECORDS:
+            raise AuditError("invalid_jsonl", "Too many records")
+    return records, failures
+
+
 def rows(path, required=True):
     return [value for _, value in numbered_rows(path, required)]
 

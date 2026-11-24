@@ -5,7 +5,7 @@
 """
 from .contracts import strict_loads
 from .errors import AuditError
-from .rule_common import MISSING
+from .rule_common import MISSING, valid_bbox
 
 LIST_FIELDS = frozenset({"compatible_models", "covered_models", "fill_percentages"})
 ALLOWED_CARRIERS = frozenset({
@@ -29,8 +29,10 @@ FACT_PROMPT = """只提取当前一张材料图像中的可见事实，不审核
  "attached_to_package":true|false|null,"four_edges_visible":true|false|null,
  "cut_line_crosses_label":true|false|null,"fields_on_same_label":true|false|null,
  "center_y_ratio":数字|null,
+ "bbox":[x1,y1,x2,y2]|null,
  "fields":{...},"texts":{...},"shapes":{...},
  "components":[],"matrix_pairs":[],"pages":[]}。
+bbox是该document内容区域在整页内的归一化坐标，未知时null，不猜测。
 仅清楚标注作废时voided=true；清楚未作废false；无法确定null。
 inspection_complete表示该文档规定检查区域是否完整清晰；不完整或不确定时填false。
 fields记录带字段名的取值，可用键：model, main_model, compatible_models, material_code,
@@ -39,7 +41,8 @@ front_weight, back_weight, height_min, height_max, fill_percentages, document_ve
 contact_name, withdrawal_date, production_date, old_model, package_model, product_name,
 product_name_en, enable_date, expire_date, issued_date, valid_from, valid_to, covered_models,
 package_spec, certificate_spec, model_text_height, mark_height, circle_interior_has_text。
-每个字段结构{"status":"value|unreadable|missing","value":...}，非value时value必须为null。
+每个字段结构{"status":"value|unreadable|missing","value":...}，非value时value必须为null；
+可加"bbox":[x1,y1,x2,y2]给出该字段原文或遮挡区域的归一化框，未知则省略，不猜测。
 value保留原文不填字段名；compatible_models、covered_models和fill_percentages为数组，其余为字符串。
 缺失仅在完整清晰范围内确认不存在时用missing，否则用unreadable。
 texts记录关键短文案是否出现，键如 warning_practice, indoor_only, outdoor_longterm,
@@ -55,7 +58,11 @@ model_specs记录证明中每个型号对应的规格，每项{"model":..,"spec"
 
 
 def _valid_field(value, list_field):
-    if not isinstance(value, dict) or set(value) != {"status", "value"}:
+    if not isinstance(value, dict):
+        return None
+    if not {"status", "value"} <= set(value):
+        return None
+    if set(value) - {"status", "value", "bbox"}:
         return None
     status = value["status"]
     if status not in {"value", "unreadable", "missing"}:
@@ -63,16 +70,21 @@ def _valid_field(value, list_field):
     if status != "value":
         if value["value"] is not None:
             return None
-        return value
-    raw = value["value"]
-    if list_field:
-        if not isinstance(raw, list) or not raw:
+        result = {"status": status, "value": None}
+    else:
+        raw = value["value"]
+        if list_field:
+            if not isinstance(raw, list) or not raw:
+                return None
+            if not all(isinstance(item, (str, int, float)) for item in raw):
+                return None
+        elif not isinstance(raw, str) or not raw.strip():
             return None
-        if not all(isinstance(item, (str, int, float)) for item in raw):
-            return None
-    elif not isinstance(raw, str) or not raw.strip():
-        return None
-    return value
+        result = {"status": "value", "value": raw}
+    bbox = valid_bbox(value.get("bbox"))
+    if bbox is not None:
+        result["bbox"] = bbox
+    return result
 
 
 def _norm_fields(raw, list_fields):
@@ -175,6 +187,7 @@ def _normalize_document(raw):
     return {
         "voided": _as_bool(raw.get("voided")),
         "inspection_complete": _as_bool(raw.get("inspection_complete")),
+        "bbox": valid_bbox(raw.get("bbox")),
         "carrier": carrier,
         "carrier_face": face,
         "is_standard_front_view": _as_bool(raw.get("is_standard_front_view")),
@@ -238,7 +251,9 @@ def extract_facts(gateway, task, input_path, trace_id):
                 break
             except (ValueError, KeyError, TypeError) as exc:
                 if attempt == 2:
-                    raise AuditError("invalid_model_output", str(exc)) from exc
+                    error = AuditError("invalid_model_output", str(exc))
+                    error.fact_traces = traces
+                    raise error from exc
                 prompt += (
                     "\n【严格JSON结构校验反馈，无标准答案】\n"
                     + str(exc)
