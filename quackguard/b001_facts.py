@@ -1,6 +1,5 @@
-from .contracts import strict_loads
 from .errors import AuditError
-from .rule_common import valid_bbox
+from .rule_common import load_model_json, valid_bbox
 
 LABEL_FIELDS = frozenset({"model", "material_code"})
 CERTIFICATE_FIELDS = frozenset({
@@ -59,8 +58,41 @@ def _validate_field(name, value):
         raise ValueError(f"Field value must be non-empty text: {name}")
 
 
+def _normalize_field(name, value):
+    """把模型常见的等价结构归一为 {status, value}。
+
+    视觉模型可能把列表字段写成字段对象数组，或对无值字段直接给 null。
+    """
+    if value is None:
+        return {"status": "missing", "value": None}
+    if isinstance(value, dict):
+        if "status" in value and "value" not in value:
+            value = dict(value)
+            value["value"] = None
+        return value
+    if not isinstance(value, list):
+        return value
+    values = []
+    for item in value:
+        if isinstance(item, dict):
+            if item.get("status") != "value" or not isinstance(
+                item.get("value"), str
+            ):
+                return {"status": "missing", "value": None}
+            values.append(item["value"])
+        elif isinstance(item, str) and item.strip():
+            values.append(item)
+        else:
+            return {"status": "missing", "value": None}
+    if name == "covered_models":
+        return {"status": "value", "value": values}
+    if len(values) == 1:
+        return {"status": "value", "value": values[0]}
+    return {"status": "missing", "value": None}
+
+
 def parse_facts(raw, material):
-    value = strict_loads(raw)
+    value = load_model_json(raw)
     if not isinstance(value, dict) or set(value) != {"status", "documents"}:
         raise ValueError("Invalid visual fact root")
     if value["status"] not in {"clear", "unreadable"}:
@@ -116,7 +148,8 @@ def parse_facts(raw, material):
         ):
             raise ValueError("Document fields do not match material role")
         fields = {}
-        for name, field in document["fields"].items():
+        for name, raw_field in document["fields"].items():
+            field = _normalize_field(name, raw_field)
             _validate_field(name, field)
             item = {"status": field["status"], "value": field["value"]}
             bbox = valid_bbox(field.get("bbox"))

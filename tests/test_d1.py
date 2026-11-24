@@ -13,7 +13,7 @@ from quackguard.artifacts import load_policy
 from quackguard.contracts import input_errors, prediction_errors, read_rows
 from quackguard.errors import AuditError
 from quackguard.io_utils import material_bytes
-from quackguard.model_gateway import ModelGateway
+from quackguard.model_gateway import ModelGateway, _strip_code_fence
 from quackguard.quality import score_annotations
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -243,6 +243,10 @@ class D1Test(unittest.TestCase):
             ModelGateway(None, base_url="http://localhost").require_config()
         self.assertEqual(caught.exception.code, "model_not_configured")
         ModelGateway("demo", base_url="http://localhost").require_config()
+        self.assertEqual(
+            _strip_code_fence('```json\n{"a": 1}\n```'), '{"a": 1}'
+        )
+        self.assertEqual(_strip_code_fence('{"a": 1}'), '{"a": 1}')
 
     def test_annotation_failure_keeps_model_traces(self):
         baseline = self.dir / "baseline"

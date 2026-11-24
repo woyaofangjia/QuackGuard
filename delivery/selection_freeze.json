@@ -1,0 +1,29 @@
+{
+  "command": "selection_freeze",
+  "decision": "baseline",
+  "baseline_artifact_version": "av_2275824ec1ba861a0c0018cb",
+  "baseline_root_sha256": "e5f41f9db34bf984c1aea87e3bdfd8f65b6d727588cf651a4e8628866d9a3091",
+  "candidate_artifact_version": "av_a80de7291b9b55c33274c8e9",
+  "candidate_artifact_hash": "b43655ac251d8a5ea5ab5a18a21f1108d4127f12642e9e3ee774c63014c9ace9",
+  "gate": {
+    "new_joint_errors": 0,
+    "new_errors": 0,
+    "invalid": 0,
+    "missing": 0,
+    "contrast_complete": true,
+    "feedback_accuracy_delta": 0,
+    "protection_accuracy_delta": 0
+  },
+  "rollback": {
+    "status": "rolled_back",
+    "baseline_version": "av_2275824ec1ba861a0c0018cb",
+    "active_version": "av_2275824ec1ba861a0c0018cb",
+    "root_sha256": "e5f41f9db34bf984c1aea87e3bdfd8f65b6d727588cf651a4e8628866d9a3091",
+    "expected_sha256": "e5f41f9db34bf984c1aea87e3bdfd8f65b6d727588cf651a4e8628866d9a3091"
+  },
+  "reason": "候选仅为澄清记录，不改变判定；验收后回滚基线作为交付活动版本。",
+  "reviewers": {
+    "A": true,
+    "B": true
+  }
+}

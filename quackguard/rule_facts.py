@@ -3,9 +3,8 @@
 按材料独立调用视觉模型，输出严格 JSON；解析器注入 material_id/page_index/role，
 防止证据伪造来源。对可选字段采用容错填充，根结构非法时触发重试。
 """
-from .contracts import strict_loads
 from .errors import AuditError
-from .rule_common import MISSING, valid_bbox
+from .rule_common import MISSING, load_model_json, valid_bbox
 
 LIST_FIELDS = frozenset({"compatible_models", "covered_models", "fill_percentages"})
 ALLOWED_CARRIERS = frozenset({
@@ -44,13 +43,14 @@ package_spec, certificate_spec, model_text_height, mark_height, circle_interior_
 每个字段结构{"status":"value|unreadable|missing","value":...}，非value时value必须为null；
 可加"bbox":[x1,y1,x2,y2]给出该字段原文或遮挡区域的归一化框，未知则省略，不猜测。
 value保留原文不填字段名；compatible_models、covered_models和fill_percentages为数组，其余为字符串。
-缺失仅在完整清晰范围内确认不存在时用missing，否则用unreadable。
+只输出本图实际识别到的字段：完整清晰范围内确认不存在的缺失字段直接省略，不写missing；无法辨认的字段必须写unreadable。
 texts记录关键短文案是否出现，键如 warning_practice, indoor_only, outdoor_longterm,
 step1, step2, step3, keep_dry_cn, keep_dry_en, do_not_invert, invert_phrase,
 removable_in_storage, non_removable_in_use, charge_reading, contents_list, old_model_relation；
-出现为value+原文，未出现且范围清晰为missing，看不清为unreadable。
+出现为value+原文；完整清晰范围内确认未出现则省略该键；看不清为unreadable。
 shapes记录图形，键如 hollow_circle, triangle_border, dot_inside, star, circle_icon,
 square_icon, blue_dot, yellow_dot；值为对象含 present(true|false|null)及count/center_x/center_y/height。
+只输出本图中出现的图形，未出现或无法辨认时省略该键。
 components记录证明组件表逐项配对"组件→型号"，每项{"component_id":..,"model":..,"status":..}。
 matrix_pairs记录从矩阵恢复的配对，结构同components。pages记录证明页码，每项{"printed_page_number":整数,"status":..}。
 model_specs记录证明中每个型号对应的规格，每项{"model":..,"spec":..,"status":..}。
@@ -207,7 +207,7 @@ def _normalize_document(raw):
 
 
 def parse_facts(raw, material):
-    value = strict_loads(raw)
+    value = load_model_json(raw)
     if not isinstance(value, dict) or set(value) != {"status", "documents"}:
         raise ValueError("Invalid visual fact root")
     if value["status"] not in {"clear", "unreadable"}:

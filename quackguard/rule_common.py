@@ -10,6 +10,18 @@ from datetime import date, timedelta
 
 MISSING = {"status": "missing", "value": None}
 
+_TRAILING_COMMA_RE = re.compile(r",(\s*[}\]])")
+
+
+def load_model_json(raw):
+    """解析模型原始输出；容忍尾逗号这类常见 JSON 语法瑕疵。"""
+    from .contracts import strict_loads
+
+    try:
+        return strict_loads(raw)
+    except ValueError:
+        return strict_loads(_TRAILING_COMMA_RE.sub(r"\1", raw))
+
 
 def normalize_text(value):
     return unicodedata.normalize("NFKC", value).strip()

@@ -1,0 +1,17 @@
+{
+  "reviewer": "A",
+  "plugin_faults": {
+    "healthy": "quackguard.conclusion",
+    "healthy_status": "ok",
+    "crash_status": "failed",
+    "crash_error": "plugin_failed",
+    "timeout_status": "failed",
+    "timeout_error": "plugin_timeout",
+    "disabled_status": "disabled",
+    "disabled_invocations": 0,
+    "healthy_second_status": "ok",
+    "input_unchanged": true,
+    "ok": true
+  },
+  "all_passed": true
+}

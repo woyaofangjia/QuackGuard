@@ -1,0 +1,35 @@
+{
+  "command": "manifest_check",
+  "artifact_version": "av_2275824ec1ba861a0c0018cb",
+  "manifest": {
+    "artifact_version": "av_2275824ec1ba861a0c0018cb",
+    "entries": 62,
+    "actual_paths": [
+      "engine"
+    ],
+    "hash_mismatch": [],
+    "version_mismatch": [],
+    "duplicates": [],
+    "keys_match": true,
+    "root_sha256": "b1172008f7b38030e039f0a905c4e70e4784a0415654bf12a0bc52b31292bfd1",
+    "ok": true
+  },
+  "outputs": {
+    "records": 64,
+    "missing": [],
+    "extraneous": [],
+    "duplicated": [],
+    "version_mismatch": [],
+    "trace_missing": [],
+    "trace_optional": [
+      "u154c743f7e20ad7ca7366c608b058d0d",
+      "uc9368235c802004c3277e4efe11a701b"
+    ],
+    "trace_mismatch": [],
+    "trace_rows": 89,
+    "ok": true
+  },
+  "public_outputs": "D:\\QuackGuard\\delivery\\traces\\public_gold.outputs.jsonl",
+  "public_traces": "D:\\QuackGuard\\delivery\\traces\\public_gold.trace.jsonl",
+  "ok": true
+}

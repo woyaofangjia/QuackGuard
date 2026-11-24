@@ -4,5 +4,11 @@ __pycache__/
 *.py[cod]
 /var/
 /artifacts/
+/build/
+.pytest_cache/
+.venv/
+*.tmp
+*.bak
 .trae/documents/D8插件与产品功能补齐实施计划.md
 .trae/documents/d9-regression-plan.md
+.trae/documents/D10验收演练与交付冻结实施计划.md

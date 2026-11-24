@@ -7,6 +7,19 @@ from .errors import AuditError
 from .io_utils import material_bytes
 
 
+def _strip_code_fence(text):
+    """去掉模型整体包裹的 Markdown 代码围栏，保留内部原文。"""
+    stripped = text.strip()
+    if not stripped.startswith("```"):
+        return stripped
+    lines = stripped.splitlines()
+    if lines and lines[0].startswith("```"):
+        lines = lines[1:]
+    if lines and lines[-1].strip() == "```":
+        lines = lines[:-1]
+    return "\n".join(lines).strip()
+
+
 class ModelGateway:
     def __init__(self, model, base_url, api_key=None, timeout=300):
         self.model = model
@@ -59,7 +72,7 @@ class ModelGateway:
             "model": self.model,
             "messages": messages,
             "temperature": 0,
-            "max_tokens": 4096,
+            "max_tokens": 1024,
             "enable_thinking": False,
         }
         headers = {"Content-Type": "application/json"}
@@ -73,9 +86,10 @@ class ModelGateway:
         try:
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
                 result = json.load(response)
-            return result["choices"][0]["message"]["content"]
+            return _strip_code_fence(result["choices"][0]["message"]["content"])
         except urllib.error.HTTPError as exc:
-            raise AuditError("model_http_error", f"HTTP {exc.code}") from exc
+            detail = exc.read().decode("utf-8", "replace")[:200]
+            raise AuditError("model_http_error", f"HTTP {exc.code} {detail}") from exc
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
             raise AuditError("model_call_failed", str(exc)) from exc
         except (ValueError, KeyError, IndexError, TypeError) as exc:

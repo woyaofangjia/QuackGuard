@@ -428,6 +428,36 @@ class D2Test(unittest.TestCase):
                 facts = make_facts(task, labels=labels, package_status=status)
                 self.assertEqual(review(task, facts, 100)["label"], expected)
 
+    def test_model_output_structure_tolerance(self):
+        task = make_task()
+        meta = task["materials"][1]
+        document = certificate()
+        document["fields"]["covered_models"] = [
+            {"status": "value", "value": "EDU-753"}
+        ]
+        facts = parse_facts(payload(document), meta)
+        self.assertEqual(
+            facts["documents"][0]["fields"]["covered_models"],
+            {"status": "value", "value": ["EDU-753"]},
+        )
+        document = certificate()
+        document["fields"]["covered_models"] = None
+        facts = parse_facts(payload(document), meta)
+        self.assertEqual(
+            facts["documents"][0]["fields"]["covered_models"],
+            {"status": "missing", "value": None},
+        )
+        trailing = payload(certificate())
+        parsed = parse_facts(trailing[:-1] + ",}", meta)
+        self.assertEqual(parsed["status"], "clear")
+        document = certificate()
+        document["fields"]["valid_from"] = {"status": "missing"}
+        facts = parse_facts(payload(document), meta)
+        self.assertEqual(
+            facts["documents"][0]["fields"]["valid_from"],
+            {"status": "missing", "value": None},
+        )
+
     def test_strict_parser_retry_and_provenance(self):
         task = make_task()
         meta = task["materials"][0]

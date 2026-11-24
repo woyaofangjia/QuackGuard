@@ -1,0 +1,256 @@
+{
+  "reviewer": "B",
+  "artifact_version": "av_2275824ec1ba861a0c0018cb",
+  "baseline_root_sha256": "5b313515fba889741281d929a013fbb477bead5bf559854238c2fe8f93faae3f",
+  "baseline_manifest": {
+    "artifact_version": "av_2275824ec1ba861a0c0018cb",
+    "entries": 62,
+    "actual_paths": [
+      "engine"
+    ],
+    "hash_mismatch": [],
+    "version_mismatch": [],
+    "duplicates": [],
+    "keys_match": true,
+    "root_sha256": "5b313515fba889741281d929a013fbb477bead5bf559854238c2fe8f93faae3f",
+    "ok": true
+  },
+  "tasks": [
+    {
+      "id": "P-TASK-01",
+      "name": "全部规则导入与版本核对",
+      "passed": true,
+      "evidence": {
+        "entries": 62,
+        "r_rules": 60,
+        "b001_versions": [
+          "3.0",
+          "3.1"
+        ],
+        "artifact_version": "av_2275824ec1ba861a0c0018cb"
+      }
+    },
+    {
+      "id": "P-TASK-02",
+      "name": "重复导入隔离且唯一规则不受影响",
+      "passed": true,
+      "evidence": {
+        "rule_failures": [
+          {
+            "line": 63,
+            "error": "重复规则B001@3.0，首次出现于第1行"
+          }
+        ],
+        "unique_entries": 62
+      }
+    },
+    {
+      "id": "P-TASK-03",
+      "name": "异常导入定位到具体行",
+      "passed": true,
+      "evidence": {
+        "failed_lines": [
+          63,
+          64
+        ],
+        "rule_failures": [
+          {
+            "line": 63,
+            "error": "rules_bad.jsonl:63: Malformed JSON"
+          },
+          {
+            "line": 64,
+            "error": "缺少非空字段：rule_text"
+          }
+        ]
+      }
+    },
+    {
+      "id": "P-TASK-04",
+      "name": "单条规则真实构建可追溯",
+      "passed": true,
+      "evidence": {
+        "artifact_version": "av_c029011c620688a20de8a14a",
+        "build_id": "8293ccf397a9451db7f2f8ac3bd9d4d1",
+        "versions": 1
+      }
+    },
+    {
+      "id": "P-TASK-05",
+      "name": "批量构建状态可核对",
+      "passed": true,
+      "evidence": {
+        "matrix": 62,
+        "status_counts": {
+          "implemented": 62
+        },
+        "db_versions": 62
+      }
+    },
+    {
+      "id": "P-TASK-06",
+      "name": "失败记录可过滤且持久化",
+      "passed": true,
+      "evidence": {
+        "failures": 2,
+        "persisted": 2
+      }
+    },
+    {
+      "id": "P-TASK-07",
+      "name": "证据定位到材料与源页",
+      "passed": true,
+      "evidence": {
+        "completed": 64,
+        "evidence_items": 89,
+        "violations": [],
+        "ok": true
+      }
+    },
+    {
+      "id": "P-TASK-08",
+      "name": "规则原文与来源哈希可追溯",
+      "passed": true,
+      "evidence": {
+        "checked": 62,
+        "text_mismatch": [],
+        "hash_mismatch": []
+      }
+    },
+    {
+      "id": "P-TASK-09",
+      "name": "新旧结果对比按单元计数",
+      "passed": true,
+      "evidence": {
+        "flipped": "u0980ddae209822e375a91ecad75386e9",
+        "counts": {
+          "fixed": 0,
+          "new_error": 1,
+          "unchanged": 63,
+          "version_changed": 0
+        },
+        "all": 64
+      }
+    },
+    {
+      "id": "P-TASK-10",
+      "name": "失败重试幂等且后继唯一",
+      "passed": true,
+      "evidence": {
+        "first_status": "ready",
+        "second_status": "existing",
+        "successors": 1
+      }
+    },
+    {
+      "id": "P-TASK-11",
+      "name": "中断恢复跳过已完成规则",
+      "passed": true,
+      "evidence": {
+        "status": "resumed",
+        "expected_skipped": 62,
+        "skipped_rule_versions": 62,
+        "failed_task_recorded": true,
+        "retry_successor_linked": true,
+        "ok": true
+      }
+    },
+    {
+      "id": "P-TASK-12",
+      "name": "导出与评估指标一致",
+      "passed": true,
+      "evidence": {
+        "rows": 64,
+        "repeat_identical": true,
+        "metric_match": true,
+        "unique_ids": true,
+        "correct_flags": true,
+        "summary": {
+          "all": 64,
+          "correct": 58,
+          "label_only_correct": 58,
+          "applicability_correct": 64,
+          "binary_correct": 47,
+          "binary_truth": 52,
+          "pass": 27,
+          "reject": 24,
+          "ambiguous": 13,
+          "error": 0,
+          "invalid": 0,
+          "missing": 0,
+          "extraneous": 0,
+          "unidentified_invalid_records": 0,
+          "accuracy": 0.90625,
+          "label_only_accuracy": 0.90625,
+          "applicability_accuracy": 1.0,
+          "machine_review_rate": 0.796875,
+          "machine_accuracy": 0.9215686274509803,
+          "correct_decisive_coverage": 0.9038461538461539,
+          "quality": 0.905528846153846,
+          "protocol_version": "1.3.1"
+        },
+        "ok": true
+      }
+    },
+    {
+      "id": "P-TASK-13",
+      "name": "候选激活后推理绑定候选版本",
+      "passed": true,
+      "evidence": {
+        "action": "changed",
+        "baseline_version": "av_2275824ec1ba861a0c0018cb",
+        "candidate_version": "av_9e064495f5a4588b8c69d0cc",
+        "active_version": "av_9e064495f5a4588b8c69d0cc",
+        "candidate_manifest": {
+          "artifact_version": "av_9e064495f5a4588b8c69d0cc",
+          "entries": 62,
+          "actual_paths": [
+            "engine"
+          ],
+          "hash_mismatch": [],
+          "version_mismatch": [],
+          "duplicates": [],
+          "keys_match": true,
+          "root_sha256": "ee2ee3f2437f2b637f67508b38b0130a2b8e4df0150203da61f693096acb5c33",
+          "ok": true
+        }
+      }
+    },
+    {
+      "id": "P-TASK-14",
+      "name": "回滚恢复基线版本与根哈希",
+      "passed": true,
+      "evidence": {
+        "status": "rolled_back",
+        "baseline_version": "av_2275824ec1ba861a0c0018cb",
+        "active_version": "av_2275824ec1ba861a0c0018cb",
+        "root_sha256": "5b313515fba889741281d929a013fbb477bead5bf559854238c2fe8f93faae3f",
+        "expected_sha256": "5b313515fba889741281d929a013fbb477bead5bf559854238c2fe8f93faae3f"
+      }
+    },
+    {
+      "id": "P-TASK-15",
+      "name": "禁用插件不调用且健康插件不受影响",
+      "passed": true,
+      "evidence": {
+        "evidence_status": "disabled",
+        "evidence_invocations": 0,
+        "conclusion_status": "ok",
+        "input_unchanged": true
+      }
+    },
+    {
+      "id": "P-TASK-16",
+      "name": "重启后构建/版本/候选/插件持久化",
+      "passed": true,
+      "evidence": {
+        "build_persisted": true,
+        "versions": 62,
+        "active": "av_2275824ec1ba861a0c0018cb",
+        "candidate_persisted": true,
+        "plugin_disabled": true
+      }
+    }
+  ],
+  "all_passed": true
+}

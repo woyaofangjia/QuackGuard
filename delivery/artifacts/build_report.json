@@ -1,0 +1,28 @@
+{
+  "status": "ready",
+  "protocol_version": "1.3.1",
+  "artifact_version": "av_2275824ec1ba861a0c0018cb",
+  "rule_versions": 62,
+  "implementation_status_counts": {
+    "implemented": 62
+  },
+  "rule_failures": [],
+  "only_missing": [],
+  "ledger": "60条建设台账.csv",
+  "versions_page": "versions.html",
+  "dependency_graph": "engine/dependency_graph.json",
+  "shared_capabilities": "engine/shared_capabilities.json",
+  "semantic_gaps": [
+    {
+      "rule_id": "R059",
+      "rule_version": "3.0",
+      "gap": "同级要求冲突：所有练习盒展示空心圆与蓝色练习盒不得出现空心圆，原文未指定例外或优先级；冲突时返回 ambiguous。"
+    },
+    {
+      "rule_id": "R060",
+      "rule_version": "3.0",
+      "gap": "原文未定义“较小”的尺寸范围或判别方法；附签方案无法唯一判定时返回 ambiguous。"
+    }
+  ],
+  "build_id": null
+}

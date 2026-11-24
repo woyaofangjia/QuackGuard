@@ -1,0 +1,963 @@
+{
+  "artifact_version": "av_2275824ec1ba861a0c0018cb",
+  "rules": {
+    "B001@3.0": {
+      "rule_id": "B001",
+      "rule_version": "3.0",
+      "family": null,
+      "dependencies": [
+        "quackguard.b001",
+        "quackguard.b001_facts",
+        "quackguard.rule_common"
+      ]
+    },
+    "B001@3.1": {
+      "rule_id": "B001",
+      "rule_version": "3.1",
+      "family": null,
+      "dependencies": [
+        "quackguard.b001",
+        "quackguard.b001_facts",
+        "quackguard.rule_common"
+      ]
+    },
+    "R001@3.0": {
+      "rule_id": "R001",
+      "rule_version": "3.0",
+      "family": "F01",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f01"
+      ]
+    },
+    "R002@3.0": {
+      "rule_id": "R002",
+      "rule_version": "3.0",
+      "family": "F01",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f01"
+      ]
+    },
+    "R003@3.0": {
+      "rule_id": "R003",
+      "rule_version": "3.0",
+      "family": "F01",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f01"
+      ]
+    },
+    "R004@3.0": {
+      "rule_id": "R004",
+      "rule_version": "3.0",
+      "family": "F01",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f01"
+      ]
+    },
+    "R005@3.0": {
+      "rule_id": "R005",
+      "rule_version": "3.0",
+      "family": "F01",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f01"
+      ]
+    },
+    "R006@3.0": {
+      "rule_id": "R006",
+      "rule_version": "3.0",
+      "family": "F01",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f01"
+      ]
+    },
+    "R007@3.0": {
+      "rule_id": "R007",
+      "rule_version": "3.0",
+      "family": "F02",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f02"
+      ]
+    },
+    "R008@3.0": {
+      "rule_id": "R008",
+      "rule_version": "3.0",
+      "family": "F02",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f02"
+      ]
+    },
+    "R009@3.0": {
+      "rule_id": "R009",
+      "rule_version": "3.0",
+      "family": "F02",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f02"
+      ]
+    },
+    "R010@3.0": {
+      "rule_id": "R010",
+      "rule_version": "3.0",
+      "family": "F02",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f02"
+      ]
+    },
+    "R011@3.0": {
+      "rule_id": "R011",
+      "rule_version": "3.0",
+      "family": "F02",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f02"
+      ]
+    },
+    "R012@3.0": {
+      "rule_id": "R012",
+      "rule_version": "3.0",
+      "family": "F02",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f02"
+      ]
+    },
+    "R013@3.0": {
+      "rule_id": "R013",
+      "rule_version": "3.0",
+      "family": "F03",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f03"
+      ]
+    },
+    "R014@3.0": {
+      "rule_id": "R014",
+      "rule_version": "3.0",
+      "family": "F03",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f03"
+      ]
+    },
+    "R015@3.0": {
+      "rule_id": "R015",
+      "rule_version": "3.0",
+      "family": "F03",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f03"
+      ]
+    },
+    "R016@3.0": {
+      "rule_id": "R016",
+      "rule_version": "3.0",
+      "family": "F03",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f03"
+      ]
+    },
+    "R017@3.0": {
+      "rule_id": "R017",
+      "rule_version": "3.0",
+      "family": "F03",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f03"
+      ]
+    },
+    "R018@3.0": {
+      "rule_id": "R018",
+      "rule_version": "3.0",
+      "family": "F03",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f03"
+      ]
+    },
+    "R019@3.0": {
+      "rule_id": "R019",
+      "rule_version": "3.0",
+      "family": "F04",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f04"
+      ]
+    },
+    "R020@3.0": {
+      "rule_id": "R020",
+      "rule_version": "3.0",
+      "family": "F04",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f04"
+      ]
+    },
+    "R021@3.0": {
+      "rule_id": "R021",
+      "rule_version": "3.0",
+      "family": "F04",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f04"
+      ]
+    },
+    "R022@3.0": {
+      "rule_id": "R022",
+      "rule_version": "3.0",
+      "family": "F04",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f04"
+      ]
+    },
+    "R023@3.0": {
+      "rule_id": "R023",
+      "rule_version": "3.0",
+      "family": "F04",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f04"
+      ]
+    },
+    "R024@3.0": {
+      "rule_id": "R024",
+      "rule_version": "3.0",
+      "family": "F04",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f04"
+      ]
+    },
+    "R025@3.0": {
+      "rule_id": "R025",
+      "rule_version": "3.0",
+      "family": "F05",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f05"
+      ]
+    },
+    "R026@3.0": {
+      "rule_id": "R026",
+      "rule_version": "3.0",
+      "family": "F05",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f05"
+      ]
+    },
+    "R027@3.0": {
+      "rule_id": "R027",
+      "rule_version": "3.0",
+      "family": "F05",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f05"
+      ]
+    },
+    "R028@3.0": {
+      "rule_id": "R028",
+      "rule_version": "3.0",
+      "family": "F05",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f05"
+      ]
+    },
+    "R029@3.0": {
+      "rule_id": "R029",
+      "rule_version": "3.0",
+      "family": "F05",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f05"
+      ]
+    },
+    "R030@3.0": {
+      "rule_id": "R030",
+      "rule_version": "3.0",
+      "family": "F05",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f05"
+      ]
+    },
+    "R031@3.0": {
+      "rule_id": "R031",
+      "rule_version": "3.0",
+      "family": "F06",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f06"
+      ]
+    },
+    "R032@3.0": {
+      "rule_id": "R032",
+      "rule_version": "3.0",
+      "family": "F06",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f06"
+      ]
+    },
+    "R033@3.0": {
+      "rule_id": "R033",
+      "rule_version": "3.0",
+      "family": "F06",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f06"
+      ]
+    },
+    "R034@3.0": {
+      "rule_id": "R034",
+      "rule_version": "3.0",
+      "family": "F06",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f06"
+      ]
+    },
+    "R035@3.0": {
+      "rule_id": "R035",
+      "rule_version": "3.0",
+      "family": "F06",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f06"
+      ]
+    },
+    "R036@3.0": {
+      "rule_id": "R036",
+      "rule_version": "3.0",
+      "family": "F06",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f06"
+      ]
+    },
+    "R037@3.0": {
+      "rule_id": "R037",
+      "rule_version": "3.0",
+      "family": "F07",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f07"
+      ]
+    },
+    "R038@3.0": {
+      "rule_id": "R038",
+      "rule_version": "3.0",
+      "family": "F07",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f07"
+      ]
+    },
+    "R039@3.0": {
+      "rule_id": "R039",
+      "rule_version": "3.0",
+      "family": "F07",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f07"
+      ]
+    },
+    "R040@3.0": {
+      "rule_id": "R040",
+      "rule_version": "3.0",
+      "family": "F07",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f07"
+      ]
+    },
+    "R041@3.0": {
+      "rule_id": "R041",
+      "rule_version": "3.0",
+      "family": "F07",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f07"
+      ]
+    },
+    "R042@3.0": {
+      "rule_id": "R042",
+      "rule_version": "3.0",
+      "family": "F07",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f07"
+      ]
+    },
+    "R043@3.0": {
+      "rule_id": "R043",
+      "rule_version": "3.0",
+      "family": "F08",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f08"
+      ]
+    },
+    "R044@3.0": {
+      "rule_id": "R044",
+      "rule_version": "3.0",
+      "family": "F08",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f08"
+      ]
+    },
+    "R045@3.0": {
+      "rule_id": "R045",
+      "rule_version": "3.0",
+      "family": "F08",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f08"
+      ]
+    },
+    "R046@3.0": {
+      "rule_id": "R046",
+      "rule_version": "3.0",
+      "family": "F08",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f08"
+      ]
+    },
+    "R047@3.0": {
+      "rule_id": "R047",
+      "rule_version": "3.0",
+      "family": "F08",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f08"
+      ]
+    },
+    "R048@3.0": {
+      "rule_id": "R048",
+      "rule_version": "3.0",
+      "family": "F08",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f08"
+      ]
+    },
+    "R049@3.0": {
+      "rule_id": "R049",
+      "rule_version": "3.0",
+      "family": "F09",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f09"
+      ]
+    },
+    "R050@3.0": {
+      "rule_id": "R050",
+      "rule_version": "3.0",
+      "family": "F09",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f09"
+      ]
+    },
+    "R051@3.0": {
+      "rule_id": "R051",
+      "rule_version": "3.0",
+      "family": "F09",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f09"
+      ]
+    },
+    "R052@3.0": {
+      "rule_id": "R052",
+      "rule_version": "3.0",
+      "family": "F09",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f09"
+      ]
+    },
+    "R053@3.0": {
+      "rule_id": "R053",
+      "rule_version": "3.0",
+      "family": "F09",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f09"
+      ]
+    },
+    "R054@3.0": {
+      "rule_id": "R054",
+      "rule_version": "3.0",
+      "family": "F09",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f09"
+      ]
+    },
+    "R055@3.0": {
+      "rule_id": "R055",
+      "rule_version": "3.0",
+      "family": "F10",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f10"
+      ]
+    },
+    "R056@3.0": {
+      "rule_id": "R056",
+      "rule_version": "3.0",
+      "family": "F10",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f10"
+      ]
+    },
+    "R057@3.0": {
+      "rule_id": "R057",
+      "rule_version": "3.0",
+      "family": "F10",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f10"
+      ]
+    },
+    "R058@3.0": {
+      "rule_id": "R058",
+      "rule_version": "3.0",
+      "family": "F10",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f10"
+      ]
+    },
+    "R059@3.0": {
+      "rule_id": "R059",
+      "rule_version": "3.0",
+      "family": "F10",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f10"
+      ]
+    },
+    "R060@3.0": {
+      "rule_id": "R060",
+      "rule_version": "3.0",
+      "family": "F10",
+      "dependencies": [
+        "quackguard.rule_common",
+        "quackguard.rule_engine",
+        "quackguard.rule_facts",
+        "quackguard.rules_f10"
+      ]
+    }
+  },
+  "modules": {
+    "quackguard.b001": [
+      "B001@3.0",
+      "B001@3.1"
+    ],
+    "quackguard.b001_facts": [
+      "B001@3.0",
+      "B001@3.1"
+    ],
+    "quackguard.rule_common": [
+      "B001@3.0",
+      "B001@3.1",
+      "R001@3.0",
+      "R002@3.0",
+      "R003@3.0",
+      "R004@3.0",
+      "R005@3.0",
+      "R006@3.0",
+      "R007@3.0",
+      "R008@3.0",
+      "R009@3.0",
+      "R010@3.0",
+      "R011@3.0",
+      "R012@3.0",
+      "R013@3.0",
+      "R014@3.0",
+      "R015@3.0",
+      "R016@3.0",
+      "R017@3.0",
+      "R018@3.0",
+      "R019@3.0",
+      "R020@3.0",
+      "R021@3.0",
+      "R022@3.0",
+      "R023@3.0",
+      "R024@3.0",
+      "R025@3.0",
+      "R026@3.0",
+      "R027@3.0",
+      "R028@3.0",
+      "R029@3.0",
+      "R030@3.0",
+      "R031@3.0",
+      "R032@3.0",
+      "R033@3.0",
+      "R034@3.0",
+      "R035@3.0",
+      "R036@3.0",
+      "R037@3.0",
+      "R038@3.0",
+      "R039@3.0",
+      "R040@3.0",
+      "R041@3.0",
+      "R042@3.0",
+      "R043@3.0",
+      "R044@3.0",
+      "R045@3.0",
+      "R046@3.0",
+      "R047@3.0",
+      "R048@3.0",
+      "R049@3.0",
+      "R050@3.0",
+      "R051@3.0",
+      "R052@3.0",
+      "R053@3.0",
+      "R054@3.0",
+      "R055@3.0",
+      "R056@3.0",
+      "R057@3.0",
+      "R058@3.0",
+      "R059@3.0",
+      "R060@3.0"
+    ],
+    "quackguard.rule_engine": [
+      "R001@3.0",
+      "R002@3.0",
+      "R003@3.0",
+      "R004@3.0",
+      "R005@3.0",
+      "R006@3.0",
+      "R007@3.0",
+      "R008@3.0",
+      "R009@3.0",
+      "R010@3.0",
+      "R011@3.0",
+      "R012@3.0",
+      "R013@3.0",
+      "R014@3.0",
+      "R015@3.0",
+      "R016@3.0",
+      "R017@3.0",
+      "R018@3.0",
+      "R019@3.0",
+      "R020@3.0",
+      "R021@3.0",
+      "R022@3.0",
+      "R023@3.0",
+      "R024@3.0",
+      "R025@3.0",
+      "R026@3.0",
+      "R027@3.0",
+      "R028@3.0",
+      "R029@3.0",
+      "R030@3.0",
+      "R031@3.0",
+      "R032@3.0",
+      "R033@3.0",
+      "R034@3.0",
+      "R035@3.0",
+      "R036@3.0",
+      "R037@3.0",
+      "R038@3.0",
+      "R039@3.0",
+      "R040@3.0",
+      "R041@3.0",
+      "R042@3.0",
+      "R043@3.0",
+      "R044@3.0",
+      "R045@3.0",
+      "R046@3.0",
+      "R047@3.0",
+      "R048@3.0",
+      "R049@3.0",
+      "R050@3.0",
+      "R051@3.0",
+      "R052@3.0",
+      "R053@3.0",
+      "R054@3.0",
+      "R055@3.0",
+      "R056@3.0",
+      "R057@3.0",
+      "R058@3.0",
+      "R059@3.0",
+      "R060@3.0"
+    ],
+    "quackguard.rule_facts": [
+      "R001@3.0",
+      "R002@3.0",
+      "R003@3.0",
+      "R004@3.0",
+      "R005@3.0",
+      "R006@3.0",
+      "R007@3.0",
+      "R008@3.0",
+      "R009@3.0",
+      "R010@3.0",
+      "R011@3.0",
+      "R012@3.0",
+      "R013@3.0",
+      "R014@3.0",
+      "R015@3.0",
+      "R016@3.0",
+      "R017@3.0",
+      "R018@3.0",
+      "R019@3.0",
+      "R020@3.0",
+      "R021@3.0",
+      "R022@3.0",
+      "R023@3.0",
+      "R024@3.0",
+      "R025@3.0",
+      "R026@3.0",
+      "R027@3.0",
+      "R028@3.0",
+      "R029@3.0",
+      "R030@3.0",
+      "R031@3.0",
+      "R032@3.0",
+      "R033@3.0",
+      "R034@3.0",
+      "R035@3.0",
+      "R036@3.0",
+      "R037@3.0",
+      "R038@3.0",
+      "R039@3.0",
+      "R040@3.0",
+      "R041@3.0",
+      "R042@3.0",
+      "R043@3.0",
+      "R044@3.0",
+      "R045@3.0",
+      "R046@3.0",
+      "R047@3.0",
+      "R048@3.0",
+      "R049@3.0",
+      "R050@3.0",
+      "R051@3.0",
+      "R052@3.0",
+      "R053@3.0",
+      "R054@3.0",
+      "R055@3.0",
+      "R056@3.0",
+      "R057@3.0",
+      "R058@3.0",
+      "R059@3.0",
+      "R060@3.0"
+    ],
+    "quackguard.rules_f01": [
+      "R001@3.0",
+      "R002@3.0",
+      "R003@3.0",
+      "R004@3.0",
+      "R005@3.0",
+      "R006@3.0"
+    ],
+    "quackguard.rules_f02": [
+      "R007@3.0",
+      "R008@3.0",
+      "R009@3.0",
+      "R010@3.0",
+      "R011@3.0",
+      "R012@3.0"
+    ],
+    "quackguard.rules_f03": [
+      "R013@3.0",
+      "R014@3.0",
+      "R015@3.0",
+      "R016@3.0",
+      "R017@3.0",
+      "R018@3.0"
+    ],
+    "quackguard.rules_f04": [
+      "R019@3.0",
+      "R020@3.0",
+      "R021@3.0",
+      "R022@3.0",
+      "R023@3.0",
+      "R024@3.0"
+    ],
+    "quackguard.rules_f05": [
+      "R025@3.0",
+      "R026@3.0",
+      "R027@3.0",
+      "R028@3.0",
+      "R029@3.0",
+      "R030@3.0"
+    ],
+    "quackguard.rules_f06": [
+      "R031@3.0",
+      "R032@3.0",
+      "R033@3.0",
+      "R034@3.0",
+      "R035@3.0",
+      "R036@3.0"
+    ],
+    "quackguard.rules_f07": [
+      "R037@3.0",
+      "R038@3.0",
+      "R039@3.0",
+      "R040@3.0",
+      "R041@3.0",
+      "R042@3.0"
+    ],
+    "quackguard.rules_f08": [
+      "R043@3.0",
+      "R044@3.0",
+      "R045@3.0",
+      "R046@3.0",
+      "R047@3.0",
+      "R048@3.0"
+    ],
+    "quackguard.rules_f09": [
+      "R049@3.0",
+      "R050@3.0",
+      "R051@3.0",
+      "R052@3.0",
+      "R053@3.0",
+      "R054@3.0"
+    ],
+    "quackguard.rules_f10": [
+      "R055@3.0",
+      "R056@3.0",
+      "R057@3.0",
+      "R058@3.0",
+      "R059@3.0",
+      "R060@3.0"
+    ]
+  }
+}

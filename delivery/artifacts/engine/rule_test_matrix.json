@@ -1,0 +1,1056 @@
+[
+  {
+    "rule_id": "B001",
+    "rule_version": "3.0",
+    "title": "可充电桌面灯包装型号与关联证明文件核验",
+    "rule_family_id": null,
+    "source_sha256": "2cf94d1578233aa479c85adc6bd8e4012d2b3d41c2dfa849918ddba56a4555e1",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "B001",
+    "rule_version": "3.1",
+    "title": "可充电桌面灯包装型号与关联证明文件核验",
+    "rule_family_id": null,
+    "source_sha256": "3a5f070192badcc02a6523407769ef5fa8d6dc444cd83e2ac03b0ab4c5d7bf7e",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R001",
+    "rule_version": "3.0",
+    "title": "包装主视图完整性",
+    "rule_family_id": "F01",
+    "source_sha256": "2fe9a01f01c3e70a011cdbaae2fc357b84cd8a5846a127530e7852f275b2e832",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R002",
+    "rule_version": "3.0",
+    "title": "声明检查面覆盖",
+    "rule_family_id": "F01",
+    "source_sha256": "e5180d509964bf99d06a0177d43e6d0e7cd8db95769829d6cdf6a816347a9430",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R003",
+    "rule_version": "3.0",
+    "title": "证明文件页码齐全",
+    "rule_family_id": "F01",
+    "source_sha256": "f88d3a2055e2772eb6e98562447195525dc67bebd64911c15c3b4cb349743b4a",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R004",
+    "rule_version": "3.0",
+    "title": "附签连接关系取证",
+    "rule_family_id": "F01",
+    "source_sha256": "82765bf2d759139541bd641c681e4edf61e04ab62385c3455f15f89b4aec509f",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R005",
+    "rule_version": "3.0",
+    "title": "遮挡信息补证",
+    "rule_family_id": "F01",
+    "source_sha256": "3e3c64ed77c80d8073c4406041b9b5828bfb82827b2a646413782d3c500045c1",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R006",
+    "rule_version": "3.0",
+    "title": "可变信息使用实拍证据",
+    "rule_family_id": "F01",
+    "source_sha256": "577a84dde5804ef53c90747a6cb7e180499ac67ce706c1a5159857f734e072dc",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R007",
+    "rule_version": "3.0",
+    "title": "包装型号与申报匹配",
+    "rule_family_id": "F02",
+    "source_sha256": "e7b2645922532e93304e2e21c3b8e79a1eb121341737fdd70cee0e7ea693cefd",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R008",
+    "rule_version": "3.0",
+    "title": "套装型号覆盖",
+    "rule_family_id": "F02",
+    "source_sha256": "92d41ac9d24f3eea69f6ba4d2562acb4dd8ba5db440e32840ba5dd588da1f3f9",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R009",
+    "rule_version": "3.0",
+    "title": "序列号唯一性",
+    "rule_family_id": "F02",
+    "source_sha256": "52346bd24f386ef70157268789963247ec00c126b9632ca5c5cdf1cc3822ed4e",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R010",
+    "rule_version": "3.0",
+    "title": "主型号与兼容型号分离",
+    "rule_family_id": "F02",
+    "source_sha256": "e8d89abf22fad7fb6ff11331369f3f5d03a1be066d39bd06ed9643acfb23d454",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R011",
+    "rule_version": "3.0",
+    "title": "新旧型号映射核验",
+    "rule_family_id": "F02",
+    "source_sha256": "118b67130f5383c3a70812f889706e80883659889a803beda64d8bd3fb7d750a",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R012",
+    "rule_version": "3.0",
+    "title": "型号相似字符区分",
+    "rule_family_id": "F02",
+    "source_sha256": "aad34e48bb3040f5b6e05aaa6e6b1c8df5f5d3623b264e1183b6aba8bcb5f7ea",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R013",
+    "rule_version": "3.0",
+    "title": "练习材料编号格式",
+    "rule_family_id": "F03",
+    "source_sha256": "5cd5a742c086274c2277213bbcb5af4e2092557868cb2cc9d0acb5a5f95ebc32",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R014",
+    "rule_version": "3.0",
+    "title": "批次日期与流水号格式",
+    "rule_family_id": "F03",
+    "source_sha256": "b97c74d3a13ed0408c8718ece94940df3037916cc5b705e6a3c5efba71664e4b",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R015",
+    "rule_version": "3.0",
+    "title": "整件数量格式",
+    "rule_family_id": "F03",
+    "source_sha256": "80c19c3e33c0bf19e331c5fac17a6a363aebe51fe26d5aa57d714cec351c72d3",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R016",
+    "rule_version": "3.0",
+    "title": "支持地址协议格式",
+    "rule_family_id": "F03",
+    "source_sha256": "7dedae9878ca4f173f17b56b8fc754a97c625c8d2d096a3135ae5df76e8bf934",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R017",
+    "rule_version": "3.0",
+    "title": "日期区间有序",
+    "rule_family_id": "F03",
+    "source_sha256": "6284d44506fc69fffe8a654efb3f7048d657d1725fb834080fc6e82555499e8c",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R018",
+    "rule_version": "3.0",
+    "title": "双语字段成对",
+    "rule_family_id": "F03",
+    "source_sha256": "f8909e79821037b040755b0ae2d8318d2a003e194b58e082844f04ba053767a6",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R019",
+    "rule_version": "3.0",
+    "title": "主型号位于包装正面",
+    "rule_family_id": "F04",
+    "source_sha256": "6b9d50afc3cb420b99b8b7f2b20bdc4a022d0ec219e480c982436cd87c8786fe",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R020",
+    "rule_version": "3.0",
+    "title": "序列号位于商品本体",
+    "rule_family_id": "F04",
+    "source_sha256": "970aed6bb061acdd224e48af558a9262ac484c117b788b3edce6ba026f111196",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R021",
+    "rule_version": "3.0",
+    "title": "型号与编号位于同一标签",
+    "rule_family_id": "F04",
+    "source_sha256": "940a360ba6e9865751f40b3afee21de3653c9d6dc45d8c375685d6127bc28e59",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R022",
+    "rule_version": "3.0",
+    "title": "小包装附签例外",
+    "rule_family_id": "F04",
+    "source_sha256": "cd997d1effd8d16bdbdd2dd9e0ba5f436a458a31eaeb333fe13ecbc39ea19b67",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R023",
+    "rule_version": "3.0",
+    "title": "标签不得跨越开封断面",
+    "rule_family_id": "F04",
+    "source_sha256": "8f0534014356528846cb61c921225d5054bc48ef1259b330f32cd0df07e52c4d",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R024",
+    "rule_version": "3.0",
+    "title": "展示面上半区位置",
+    "rule_family_id": "F04",
+    "source_sha256": "5ebadeafafb39509a898866bdbd67c155fb8a16a06e02b1f26623fb854614003",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R025",
+    "rule_version": "3.0",
+    "title": "空心圆标志",
+    "rule_family_id": "F05",
+    "source_sha256": "5c8a1bd7606d8fcdd083e7509d782e405e028a8ea3f95d5681c447160b3e2eab",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R026",
+    "rule_version": "3.0",
+    "title": "三角点标志结构",
+    "rule_family_id": "F05",
+    "source_sha256": "e442e2c0aca72a06df687d66d4ec2ac5d8c089c369970a6f865a232339c49b39",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R027",
+    "rule_version": "3.0",
+    "title": "成对图标次序",
+    "rule_family_id": "F05",
+    "source_sha256": "7c2af1ffda2502f0708e0d1f45ee01322bf0a4addc6aa3badd16b103b54b7e55",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R028",
+    "rule_version": "3.0",
+    "title": "颜色编码与声明匹配",
+    "rule_family_id": "F05",
+    "source_sha256": "ffa7f804706956c86da4ab9b0269117b60c33c4df6c50a7eeb7771f2b950ae05",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R029",
+    "rule_version": "3.0",
+    "title": "图标数量约束",
+    "rule_family_id": "F05",
+    "source_sha256": "63824a8842cdcf1cbe166eb8dc65d52c861444efec337232c9f7930bc14fa5f0",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R030",
+    "rule_version": "3.0",
+    "title": "标志最小相对高度",
+    "rule_family_id": "F05",
+    "source_sha256": "0ad2a423e341647d01284e2e34794b8badc22d701edd88adab4efb20ae5bb7b5",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R031",
+    "rule_version": "3.0",
+    "title": "固定警示完整出现",
+    "rule_family_id": "F06",
+    "source_sha256": "aaa0fae6b5c98adf4adafbc2d127b5a20454ef6935fdeee15873c17d5a9ca4ec",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R032",
+    "rule_version": "3.0",
+    "title": "限制性文案不得自相矛盾",
+    "rule_family_id": "F06",
+    "source_sha256": "d91d8ea58e73cbe1d09e3ac930d70b8d95de8c99b2a48ed6d04ba08692375938",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R033",
+    "rule_version": "3.0",
+    "title": "步骤顺序明确",
+    "rule_family_id": "F06",
+    "source_sha256": "f4fc12ea66bfd6b0cfe35beb21fdb0c81afb0a53231ffae469d25b383a03bced",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R034",
+    "rule_version": "3.0",
+    "title": "例外场景说明",
+    "rule_family_id": "F06",
+    "source_sha256": "e3f31aba63c697cb1ec221eeb6ee0760df0993cdb1f785fa14a0cf4076dfe00a",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R035",
+    "rule_version": "3.0",
+    "title": "语言声明与关键句一致",
+    "rule_family_id": "F06",
+    "source_sha256": "5a76d51324e3135613914979b963bd6b31b56846552e0819bf249eb256b979e2",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R036",
+    "rule_version": "3.0",
+    "title": "否定词完整保留",
+    "rule_family_id": "F06",
+    "source_sha256": "788a0b1664b433cbe8e71b0ec6f09a0b9d8f7b485716e6809e8f9bc257b2ad53",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R037",
+    "rule_version": "3.0",
+    "title": "容量单位换算一致",
+    "rule_family_id": "F07",
+    "source_sha256": "341b9c90936d254b70e2c67649e7255d0c4a2f8c372c2e3511f008b7e883e667",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R038",
+    "rule_version": "3.0",
+    "title": "净重不大于总重",
+    "rule_family_id": "F07",
+    "source_sha256": "7486809ba826642beda9c0df9098269035aa8b60d1ae9adfa0a60c7743707d53",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R039",
+    "rule_version": "3.0",
+    "title": "范围包含申报值",
+    "rule_family_id": "F07",
+    "source_sha256": "7d28e3a2840d39bf884b7fe534e720d26c007997b8768ad22742ab42ca804e18",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R040",
+    "rule_version": "3.0",
+    "title": "部件比例总和",
+    "rule_family_id": "F07",
+    "source_sha256": "d425ab0915b0fd58e0fb07f5b630e43a51551a21a4b89af1d1a45955a4cd6872",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R041",
+    "rule_version": "3.0",
+    "title": "双面数值容差",
+    "rule_family_id": "F07",
+    "source_sha256": "06a70310d44457c205ed51ac232fac15d444bdea02115a94ac76f578f31b5360",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R042",
+    "rule_version": "3.0",
+    "title": "日期加天数有效期",
+    "rule_family_id": "F07",
+    "source_sha256": "613e4f7c13151392a7f81f47f1479e6dff9eafdfec9fb5f6d60769c93e3a644e",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R043",
+    "rule_version": "3.0",
+    "title": "证明文件编号必填",
+    "rule_family_id": "F08",
+    "source_sha256": "8afb5693ae6ed5e1d2d61e733810ba8394ac96699a4fd37642db65d52582649e",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R044",
+    "rule_version": "3.0",
+    "title": "证明有效期覆盖",
+    "rule_family_id": "F08",
+    "source_sha256": "e8d14711df129fe412be75d892f5d14dfd59537236238c2d9745b76381b2ac79",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R045",
+    "rule_version": "3.0",
+    "title": "覆盖型号明确列出",
+    "rule_family_id": "F08",
+    "source_sha256": "97015fd467ed82c3177cd702bc9fa3fe9c894ecaf3150f2d7d28ea1915dd8702",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R046",
+    "rule_version": "3.0",
+    "title": "作废状态优先",
+    "rule_family_id": "F08",
+    "source_sha256": "288bc8dd1731825756248b100f6dbc8aec160f59779adcd0adde80c2d9f85c0f",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R047",
+    "rule_version": "3.0",
+    "title": "文件版本与申报一致",
+    "rule_family_id": "F08",
+    "source_sha256": "d3f50266bb9001b7f944f016cdb9a29cdffb556320b1c083e77ad23e781a5574",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R048",
+    "rule_version": "3.0",
+    "title": "撤回日期边界",
+    "rule_family_id": "F08",
+    "source_sha256": "1e7d27e3577645ad78a6da0ddd06d825040d564fd7a818434fc5d2e3a58d7076",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R049",
+    "rule_version": "3.0",
+    "title": "材料编号跨源一致",
+    "rule_family_id": "F09",
+    "source_sha256": "78a2141a77f4416f3a945c3dc2c617c818d33e31a8ffc8e02ede3fc472b30a9a",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R050",
+    "rule_version": "3.0",
+    "title": "套装组件逐项对应",
+    "rule_family_id": "F09",
+    "source_sha256": "e9ce30255b0308e5d1f3270bc7be7a2a163a81a570000c6951a1b5a17877e062",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R051",
+    "rule_version": "3.0",
+    "title": "批次号在允许区间内",
+    "rule_family_id": "F09",
+    "source_sha256": "80ae4d2a16846118c95e898b24709a9e0f1d924191df4054ccd3929ab3028f31",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R052",
+    "rule_version": "3.0",
+    "title": "包装规格与证明规格对应",
+    "rule_family_id": "F09",
+    "source_sha256": "1dfab240e5fe4a1352585d3947b36405a2e935ee05f8fc0fa14b3a60957585c9",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R053",
+    "rule_version": "3.0",
+    "title": "证明附图文字锚点匹配",
+    "rule_family_id": "F09",
+    "source_sha256": "9caa2d902ba973150cd334ab44c4e3ac938361676f37a8c93f821cf00e3ae6c2",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R054",
+    "rule_version": "3.0",
+    "title": "共同编号不同主体冲突",
+    "rule_family_id": "F09",
+    "source_sha256": "f9f8ba5896ecbee3456bc26eff214d194b0b993b84432eda8263f2ec3f53dbe2",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R055",
+    "rule_version": "3.0",
+    "title": "充电品类条件触发",
+    "rule_family_id": "F10",
+    "source_sha256": "b5acee69d391a19ace29e4aed6a2d6ff9b34fc549d1cbf15d6f578c902b83e37",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R056",
+    "rule_version": "3.0",
+    "title": "多件装数量条件触发",
+    "rule_family_id": "F10",
+    "source_sha256": "cd2f91f65d223ac382e125171bc6ec740becff06adc6863168ed0cdef644d9a4",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R057",
+    "rule_version": "3.0",
+    "title": "两种方案择一完整满足",
+    "rule_family_id": "F10",
+    "source_sha256": "ac52323ee51e9ab41057168184e525b79872c1775e973e8217c834aad15cca8a",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R058",
+    "rule_version": "3.0",
+    "title": "生产日期决定版本",
+    "rule_family_id": "F10",
+    "source_sha256": "222cc9cb76b9a0d189cd1089c856cad11502390253b8cc74bf99d8c0054772f5",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R059",
+    "rule_version": "3.0",
+    "title": "同级冲突条款处理",
+    "rule_family_id": "F10",
+    "source_sha256": "bbbf312b120edf080d27883d02b087c3865245bc4811edfe0719cdbfb605dd27",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "同级要求冲突：所有练习盒展示空心圆与蓝色练习盒不得出现空心圆，原文未指定例外或优先级；冲突时返回 ambiguous。",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  },
+  {
+    "rule_id": "R060",
+    "rule_version": "3.0",
+    "title": "未定义阈值处理",
+    "rule_family_id": "F10",
+    "source_sha256": "7b1f28bdaa619b910146b5492570256295af794f3d2ccd63a262c712a2c01f93",
+    "implementation_status": "implemented",
+    "case_status": "ready",
+    "semantic_gap": "原文未定义“较小”的尺寸范围或判别方法；附签方案无法唯一判定时返回 ambiguous。",
+    "planned_checks": [
+      "valid_artifact",
+      "source_trace",
+      "version_selection",
+      "decision_branches",
+      "contrast_regression"
+    ]
+  }
+]
