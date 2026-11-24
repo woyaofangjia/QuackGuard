@@ -199,6 +199,34 @@ class Store:
         )
         self.db.commit()
 
+    def list_builds(self, limit=20):
+        return self.db.execute(
+            """
+            SELECT b.build_id, b.artifact_version, b.root_path, b.status,
+                   b.created_at, COUNT(v.rule_id) AS rule_count,
+                   COALESCE(SUM(v.is_active), 0) AS active_count
+            FROM builds b
+            LEFT JOIN versions v ON v.build_id = b.build_id
+            GROUP BY b.build_id
+            ORDER BY b.created_at DESC, b.build_id DESC
+            LIMIT ?
+            """,
+            (int(limit),),
+        ).fetchall()
+
+    def list_versions(self, build_id, limit=200):
+        return self.db.execute(
+            """
+            SELECT rule_id, rule_version, artifact_version, artifact_path,
+                   sha256, is_active
+            FROM versions
+            WHERE build_id = ?
+            ORDER BY rule_id, rule_version
+            LIMIT ?
+            """,
+            (build_id, int(limit)),
+        ).fetchall()
+
     def start_task(self, command, retry_of=None):
         task_id = uuid.uuid4().hex
         self.db.execute(

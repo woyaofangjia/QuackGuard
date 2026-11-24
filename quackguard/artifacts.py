@@ -13,10 +13,24 @@ from .io_utils import (
     numbered_rows_lenient,
     write_json,
 )
-from .report import write_ledger, write_status_page
+from .report import (
+    write_ledger,
+    write_status_page,
+    write_versions_page,
+)
 
 REQUIRED_RULE_FIELDS = ("rule_id", "version", "rule_text")
 LEDGER_NAME = "60条建设台账.csv"
+SEMANTIC_GAPS = {
+    "R059": (
+        "同级要求冲突：所有练习盒展示空心圆与蓝色练习盒不得出现空心圆，"
+        "原文未指定例外或优先级；冲突时返回 ambiguous。"
+    ),
+    "R060": (
+        "原文未定义“较小”的尺寸范围或判别方法；"
+        "附签方案无法唯一判定时返回 ambiguous。"
+    ),
+}
 
 
 def rule_key(rule):
@@ -125,17 +139,75 @@ def _filter_rules(rules, only):
     return kept, [item for item in only if item not in present]
 
 
-def _shared_capabilities(rule):
-    parts = [
-        "quackguard.rule_common",
-        "quackguard.rule_facts",
-        "quackguard.rule_engine",
-        "quackguard.rule_sop",
-    ]
-    family = (rule.get("rule_family_id") or "").lower()
-    if family:
-        parts.append("quackguard.rules_" + family)
-    return ";".join(parts)
+def _dependencies(rule, implementation):
+    dependencies = {"quackguard.rule_common"}
+    artifact = implementation.get("artifact", {})
+    for value in artifact.get("dependencies", {}).values():
+        if not isinstance(value, str) or not value.startswith("quackguard."):
+            continue
+        if value.startswith("quackguard.rules_f"):
+            continue
+        dependencies.add(value)
+    if rule["rule_id"].startswith("R"):
+        family = (rule.get("rule_family_id") or "").lower()
+        if family:
+            dependencies.add("quackguard.rules_" + family)
+    else:
+        dependencies.update({"quackguard.b001", "quackguard.b001_facts"})
+    return sorted(dependencies)
+
+
+def _dependency_graph(rules, implementations, artifact_version):
+    graph = {
+        "artifact_version": artifact_version,
+        "rules": {},
+        "modules": {},
+    }
+    for rule in rules:
+        key = rule_key(rule)
+        implementation = implementations.get(key)
+        dependencies = (
+            _dependencies(rule, implementation) if implementation else []
+        )
+        graph["rules"][key] = {
+            "rule_id": rule["rule_id"],
+            "rule_version": rule["version"],
+            "family": (
+                implementation.get("sop", {}).get("family")
+                if implementation else None
+            ),
+            "dependencies": dependencies,
+        }
+        for module in dependencies:
+            graph["modules"].setdefault(module, []).append(key)
+    for keys in graph["modules"].values():
+        keys.sort()
+    return graph
+
+
+def _capability_reuse(graph, implementations, artifact_version):
+    modules = {
+        module: {"rule_count": len(keys), "rules": keys}
+        for module, keys in graph["modules"].items()
+    }
+    decisions = {}
+    for implementation in implementations.values():
+        policy = implementation.get("build_policy", {})
+        for name, value in policy.get("reuse_decisions", {}).items():
+            decisions.setdefault(name, set()).add(str(value))
+    return {
+        "artifact_version": artifact_version,
+        "modules": modules,
+        "reuse_decisions": {
+            name: sorted(values) for name, values in sorted(decisions.items())
+        },
+    }
+
+
+def _shared_capabilities(rule, implementation):
+    if implementation is None:
+        return ""
+    return ";".join(_dependencies(rule, implementation))
 
 
 def _ledger_entries(rules, implementations, artifact_version, engine_hash):
@@ -144,15 +216,15 @@ def _ledger_entries(rules, implementations, artifact_version, engine_hash):
         if not rule["rule_id"].startswith("R"):
             continue
         key = rule_key(rule)
-        built = key in implementations
+        implementation = implementations.get(key)
         entries.append({
             "rule_id": rule["rule_id"],
             "rule_version": rule["version"],
-            "build_status": "built" if built else "adapter_only",
+            "build_status": "built" if implementation else "adapter_only",
             "artifact_version": artifact_version,
             "artifact_sha256": engine_hash,
             "trace_path": "engine/rule_test_matrix.json",
-            "shared_capabilities": _shared_capabilities(rule) if built else "",
+            "shared_capabilities": _shared_capabilities(rule, implementation),
             "build_seconds": "",
             "manual_edit_count": "0",
             "accuracy": "",
@@ -218,7 +290,15 @@ def build(rules_path, config_path, out_path, store=None, resume=False, only=None
         "implementations": implementations,
     }
     matrix = []
+    semantic_gaps = []
     for rule in rules:
+        gap = SEMANTIC_GAPS.get(rule["rule_id"], "")
+        if gap:
+            semantic_gaps.append({
+                "rule_id": rule["rule_id"],
+                "rule_version": rule["version"],
+                "gap": gap,
+            })
         matrix.append({
             "rule_id": rule["rule_id"],
             "rule_version": rule["version"],
@@ -232,6 +312,7 @@ def build(rules_path, config_path, out_path, store=None, resume=False, only=None
             "case_status": (
                 "ready" if rule_key(rule) in implementations else "pending"
             ),
+            "semantic_gap": gap,
             "planned_checks": [
                 "valid_artifact",
                 "source_trace",
@@ -244,6 +325,13 @@ def build(rules_path, config_path, out_path, store=None, resume=False, only=None
     out = new_directory(out_path)
     write_json(out / "engine" / "policy.json", policy)
     write_json(out / "engine" / "rule_test_matrix.json", matrix)
+    graph = _dependency_graph(rules, implementations, artifact_version)
+    write_json(out / "engine" / "dependency_graph.json", graph)
+    write_json(
+        out / "engine" / "shared_capabilities.json",
+        _capability_reuse(graph, implementations, artifact_version),
+    )
+    write_json(out / "engine" / "semantic_gaps.json", semantic_gaps)
     engine_hash = path_digest(out / "engine")
     ledger = _ledger_entries(rules, implementations, artifact_version, engine_hash)
     if ledger:
@@ -259,29 +347,6 @@ def build(rules_path, config_path, out_path, store=None, resume=False, only=None
         })
     write_json(out / "artifact_manifest.json", {"entries": entries})
 
-    status_counts = {}
-    for row in matrix:
-        status = row["implementation_status"]
-        status_counts[status] = status_counts.get(status, 0) + 1
-    status = "ready" if not rule_failures else "ready_with_rule_failures"
-    report = {
-        "status": status,
-        "protocol_version": PROTOCOL_VERSION,
-        "artifact_version": artifact_version,
-        "rule_versions": len(entries),
-        "implementation_status_counts": status_counts,
-        "rule_failures": rule_failures,
-        "only_missing": only_missing,
-        "ledger": LEDGER_NAME if ledger else None,
-    }
-    write_json(out / "build_report.json", report)
-    write_status_page(
-        out / "status.html",
-        report,
-        matrix,
-        ledger=LEDGER_NAME if ledger else None,
-    )
-
     if store:
         store.add_rules(rules, source_hashes)
         build_id = store.add_build(
@@ -293,6 +358,62 @@ def build(rules_path, config_path, out_path, store=None, resume=False, only=None
         store.add_versions(build_id, entries)
         if rule_failures:
             store.add_build_failures(build_id, rule_failures)
+        builds = store.list_builds()
+        versions = store.list_versions(build_id)
+    else:
+        build_id = None
+        builds = [{
+            "build_id": "-",
+            "artifact_version": artifact_version,
+            "status": "built",
+            "rule_count": len(entries),
+            "active_count": 0,
+            "created_at": "",
+        }]
+        versions = [
+            {
+                "rule_id": entry["rule_id"],
+                "rule_version": entry["rule_version"],
+                "artifact_version": entry["artifact_version"],
+                "sha256": entry["sha256"],
+                "is_active": 0,
+            }
+            for entry in entries
+        ]
+    write_versions_page(
+        out / "versions.html", builds, versions, artifact_version
+    )
+
+    status_counts = {}
+    for row in matrix:
+        status = row["implementation_status"]
+        status_counts[status] = status_counts.get(status, 0) + 1
+    status = "ready" if not rule_failures else "ready_with_rule_failures"
+    links = {
+        "版本追踪": "versions.html",
+        "依赖图": "engine/dependency_graph.json",
+        "共享能力复用记录": "engine/shared_capabilities.json",
+        "语义缺口": "engine/semantic_gaps.json",
+    }
+    if ledger:
+        links["建设台账"] = LEDGER_NAME
+    report = {
+        "status": status,
+        "protocol_version": PROTOCOL_VERSION,
+        "artifact_version": artifact_version,
+        "rule_versions": len(entries),
+        "implementation_status_counts": status_counts,
+        "rule_failures": rule_failures,
+        "only_missing": only_missing,
+        "ledger": LEDGER_NAME if ledger else None,
+        "versions_page": "versions.html",
+        "dependency_graph": "engine/dependency_graph.json",
+        "shared_capabilities": "engine/shared_capabilities.json",
+        "semantic_gaps": semantic_gaps,
+        "build_id": build_id,
+    }
+    write_json(out / "build_report.json", report)
+    write_status_page(out / "status.html", report, matrix, links=links)
     return {
         "command": "build",
         "status": status,

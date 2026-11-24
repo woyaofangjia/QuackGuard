@@ -59,7 +59,7 @@ def _badge(label):
     return f'<span class="badge {css}">{_esc(label)}</span>'
 
 
-def write_status_page(path, report, matrix, ledger=None):
+def write_status_page(path, report, matrix, links=None):
     counts = report.get("implementation_status_counts", {})
     failures = report.get("rule_failures") or []
     count_rows = "".join(
@@ -87,11 +87,28 @@ def write_status_page(path, report, matrix, ledger=None):
         )
         if missing else ""
     )
-    ledger_html = (
-        '<section><h2>建设台账</h2><p><a href="{}">{}</a></p></section>'.format(
-            _esc(ledger), _esc(ledger)
+    link_rows = "".join(
+        '<li><a href="{}">{}</a></li>'.format(_esc(href), _esc(label))
+        for label, href in sorted((links or {}).items())
+    )
+    links_html = (
+        "<section><h2>建设记录</h2><ul>{}</ul></section>".format(link_rows)
+        if link_rows else ""
+    )
+    gaps = report.get("semantic_gaps") or []
+    gap_rows = "".join(
+        "<tr><td>{}@{}</td><td>{}</td></tr>".format(
+            _esc(item.get("rule_id")),
+            _esc(item.get("rule_version")),
+            _esc(item.get("gap")),
         )
-        if ledger else ""
+        for item in gaps
+    ) or '<tr><td colspan="2">无</td></tr>'
+    gaps_html = (
+        "<section><h2>语义缺口记录</h2>"
+        "<table><thead><tr><th>规则@版本</th><th>缺口</th></tr></thead>"
+        "<tbody>{}</tbody></table></section>".format(gap_rows)
+        if gaps else ""
     )
     document = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
@@ -113,7 +130,8 @@ def write_status_page(path, report, matrix, ledger=None):
 <table><thead><tr><th>行号</th><th>原因</th></tr></thead>
 <tbody>{failure_rows}</tbody></table></section>
 {missing_html}
-{ledger_html}
+{links_html}
+{gaps_html}
 <section><h2>规则版本矩阵</h2>
 <table><thead><tr><th>规则</th><th>版本</th><th>实现</th><th>用例</th><th>源哈希</th></tr></thead>
 <tbody>{matrix_rows}</tbody></table></section>
@@ -220,6 +238,56 @@ def write_ledger(path, entries):
         writer.writerow(LEDGER_COLUMNS)
         for entry in entries:
             writer.writerow([entry.get(column, "") for column in LEDGER_COLUMNS])
+
+
+def _row_value(row, key):
+    try:
+        return row[key]
+    except (KeyError, IndexError):
+        return ""
+
+
+def write_versions_page(path, builds, versions, artifact_version):
+    build_rows = "".join(
+        "<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>".format(
+            _esc(_row_value(row, "build_id")),
+            _esc(_row_value(row, "artifact_version")),
+            _esc(_row_value(row, "status")),
+            _esc(_row_value(row, "rule_count")),
+            _esc(_row_value(row, "active_count")),
+            _esc(_row_value(row, "created_at")),
+        )
+        for row in builds
+    ) or '<tr><td colspan="6">无构建记录</td></tr>'
+    version_rows = "".join(
+        "<tr><td>{}@{}</td><td>{}</td><td>{}</td><td>{}</td></tr>".format(
+            _esc(_row_value(row, "rule_id")),
+            _esc(_row_value(row, "rule_version")),
+            _esc(_row_value(row, "artifact_version")),
+            _esc(str(_row_value(row, "sha256"))[:12]),
+            _esc("是" if _row_value(row, "is_active") else "否"),
+        )
+        for row in versions
+    ) or '<tr><td colspan="4">无规则版本</td></tr>'
+    document = f"""<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>版本追踪 {_esc(artifact_version)}</title>
+<style>{_STYLE}</style></head><body>
+<header><h1>版本追踪</h1></header>
+<main>
+<section class="meta">
+<span>当前产物版本：{_esc(artifact_version)}</span>
+<span>构建数：{_esc(len(builds))}</span>
+<span>规则版本数：{_esc(len(versions))}</span>
+</section>
+<section><h2>构建历史</h2>
+<table><thead><tr><th>构建ID</th><th>产物版本</th><th>状态</th><th>规则数</th><th>活动版本</th><th>创建时间</th></tr></thead>
+<tbody>{build_rows}</tbody></table></section>
+<section><h2>规则版本追踪</h2>
+<table><thead><tr><th>规则@版本</th><th>产物版本</th><th>产物哈希</th><th>活动</th></tr></thead>
+<tbody>{version_rows}</tbody></table></section>
+</main></body></html>"""
+    Path(path).write_text(document, encoding="utf-8")
 
 
 def _compare_badge(status):
