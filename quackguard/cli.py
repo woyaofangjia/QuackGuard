@@ -15,6 +15,7 @@ from .export import export_results
 from .inference import infer
 from .iteration import iterate
 from .storage import Store
+from .versioning import activate, rollback
 
 PARAMETERS = {
     "build": ["rules", "config", "out"],
@@ -26,6 +27,8 @@ PARAMETERS = {
 PRODUCT_PARAMETERS = {
     "compare": ["old", "new", "input", "references", "out"],
     "export": ["input", "predictions", "references", "out"],
+    "activate": ["baseline", "candidate", "out"],
+    "rollback": ["to", "out"],
 }
 INPUT_PARAMETERS = {
     "build": "rules",
@@ -35,6 +38,8 @@ INPUT_PARAMETERS = {
     "evaluate": "inputs",
     "compare": "input",
     "export": "input",
+    "activate": "baseline",
+    "rollback": "to",
 }
 
 
@@ -60,10 +65,37 @@ def parser():
         action="store_true",
         help="目标产物已存在且哈希未变时跳过构建",
     )
+    commands.choices["activate"].add_argument(
+        "--gate",
+        default=None,
+        help="可选：激活门槛证据JSON；提供时任一门槛失败即拒绝激活",
+    )
+    commands.choices["rollback"].add_argument(
+        "--expect-hash",
+        default=None,
+        help="可选：回滚目标根目录哈希，必须匹配",
+    )
+    commands.choices["rollback"].add_argument(
+        "--reason",
+        default="",
+        help="可选：回滚原因",
+    )
     retry = commands.add_parser("retry", help="重试失败的旧任务")
     retry.add_argument("--task-id", required=True, help="要重试的失败任务ID")
     retry.add_argument("--out", default=None, help="可选：覆盖原输出路径")
     return result
+
+
+def resolve_artifacts(path, store):
+    """允许 --artifacts active，从活动版本指针解析产物目录。"""
+    if path != "active":
+        return path
+    if store is None:
+        raise AuditError("active_requires_db")
+    active = store.get_active()
+    if active is None:
+        raise AuditError("no_active_version")
+    return active["root_path"]
 
 
 def execute(args, store):
@@ -80,7 +112,7 @@ def execute(args, store):
     if args.command == "infer":
         return infer(
             args.input,
-            args.artifacts,
+            resolve_artifacts(args.artifacts, store),
             args.out,
             base_url=os.environ.get("OPENAI_BASE_URL"),
             api_key=os.environ.get("OPENAI_API_KEY"),
@@ -89,13 +121,13 @@ def execute(args, store):
         return annotate(
             args.input,
             args.targets,
-            args.artifacts,
+            resolve_artifacts(args.artifacts, store),
             args.out,
             base_url=os.environ.get("OPENAI_BASE_URL"),
             api_key=os.environ.get("OPENAI_API_KEY"),
         )
     if args.command == "iterate":
-        return iterate(args.base, args.feedback, args.out)
+        return iterate(args.base, args.feedback, args.input, args.out, store=store)
     if args.command == "evaluate":
         timeout_value = os.environ.get("PLUGIN_TIMEOUT_SECONDS")
         timeout = float(timeout_value) if timeout_value else None
@@ -115,6 +147,22 @@ def execute(args, store):
     if args.command == "export":
         return export_results(
             args.input, args.predictions, args.references, args.out
+        )
+    if args.command == "activate":
+        return activate(
+            args.baseline,
+            args.candidate,
+            store,
+            gate_path=args.gate,
+            out_path=args.out,
+        )
+    if args.command == "rollback":
+        return rollback(
+            args.to,
+            store,
+            expect_hash=args.expect_hash,
+            out_path=args.out,
+            reason=args.reason,
         )
     raise AuditError("unsupported_command", args.command)
 

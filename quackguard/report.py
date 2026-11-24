@@ -299,6 +299,149 @@ def _compare_badge(status):
     return f'<span class="badge {css}">{_esc(status)}</span>'
 
 
+def _decision_badge(decision):
+    css = {"accept": "pass", "reject": "reject"}.get(decision, "ambiguous")
+    return f'<span class="badge {css}">{_esc(decision)}</span>'
+
+
+def write_iteration_page(path, report):
+    counts = report.get("decision_counts", {})
+    count_rows = "".join(
+        f"<tr><td>{_esc(key)}</td><td>{_esc(value)}</td></tr>"
+        for key, value in sorted(counts.items())
+    ) or '<tr><td colspan="2">无</td></tr>'
+    decision_rows = []
+    for item in report.get("decisions", []):
+        citations = "".join(
+            '<div class="fact">{}@{} · {}</div>'.format(
+                _esc(citation.get("rule_id")),
+                _esc(citation.get("rule_version")),
+                _esc(citation.get("quote")),
+            )
+            for citation in item.get("rule_citations", [])
+        ) or '<span class="muted">无规则引用</span>'
+        decision_rows.append(
+            "<tr><td>{}</td><td>{}</td><td>{}@{}</td><td>{}</td>"
+            "<td>{}</td><td>{}</td></tr>".format(
+                _esc(item.get("packet_id")),
+                _esc(item.get("audit_unit_id")),
+                _esc(item.get("rule_id")),
+                _esc(item.get("rule_version")),
+                _decision_badge(item.get("decision")),
+                _esc(item.get("teacher_proposal")),
+                _esc(item.get("reason")) + citations,
+            )
+        )
+    decision_html = "".join(decision_rows) or '<tr><td colspan="6">无反馈项</td></tr>'
+    comparison = report.get("comparison", {})
+    changed = comparison.get("changed_files", [])
+    changed_html = (
+        "<ul>{}</ul>".format(
+            "".join(f"<li>{_esc(item)}</li>" for item in changed)
+        )
+        if changed else '<p class="muted">产物逐字节未变化（仅新增迭代报告）</p>'
+    )
+    changed_rules = report.get("changed_rules", [])
+    changed_rule_html = (
+        "<section><h2>改动规则与原因</h2>"
+        "<table><thead><tr><th>反馈项</th><th>规则@版本</th><th>原因</th></tr></thead>"
+        "<tbody>{}</tbody></table></section>".format(
+            "".join(
+                "<tr><td>{}</td><td>{}@{}</td><td>{}</td></tr>".format(
+                    _esc(item.get("packet_id")),
+                    _esc(item.get("rule_id")),
+                    _esc(item.get("rule_version")),
+                    _esc(item.get("reason")),
+                )
+                for item in changed_rules
+            )
+        )
+        if changed_rules
+        else '<section><h2>改动规则与原因</h2>'
+        '<p class="muted">无改动规则（no_change）</p></section>'
+    )
+    basis = report.get("no_change_basis")
+    basis_html = (
+        "<section><h2>no_change 依据</h2>"
+        "<p>{}</p><table><thead><tr><th>检查项</th><th>结果</th></tr></thead>"
+        "<tbody>{}</tbody></table></section>".format(
+            _esc(basis.get("reason")),
+            "".join(
+                f"<tr><td>{_esc(key)}</td><td>{_esc(value)}</td></tr>"
+                for key, value in basis.items()
+                if key != "reason"
+            ),
+        )
+        if basis else ""
+    )
+    document = f"""<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>迭代报告 {_esc(report.get('feedback_id'))}</title>
+<style>{_STYLE}</style></head><body>
+<header><h1>安全反馈迭代报告</h1></header>
+<main>
+<section class="meta">
+<span>动作：{_esc(report.get('action'))}</span>
+<span>反馈包：{_esc(report.get('feedback_id'))}</span>
+<span>baseline哈希：{_esc(report.get('base_artifact_sha256'))}</span>
+<span>父版本：{_esc(report.get('parent_artifact_version'))}</span>
+<span>候选版本：{_esc(report.get('candidate_artifact_version'))}</span>
+<span>baseline未改：{_esc(report.get('baseline_unchanged'))}</span>
+</section>
+<section><h2>决定统计</h2>
+<table><thead><tr><th>决定</th><th>数量</th></tr></thead>
+<tbody>{count_rows}</tbody></table></section>
+<section><h2>候选比较：改动原因与版本哈希</h2>
+<p class="muted">baseline引擎：{_esc(comparison.get('base_engine_sha256'))}
+候选引擎：{_esc(comparison.get('candidate_engine_sha256'))}</p>
+{changed_html}</section>
+{changed_rule_html}
+{basis_html}
+<section><h2>教师建议逐条处理</h2>
+<table><thead><tr><th>反馈项</th><th>审核单元</th><th>规则@版本</th>
+<th>决定</th><th>教师建议</th><th>理由与规则依据</th></tr></thead>
+<tbody>{decision_html}</tbody></table></section>
+</main></body></html>"""
+    Path(path).write_text(document, encoding="utf-8")
+
+
+def write_active_page(path, report):
+    gate_rows = "".join(
+        f"<tr><td>{_esc(key)}</td><td>{_esc(value)}</td></tr>"
+        for key, value in sorted((report.get("gate") or {}).items())
+    ) or '<tr><td colspan="2">未提供门槛证据（仅执行结构校验）</td></tr>'
+    failures = report.get("gate_failures") or []
+    failure_html = (
+        '<section><h2>门槛失败</h2><ul>{}</ul></section>'.format(
+            "".join(f"<li>{_esc(item)}</li>" for item in failures)
+        )
+        if failures else ""
+    )
+    previous = report.get("previous") or {}
+    document = f"""<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>活动版本 {_esc(report.get('status'))}</title>
+<style>{_STYLE}</style></head><body>
+<header><h1>活动版本指针</h1></header>
+<main>
+<section class="meta">
+<span>状态：{_esc(report.get('status'))}</span>
+<span>来源：{_esc(report.get('source'))}</span>
+<span>产物版本：{_esc(report.get('artifact_version'))}</span>
+<span>根目录哈希：{_esc(report.get('root_sha256'))}</span>
+<span>活动目录：{_esc(report.get('root_path'))}</span>
+<span>上一版本：{_esc(previous.get('artifact_version'))}</span>
+<span>上一哈希：{_esc(previous.get('root_sha256'))}</span>
+</section>
+<section><h2>激活门槛证据</h2>
+<table><thead><tr><th>检查项</th><th>值</th></tr></thead>
+<tbody>{gate_rows}</tbody></table></section>
+{failure_html}
+<section><h2>说明</h2><p>{_esc(report.get('reason'))}</p></section>
+</main></body></html>"""
+    Path(path).write_text(document, encoding="utf-8")
+
+
 def write_compare_page(path, result):
     counts = result.get("counts", {})
     count_rows = "".join(

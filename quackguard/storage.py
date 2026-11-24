@@ -72,6 +72,26 @@ CREATE TABLE IF NOT EXISTS plugins (
     config_json TEXT NOT NULL DEFAULT '{}',
     PRIMARY KEY (plugin_id, plugin_version)
 );
+CREATE TABLE IF NOT EXISTS candidates (
+    candidate_id TEXT PRIMARY KEY,
+    base_root_sha256 TEXT NOT NULL,
+    root_path TEXT NOT NULL UNIQUE,
+    artifact_version TEXT NOT NULL,
+    root_sha256 TEXT NOT NULL,
+    action TEXT NOT NULL,
+    feedback_id TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS active_version (
+    singleton INTEGER PRIMARY KEY CHECK (singleton = 1),
+    root_path TEXT NOT NULL,
+    artifact_version TEXT NOT NULL,
+    root_sha256 TEXT NOT NULL,
+    source TEXT NOT NULL,
+    candidate_id TEXT,
+    parent_root_sha256 TEXT,
+    updated_at TEXT NOT NULL
+);
 """
 
 
@@ -140,7 +160,10 @@ class Store:
         self.db.executemany(statement, records)
         self.db.commit()
 
-    def add_build(self, artifact_version, root_path, rules_sha256, config_sha256):
+    def add_build(
+        self, artifact_version, root_path, rules_sha256, config_sha256,
+        status="built",
+    ):
         build_id = uuid.uuid4().hex
         self.db.execute(
             """
@@ -155,7 +178,7 @@ class Store:
                 str(root_path),
                 rules_sha256,
                 config_sha256,
-                "built",
+                status,
                 now(),
             ),
         )
@@ -197,6 +220,21 @@ class Store:
                 for item in failures
             ],
         )
+        self.db.commit()
+
+    def find_build(self, root_path):
+        return self.db.execute(
+            "SELECT * FROM builds WHERE root_path = ?",
+            (str(Path(root_path).resolve()),),
+        ).fetchone()
+
+    def mark_build_active(self, build_id):
+        self.db.execute("UPDATE versions SET is_active = 0")
+        if build_id:
+            self.db.execute(
+                "UPDATE versions SET is_active = 1 WHERE build_id = ?",
+                (build_id,),
+            )
         self.db.commit()
 
     def list_builds(self, limit=20):
@@ -319,3 +357,112 @@ class Store:
             (plugin_id, plugin_version, PROTOCOL_VERSION, entrypoint),
         )
         self.db.commit()
+
+    def add_candidate(
+        self,
+        base_root_sha256,
+        root_path,
+        artifact_version,
+        root_sha256,
+        action,
+        feedback_id,
+    ):
+        """登记候选版本；同一路径重复登记时保留原ID并刷新摘要。"""
+        path = str(Path(root_path).resolve())
+        existing = self.db.execute(
+            "SELECT candidate_id FROM candidates WHERE root_path = ?", (path,)
+        ).fetchone()
+        if existing is not None:
+            self.db.execute(
+                """
+                UPDATE candidates
+                SET base_root_sha256 = ?, artifact_version = ?, root_sha256 = ?,
+                    action = ?, feedback_id = ?
+                WHERE candidate_id = ?
+                """,
+                (
+                    base_root_sha256,
+                    artifact_version,
+                    root_sha256,
+                    action,
+                    feedback_id,
+                    existing["candidate_id"],
+                ),
+            )
+            self.db.commit()
+            return existing["candidate_id"]
+        candidate_id = uuid.uuid4().hex
+        self.db.execute(
+            """
+            INSERT INTO candidates (
+                candidate_id, base_root_sha256, root_path, artifact_version,
+                root_sha256, action, feedback_id, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                candidate_id,
+                base_root_sha256,
+                path,
+                artifact_version,
+                root_sha256,
+                action,
+                feedback_id,
+                now(),
+            ),
+        )
+        self.db.commit()
+        return candidate_id
+
+    def get_candidate(self, root_path):
+        return self.db.execute(
+            "SELECT * FROM candidates WHERE root_path = ?",
+            (str(Path(root_path).resolve()),),
+        ).fetchone()
+
+    def list_candidates(self, limit=20):
+        return self.db.execute(
+            "SELECT * FROM candidates ORDER BY created_at DESC, rowid DESC LIMIT ?",
+            (int(limit),),
+        ).fetchall()
+
+    def set_active(
+        self,
+        root_path,
+        artifact_version,
+        root_sha256,
+        source,
+        candidate_id=None,
+        parent_root_sha256=None,
+    ):
+        self.db.execute(
+            """
+            INSERT INTO active_version (
+                singleton, root_path, artifact_version, root_sha256, source,
+                candidate_id, parent_root_sha256, updated_at
+            ) VALUES (1, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(singleton) DO UPDATE SET
+                root_path = excluded.root_path,
+                artifact_version = excluded.artifact_version,
+                root_sha256 = excluded.root_sha256,
+                source = excluded.source,
+                candidate_id = excluded.candidate_id,
+                parent_root_sha256 = excluded.parent_root_sha256,
+                updated_at = excluded.updated_at
+            """,
+            (
+                str(Path(root_path).resolve()),
+                artifact_version,
+                root_sha256,
+                source,
+                candidate_id,
+                parent_root_sha256,
+                now(),
+            ),
+        )
+        self.db.commit()
+        return self.get_active()
+
+    def get_active(self):
+        return self.db.execute(
+            "SELECT * FROM active_version WHERE singleton = 1"
+        ).fetchone()
