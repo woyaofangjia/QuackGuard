@@ -4,6 +4,9 @@ import time
 import uuid
 
 from .artifacts import load_policy
+from .b001 import applicability as b001_applicability
+from .b001 import review as b001_review
+from .b001_facts import extract_facts
 from .contracts import input_errors, prediction_errors
 from .errors import AuditError
 from .facts import Fact
@@ -86,6 +89,19 @@ def audit_prompt(policy, task):
     return "\n".join(sections)
 
 
+def structured_b001_review(
+    gateway, implementation, task, input_path, trace_id
+):
+    early_result = b001_applicability(task["metadata"])
+    if early_result is not None:
+        return early_result, []
+    threshold = implementation["sop"]["evidence_requirements"][
+        "outer_package_threshold_mm"
+    ]
+    materials, traces = extract_facts(gateway, task, input_path, trace_id)
+    return b001_review(task, materials, threshold), traces
+
+
 def review_task(gateway, policy, task, input_path):
     started = time.monotonic()
     output = {
@@ -98,43 +114,63 @@ def review_task(gateway, policy, task, input_path):
     }
     traces = []
     try:
-        prompt = audit_prompt(policy, task)
-        for attempt in (1, 2):
-            messages = gateway.messages(prompt, task, input_path)
-            raw = gateway.complete(messages)
-            traces.append({
-                "trace_id": output["trace_id"],
-                "audit_unit_id": task["audit_unit_id"],
-                "attempt": attempt,
-                "response": raw,
-            })
-            try:
-                result = parse_prediction(raw)
-                if result["applicability"] == "not_applicable":
-                    reason_code = "rule_not_applicable"
-                else:
-                    reason_code = "model_review"
-                output.update(
-                    result,
-                    execution_status="completed",
-                    reason_code=reason_code,
-                    latency_ms=(time.monotonic() - started) * 1000,
-                )
-                errors = prediction_errors(
-                    output, task, policy["artifact_version"]
-                )
-                if errors:
-                    raise ValueError(str(errors))
-                break
-            except (ValueError, KeyError, TypeError) as exc:
-                if attempt == 2:
-                    raise AuditError("invalid_model_output", str(exc)) from exc
-                prompt += (
-                    "\n【公开协议校验反馈，无标准答案】\n"
-                    + str(exc)
-                    + "\n请按固定行格式重新完整输出。上次输出：\n"
-                    + raw
-                )
+        key = task["rule_id"] + "@" + task["rule_version"]
+        implementation = policy.get("implementations", {}).get(key)
+        if implementation is not None:
+            if implementation.get("processor") != "b001":
+                raise AuditError("unsupported_rule_processor", key)
+            result, fact_traces = structured_b001_review(
+                gateway, implementation, task, input_path, output["trace_id"]
+            )
+            traces.extend(fact_traces)
+            output.update(
+                result,
+                execution_status="completed",
+                latency_ms=(time.monotonic() - started) * 1000,
+            )
+            errors = prediction_errors(
+                output, task, policy["artifact_version"]
+            )
+            if errors:
+                raise AuditError("invalid_processor_output", str(errors))
+        else:
+            prompt = audit_prompt(policy, task)
+            for attempt in (1, 2):
+                messages = gateway.messages(prompt, task, input_path)
+                raw = gateway.complete(messages)
+                traces.append({
+                    "trace_id": output["trace_id"],
+                    "audit_unit_id": task["audit_unit_id"],
+                    "attempt": attempt,
+                    "response": raw,
+                })
+                try:
+                    result = parse_prediction(raw)
+                    if result["applicability"] == "not_applicable":
+                        reason_code = "rule_not_applicable"
+                    else:
+                        reason_code = "model_review"
+                    output.update(
+                        result,
+                        execution_status="completed",
+                        reason_code=reason_code,
+                        latency_ms=(time.monotonic() - started) * 1000,
+                    )
+                    errors = prediction_errors(
+                        output, task, policy["artifact_version"]
+                    )
+                    if errors:
+                        raise ValueError(str(errors))
+                    break
+                except (ValueError, KeyError, TypeError) as exc:
+                    if attempt == 2:
+                        raise AuditError("invalid_model_output", str(exc)) from exc
+                    prompt += (
+                        "\n【公开协议校验反馈，无标准答案】\n"
+                        + str(exc)
+                        + "\n请按固定行格式重新完整输出。上次输出：\n"
+                        + raw
+                    )
     except (AuditError, ValueError, KeyError, TypeError, OSError) as exc:
         if isinstance(exc, AuditError):
             error = exc

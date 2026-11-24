@@ -2,9 +2,10 @@ from pathlib import Path
 
 from . import PROTOCOL_VERSION, __version__
 from .artifact_hash import digest_obj, path_digest
+from .b001_sop import build_implementation
 from .contracts import safe_relative
 from .errors import AuditError
-from .io_utils import load_json, new_directory, rows, write_json
+from .io_utils import load_json, new_directory, numbered_rows, write_json
 
 
 def rule_key(rule):
@@ -12,20 +13,28 @@ def rule_key(rule):
 
 
 def checked_rules(path):
-    rules = rows(path)
-    seen = set()
+    rules = numbered_rows(path)
+    seen = {}
     required_fields = ("rule_id", "version", "rule_text")
-    for rule in rules:
+    for line_number, rule in rules:
         if not isinstance(rule, dict):
-            raise AuditError("invalid_rule", "规则必须是JSON对象")
+            raise AuditError("invalid_rule", f"第{line_number}行：规则必须是JSON对象")
         for field in required_fields:
             if not isinstance(rule.get(field), str) or not rule[field].strip():
-                raise AuditError("invalid_rule", f"{field}必须为非空字符串")
+                raise AuditError(
+                    "invalid_rule", f"第{line_number}行：{field}必须为非空字符串"
+                )
         key = rule_key(rule)
         if key in seen:
-            raise AuditError("duplicate_rule", key)
-        seen.add(key)
-    return sorted(rules, key=lambda rule: (rule["rule_id"], rule["version"]))
+            raise AuditError(
+                "duplicate_rule",
+                f"第{line_number}行：{key}，首次出现于第{seen[key]}行",
+            )
+        seen[key] = line_number
+    return sorted(
+        (rule for _, rule in rules),
+        key=lambda rule: (rule["rule_id"], rule["version"]),
+    )
 
 
 def build(rules_path, config_path, out_path, store=None):
@@ -37,6 +46,16 @@ def build(rules_path, config_path, out_path, store=None):
     source_hashes = {rule_key(rule): digest_obj(rule) for rule in rules}
     version_input = {"protocol": PROTOCOL_VERSION, "rules": rules, "config": config}
     artifact_version = "av_" + digest_obj(version_input)[:24]
+    implementations = {}
+    for rule in rules:
+        if rule["rule_id"] == "B001":
+            key = rule_key(rule)
+            implementations[key] = build_implementation(
+                rule,
+                source_hashes[key],
+                artifact_version,
+                config.get("general", ""),
+            )
     policy = {
         "protocol_version": PROTOCOL_VERSION,
         "adapter_version": __version__,
@@ -46,6 +65,7 @@ def build(rules_path, config_path, out_path, store=None):
         "general": config.get("general", ""),
         "supplement": config.get("supplement", ""),
         "model": config.get("model"),
+        "implementations": implementations,
     }
     matrix = []
     for rule in rules:
@@ -55,8 +75,13 @@ def build(rules_path, config_path, out_path, store=None):
             "title": rule.get("title", ""),
             "rule_family_id": rule.get("rule_family_id"),
             "source_sha256": source_hashes[rule_key(rule)],
-            "implementation_status": "baseline_adapter_only",
-            "case_status": "pending",
+            "implementation_status": (
+                "implemented" if rule_key(rule) in implementations
+                else "baseline_adapter_only"
+            ),
+            "case_status": (
+                "ready" if rule_key(rule) in implementations else "pending"
+            ),
             "planned_checks": [
                 "valid_artifact",
                 "source_trace",
@@ -90,10 +115,16 @@ def build(rules_path, config_path, out_path, store=None):
             config_sha256=digest_obj(config),
         )
         store.add_versions(build_id, entries)
+    status_counts = {}
+    for row in matrix:
+        status = row["implementation_status"]
+        status_counts[status] = status_counts.get(status, 0) + 1
     return {
         "command": "build",
+        "status": "ready",
         "artifact_version": artifact_version,
         "rule_versions": len(entries),
+        "implementation_status_counts": status_counts,
         "out": str(out),
     }
 

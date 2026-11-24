@@ -2,8 +2,9 @@ import json
 from pathlib import Path
 
 from .contracts import (
+    MAX_LINE_BYTES,
+    MAX_RECORDS,
     ContractError,
-    read_rows,
     regular_bytes,
     safe_relative,
     strict_loads,
@@ -11,11 +12,42 @@ from .contracts import (
 from .errors import AuditError
 
 
-def rows(path, required=True):
+def numbered_rows(path, required=True):
+    path = Path(path)
     try:
-        return read_rows(path, missing_ok=not required)
+        if not path.exists():
+            if path.is_symlink():
+                raise ContractError("Broken symlink")
+            if not required:
+                return []
+            raise ContractError("Required file missing")
+        try:
+            text = regular_bytes(path).decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise ContractError("JSONL must be UTF-8") from exc
+        result = []
+        for line_number, line in enumerate(text.split("\n"), 1):
+            line = line.rstrip("\r")
+            if not line.strip():
+                continue
+            if len(line.encode()) > MAX_LINE_BYTES:
+                raise ContractError("Oversized JSONL line")
+            try:
+                value = strict_loads(line)
+            except ContractError as exc:
+                raise ContractError(
+                    f"{path.name}:{line_number}: {exc}"
+                ) from exc
+            result.append((line_number, value))
+            if len(result) > MAX_RECORDS:
+                raise ContractError("Too many records")
+        return result
     except (ContractError, OSError) as exc:
         raise AuditError("invalid_jsonl", str(exc)) from exc
+
+
+def rows(path, required=True):
+    return [value for _, value in numbered_rows(path, required)]
 
 
 def load_json(path):
