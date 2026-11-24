@@ -13,7 +13,10 @@ from .errors import AuditError
 from .evaluation import evaluate
 from .export import export_results
 from .inference import infer
+from .io_utils import write_json
 from .iteration import iterate
+from .plugin_registry import load_manifest, register_manifest
+from .plugin_report import write_plugins_page
 from .storage import Store
 from .versioning import activate, rollback
 
@@ -22,7 +25,19 @@ PARAMETERS = {
     "infer": ["input", "artifacts", "out"],
     "annotate": ["input", "targets", "artifacts", "out"],
     "iterate": ["base", "feedback", "input", "out"],
-    "evaluate": ["plugin", "inputs", "outputs", "references", "out"],
+    "evaluate": ["inputs", "outputs", "references", "out"],
+    "plugins": ["out"],
+    "plugin-state": ["plugin-id", "plugin-version", "state", "out"],
+}
+ERROR_HINTS = {
+    "invalid_jsonl": "检查JSONL行号与JSON字段；合法记录仍会保留。",
+    "invalid_rule": "修正规则ID/版本/正文后重新build；合法规则不受影响。",
+    "duplicate_rule": "删除重复规则版本后重新build；首次出现行号见状态页。",
+    "artifact_hash_mismatch": "产物已被修改；请从干净目录重新build或恢复原产物。",
+    "contract_error": "按错误信息校验规则/配置/产物字段；修正后重试，既有产物不受影响。",
+    "io_error": "检查文件路径与读写权限后重试；已完成任务记录会保留。",
+    "invalid_plugin_manifest": "修正插件清单字段与input_schema_version后重试。",
+    "unknown_plugin": "先用plugins --manifest注册插件，再切换启用状态。",
 }
 PRODUCT_PARAMETERS = {
     "compare": ["old", "new", "input", "references", "out"],
@@ -40,6 +55,8 @@ INPUT_PARAMETERS = {
     "export": "input",
     "activate": "baseline",
     "rollback": "to",
+    "plugins": "manifest",
+    "plugin-state": "plugin_id",
 }
 
 
@@ -54,7 +71,21 @@ def parser():
     for command, parameters in {**PARAMETERS, **PRODUCT_PARAMETERS}.items():
         subparser = commands.add_parser(command)
         for parameter in parameters:
-            subparser.add_argument("--" + parameter, required=True)
+            if command == "plugin-state" and parameter == "state":
+                subparser.add_argument(
+                    "--state", required=True, choices=["enabled", "disabled"]
+                )
+            else:
+                subparser.add_argument("--" + parameter, required=True)
+    commands.choices["evaluate"].add_argument(
+        "--plugin", default=None, help="单个插件入口，例如quackguard.conclusion"
+    )
+    commands.choices["evaluate"].add_argument(
+        "--manifest", default=None, help="插件清单JSON；与--plugin二选一"
+    )
+    commands.choices["plugins"].add_argument(
+        "--manifest", default=None, help="可选：先注册清单中的插件再列出"
+    )
     commands.choices["build"].add_argument(
         "--only",
         default="",
@@ -98,6 +129,45 @@ def resolve_artifacts(path, store):
     return active["root_path"]
 
 
+def list_registered_plugins(manifest, out_path, store):
+    if store is None:
+        raise AuditError("plugins_requires_db")
+    if manifest:
+        register_manifest(store, load_manifest(manifest))
+    plugins = store.list_plugins()
+    result = {
+        "command": "plugins",
+        "plugin_count": len(plugins),
+        "plugins": [dict(row) for row in plugins],
+        "out": str(out_path),
+    }
+    write_json(out_path, result)
+    page = Path(out_path).with_name("plugins.html")
+    write_plugins_page(page, plugins, None)
+    result["page"] = str(page)
+    return result
+
+
+def change_plugin_state(plugin_id, plugin_version, state, out_path, store):
+    if store is None:
+        raise AuditError("plugin_state_requires_db")
+    row = store.set_plugin_enabled(
+        plugin_id, plugin_version, state == "enabled"
+    )
+    result = {
+        "command": "plugin-state",
+        "plugin_id": plugin_id,
+        "plugin_version": plugin_version,
+        "enabled": bool(row["enabled"]),
+        "out": str(out_path),
+    }
+    write_json(out_path, result)
+    page = Path(out_path).with_name("plugins.html")
+    write_plugins_page(page, store.list_plugins(), None)
+    result["page"] = str(page)
+    return result
+
+
 def execute(args, store):
     if args.command == "build":
         only = [item.strip() for item in args.only.split(",") if item.strip()]
@@ -139,6 +209,17 @@ def execute(args, store):
             args.out,
             plugin_timeout=timeout,
             store=store,
+            manifest=args.manifest,
+        )
+    if args.command == "plugins":
+        return list_registered_plugins(args.manifest, args.out, store)
+    if args.command == "plugin-state":
+        return change_plugin_state(
+            args.plugin_id,
+            args.plugin_version,
+            args.state,
+            args.out,
+            store,
         )
     if args.command == "compare":
         return compare_results(
@@ -209,7 +290,7 @@ def prepare_retry(args, store):
     new_run = store.start_run(
         new_task,
         task["command"],
-        getattr(replay, INPUT_PARAMETERS[task["command"]]),
+        getattr(replay, INPUT_PARAMETERS[task["command"]], None) or replay.out,
         replay.out,
         arguments=arguments(replay),
     )
@@ -244,7 +325,9 @@ def main(argv=None):
             args, task_id, run_id = prepared
         elif store:
             task_id = store.start_task(args.command)
-            input_path = getattr(args, INPUT_PARAMETERS[args.command])
+            input_path = (
+                getattr(args, INPUT_PARAMETERS[args.command], None) or args.out
+            )
             run_id = store.start_run(
                 task_id,
                 args.command,
@@ -261,11 +344,11 @@ def main(argv=None):
         code = error_code(exc)
         if store and task_id and run_id:
             store.finish(task_id, run_id, "failed", code)
+        payload = {"error_code": code, "detail": str(exc)[:500]}
+        if code in ERROR_HINTS:
+            payload["hint"] = ERROR_HINTS[code]
         print(
-            json.dumps(
-                {"error_code": code, "detail": str(exc)[:500]},
-                ensure_ascii=False,
-            ),
+            json.dumps(payload, ensure_ascii=False),
             file=sys.stderr,
         )
         return 2

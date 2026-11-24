@@ -70,6 +70,12 @@ def write_status_page(path, report, matrix, links=None):
         f"<tr><td>{_esc(item.get('line'))}</td><td>{_esc(item.get('error'))}</td></tr>"
         for item in failures
     ) or '<tr><td colspan="2">无</td></tr>'
+    failure_hint = (
+        "<section><h2>异常操作提示</h2>"
+        "<p>失败记录按行号定位；合法规则已继续构建。修正对应行后重新执行build，"
+        "修正前可继续使用当前合法产物。</p></section>"
+        if failures else ""
+    )
     matrix_rows = "".join(
         "<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>".format(
             _esc(row.get("rule_id")),
@@ -129,6 +135,7 @@ def write_status_page(path, report, matrix, links=None):
 <section><h2>规则导入失败</h2>
 <table><thead><tr><th>行号</th><th>原因</th></tr></thead>
 <tbody>{failure_rows}</tbody></table></section>
+{failure_hint}
 {missing_html}
 {links_html}
 {gaps_html}

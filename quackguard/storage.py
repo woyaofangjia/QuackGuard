@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from . import PROTOCOL_VERSION
+from .errors import AuditError
 
 SCHEMA = """
 PRAGMA foreign_keys = ON;
@@ -357,6 +358,42 @@ class Store:
             (plugin_id, plugin_version, PROTOCOL_VERSION, entrypoint),
         )
         self.db.commit()
+
+    def register_plugins(self, entries):
+        for entry in entries:
+            self.register_plugin(
+                entry["plugin_id"], entry["plugin_version"], entry["entrypoint"]
+            )
+
+    def list_plugins(self):
+        return self.db.execute(
+            """
+            SELECT plugin_id, plugin_version, schema_version, entrypoint, enabled
+            FROM plugins
+            ORDER BY plugin_id, plugin_version
+            """
+        ).fetchall()
+
+    def get_plugin(self, plugin_id, plugin_version):
+        return self.db.execute(
+            "SELECT * FROM plugins WHERE plugin_id = ? AND plugin_version = ?",
+            (plugin_id, plugin_version),
+        ).fetchone()
+
+    def plugin_enabled(self, plugin_id, plugin_version):
+        row = self.get_plugin(plugin_id, plugin_version)
+        return True if row is None else bool(row["enabled"])
+
+    def set_plugin_enabled(self, plugin_id, plugin_version, enabled):
+        cursor = self.db.execute(
+            "UPDATE plugins SET enabled = ? WHERE plugin_id = ? AND plugin_version = ?",
+            (1 if enabled else 0, plugin_id, plugin_version),
+        )
+        if cursor.rowcount == 0:
+            self.db.rollback()
+            raise AuditError("unknown_plugin", plugin_id + "@" + plugin_version)
+        self.db.commit()
+        return self.get_plugin(plugin_id, plugin_version)
 
     def add_candidate(
         self,
