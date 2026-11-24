@@ -1,35 +1,16 @@
 import json
 import math
 import re
-import unicodedata
-from datetime import date
+
+from .rule_common import (
+    normalize_material_code,
+    normalize_model,
+    normalize_text,
+    parse_date,
+)
 
 LABEL_ROLES = frozenset({"package_photos", "tag_photos"})
 CERTIFICATE_ROLES = frozenset({"certificate_pages"})
-
-
-def normalize_text(value):
-    return unicodedata.normalize("NFKC", value).strip()
-
-
-def normalize_model(value):
-    return normalize_text(value).lower().replace(" ", "").replace("-", "")
-
-
-def normalize_material_code(value):
-    return normalize_text(value)
-
-
-def parse_date(value):
-    if not isinstance(value, str):
-        return None
-    value = normalize_text(value)
-    if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value):
-        return None
-    try:
-        return date.fromisoformat(value)
-    except ValueError:
-        return None
 
 
 def applicability(metadata):

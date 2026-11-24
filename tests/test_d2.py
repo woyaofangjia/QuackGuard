@@ -212,12 +212,16 @@ class D2Test(unittest.TestCase):
 
     def test_build_sop_thresholds_and_status(self):
         implementations = self.policy["implementations"]
-        self.assertEqual(set(implementations), {"B001@3.0", "B001@3.1"})
+        b001_keys = {"B001@3.0", "B001@3.1"}
+        self.assertTrue(b001_keys.issubset(implementations))
+        r_keys = {key for key in implementations if key.startswith("R")}
+        self.assertEqual(len(r_keys), 60)
         thresholds = {
             key: value["sop"]["evidence_requirements"][
                 "outer_package_threshold_mm"
             ]
             for key, value in implementations.items()
+            if key.startswith("B001")
         }
         self.assertEqual(thresholds, {"B001@3.0": 100, "B001@3.1": 80})
         sop_fields = {
@@ -242,17 +246,33 @@ class D2Test(unittest.TestCase):
             "promotion_conditions",
             "rollback_conditions",
         }
-        for implementation in implementations.values():
-            self.assertEqual(sop_fields, set(implementation["sop"]))
-            self.assertEqual(policy_fields, set(implementation["build_policy"]))
+        r_sop_fields = {
+            "source_quotes",
+            "family",
+            "family_title",
+            "params",
+            "applicability",
+            "facts_to_check",
+            "decision_order",
+            "clarifications",
+        }
+        for key, implementation in implementations.items():
             self.assertEqual(
                 set(implementation["artifact"]),
                 {"version", "source_hash", "dependencies"},
             )
+            if key.startswith("B001"):
+                self.assertEqual(implementation["processor"], "b001")
+                self.assertEqual(sop_fields, set(implementation["sop"]))
+                self.assertEqual(policy_fields, set(implementation["build_policy"]))
+            else:
+                self.assertEqual(implementation["processor"], "r_rule")
+                self.assertEqual(r_sop_fields, set(implementation["sop"]))
+                self.assertTrue(implementation["sop"]["family"].startswith("F"))
         self.assertEqual(self.build_result["status"], "ready")
         self.assertEqual(
             self.build_result["implementation_status_counts"],
-            {"implemented": 2, "baseline_adapter_only": 60},
+            {"implemented": 62},
         )
 
     def test_rule_errors_include_jsonl_line_numbers(self):

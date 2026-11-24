@@ -4,6 +4,7 @@ from . import PROTOCOL_VERSION, __version__
 from .artifact_hash import digest_obj, path_digest
 from .b001_sop import build_implementation
 from .contracts import safe_relative
+from .rule_sop import build_r_implementation
 from .errors import AuditError
 from .io_utils import load_json, new_directory, numbered_rows, write_json
 
@@ -48,9 +49,16 @@ def build(rules_path, config_path, out_path, store=None):
     artifact_version = "av_" + digest_obj(version_input)[:24]
     implementations = {}
     for rule in rules:
+        key = rule_key(rule)
         if rule["rule_id"] == "B001":
-            key = rule_key(rule)
             implementations[key] = build_implementation(
+                rule,
+                source_hashes[key],
+                artifact_version,
+                config.get("general", ""),
+            )
+        elif rule["rule_id"].startswith("R"):
+            implementations[key] = build_r_implementation(
                 rule,
                 source_hashes[key],
                 artifact_version,

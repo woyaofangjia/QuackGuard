@@ -90,8 +90,8 @@ class D1Test(unittest.TestCase):
         self.assertEqual(result["rule_versions"], 62)
         self.assertEqual(len(manifest["entries"]), 62)
         self.assertEqual(len(matrix), 62)
-        self.assertEqual(sum(row["case_status"] == "ready" for row in matrix), 2)
-        self.assertEqual(sum(row["case_status"] == "pending" for row in matrix), 60)
+        self.assertEqual(sum(row["case_status"] == "ready" for row in matrix), 62)
+        self.assertEqual(sum(row["case_status"] == "pending" for row in matrix), 0)
         engine_hash = path_digest(self.dir / "baseline" / "engine")
         self.assertTrue(all(row["artifact_version"] == result["artifact_version"] and row["sha256"] == engine_hash for row in manifest["entries"]))
 

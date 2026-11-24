@@ -8,6 +8,7 @@ from .b001 import applicability as b001_applicability
 from .b001 import review as b001_review
 from .b001_facts import extract_facts
 from .contracts import input_errors, prediction_errors
+from .rule_engine import review_rule
 from .errors import AuditError
 from .facts import Fact
 from .io_utils import rows, write_jsonl
@@ -117,11 +118,17 @@ def review_task(gateway, policy, task, input_path):
         key = task["rule_id"] + "@" + task["rule_version"]
         implementation = policy.get("implementations", {}).get(key)
         if implementation is not None:
-            if implementation.get("processor") != "b001":
+            processor = implementation.get("processor")
+            if processor == "b001":
+                result, fact_traces = structured_b001_review(
+                    gateway, implementation, task, input_path, output["trace_id"]
+                )
+            elif processor == "r_rule":
+                result, fact_traces = review_rule(
+                    gateway, implementation, task, input_path, output["trace_id"]
+                )
+            else:
                 raise AuditError("unsupported_rule_processor", key)
-            result, fact_traces = structured_b001_review(
-                gateway, implementation, task, input_path, output["trace_id"]
-            )
             traces.extend(fact_traces)
             output.update(
                 result,
