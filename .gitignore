@@ -1,2 +1,6 @@
 /O2_AI商品审核官_资料包/
 .env
+__pycache__/
+*.py[cod]
+/var/
+/artifacts/
