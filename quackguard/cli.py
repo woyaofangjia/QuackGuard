@@ -30,6 +30,7 @@ PARAMETERS = {
     "plugins": ["out"],
     "plugin-state": ["plugin-id", "plugin-version", "state", "out"],
     "regress": ["rules", "config", "input", "references", "baseline", "out"],
+    "console": ["workspace"],
 }
 ERROR_HINTS = {
     "invalid_jsonl": "检查JSONL行号与JSON字段；合法记录仍会保留。",
@@ -114,6 +115,12 @@ def parser():
         "--reason",
         default="",
         help="可选：回滚原因",
+    )
+    commands.choices["console"].add_argument(
+        "--host", default="127.0.0.1", help="仅本机访问，默认127.0.0.1"
+    )
+    commands.choices["console"].add_argument(
+        "--port", type=int, default=8765, help="监听端口，默认8765"
     )
     regress_parser = commands.choices["regress"]
     regress_parser.add_argument(
@@ -357,6 +364,11 @@ def error_code(exc):
 
 def main(argv=None):
     args = parser().parse_args(argv)
+    if args.command == "console":
+        from .console import serve
+
+        serve(args.workspace, args.host, args.port)
+        return 0
     store = None
     task_id = None
     run_id = None

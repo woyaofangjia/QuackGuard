@@ -3,10 +3,13 @@
 ## 1. 交付内容
 
 - `quackguard/`：产品源码（Python 标准库，无第三方依赖）。
-- `run.py`：命令行入口。
+- `run.py`：命令行入口；`python run.py console --workspace var/console` 启动本地操作控制台。
 - `delivery/artifacts/`：冻结产物（`engine/`、`artifact_manifest.json`、`status.html`、`versions.html`、`60条建设台账.csv`）。
 - `delivery/traces/`：推理与公开集验收轨迹。
-- `delivery/acceptance/`：评审 A/B 的 16 项验收记录与插件故障记录。
+- `delivery/annotations/`：标注输出、标注失败记录、事实轨迹与公开样例评分（`annotations.jsonl`、`annotations.errors.json`、`annotations.trace.jsonl`、`score.json`、`meta.json`）。
+- `delivery/evaluation.json`：两个评估插件的实际运行报告；同目录 `plugin_report.html` 为对应页面。
+- `delivery/model_run/`：一次真实 `glm-4v-flash` 在线运行记录（构建版本 `av_a489476e2465379a03414735`、公开集 64 条输出、标注输出、轨迹、插件报告、指标与逐单元变化），与离线冻结快照分开保存。
+- `delivery/acceptance/`：两轮独立操作的 16 项验收记录与插件故障记录（自测证据，非产品内置评审模式）。
 - `delivery/config.json`：官方样例配置 + `"model": "glm-4v-flash"`，不含任何密钥。
 - `delivery/policy.json`：B001 3.0/3.1 的 SOP、build policy 与产物描述。
 - `delivery/manifest_check.json`：manifest 与实际文件哈希、输出 `artifact_version`、trace 核对结果。
@@ -56,13 +59,22 @@ python run.py plugin-state --plugin-id quackguard.evidence_content --plugin-vers
 
 `regress` 为 D9 全量回归命令，参数见 `docs`/`--help`。
 
-## 4. 产品页面
+## 4. 产品页面与操作控制台
 
-命令会在输出目录生成可直接打开的 HTML：
+完全不懂技术的评审可直接启动本地控制台：
+
+```powershell
+python run.py console --workspace var/console
+# 浏览器打开输出里的 http://127.0.0.1:8765/ ，顶部可切换评审 A / B
+```
+
+控制台为单页、仅标准库、只监听本机，单一工作区即可完成全部操作。左侧固定入口覆盖：规则导入（含逐行错误定位）、建设、审核、证据定位、标注、迭代、版本比较/激活/回滚、插件配置与失败重试；审核页每一行可打开规则原文、理由、材料与区域框、产物版本与 trace。
+
+命令行也会在输出目录生成可直接打开的 HTML：
 
 - `artifacts/status.html`：构建状态、规则失败行号。
 - `artifacts/versions.html`：规则版本与产物版本。
-- `outputs.jsonl` 同目录 `review.html`：逐单审核、证据与轨迹入口。
+- `outputs.jsonl` 同目录 `review.html`：逐单审核、证据、规则源哈希、产物版本与 trace。
 - `candidate/iteration.html`：候选差异与门槛。
 - `plugin_report.html`：插件运行、输入哈希与故障隔离。
 - `plugins.html`：插件注册与启用状态。
@@ -102,5 +114,8 @@ python "O2_AI商品审核官_资料包/04_最小对接样例/smoke.py"
 
 - 活动版本冻结为 baseline：`artifact_version=av_2275824ec1ba861a0c0018cb`，候选仅记录澄清，不改变判定，验收后已回滚。
 - 冻结快照 `delivery/artifacts/` 为离线构建：未配置模型时，64 条公开任务中 62 条显式 `model_not_configured`，2 条 B001 因材料不适配可直接判定 `not_applicable`。需要真实审核时按第 5 节配置 `glm-4v-flash` 并用 `delivery/config.json` 重建。
+- `delivery/annotations/` 用公开金标可见事实驱动同一 `annotate` 实现，验证值/状态/标签/材料/页码/IoU 联合链路；公开样例得分为 7/7，但属于链路校验，不是系统正式标注成绩。配置模型后重跑 `annotate` 即得到真实标注输出。
+- `delivery/evaluation.json` 基于 `traces/infer.outputs.jsonl` 运行两个插件：输入哈希前后一致、故障 0；指标反映离线快照（多数为显式 error），不代表模型能力。
+- 真实模型结果见 `delivery/model_run/`：公开集 A=0.609375、U=0.673077、Q=0.628486，执行错误 1；标注的值/状态/标签 3/3 正确，但 `glm-4v-flash` 返回的框存在系统性坐标偏移，IoU 不达标，标注得分 0/7。该限制已如实记录，未用整帧或文档框冒充。
 - R021/R026/R060 的参考输出与契约存在已知语义差异，只影响 A/U/Q，不属于非法输出。
 - 公开参考基线 Q=1 仅证明评分算术，不计入系统成绩。

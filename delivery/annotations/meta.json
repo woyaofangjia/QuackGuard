@@ -1,0 +1,9 @@
+{
+  "method": "gold_visible_facts_verification",
+  "artifact_version": "av_2275824ec1ba861a0c0018cb",
+  "tasks": "O2_AI商品审核官_资料包\\03_公开开发集\\标注样例\\inputs\\tasks.jsonl",
+  "targets": "O2_AI商品审核官_资料包\\03_公开开发集\\标注样例\\inputs\\targets.jsonl",
+  "outputs": 3,
+  "failures": 0,
+  "annotation_score": 7.0
+}

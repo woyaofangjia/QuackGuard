@@ -1,0 +1,726 @@
+{
+  "command": "evaluate",
+  "status": "ok",
+  "plugin_count": 2,
+  "enabled_count": 2,
+  "disabled_count": 0,
+  "invocations": 2,
+  "errors": 0,
+  "plugins": [
+    {
+      "plugin_id": "quackguard.conclusion",
+      "plugin_version": "0.1.0",
+      "input_schema_version": "1.3.1",
+      "metrics": {
+        "accuracy": 0.609375,
+        "machine_review_rate": 0.8125,
+        "machine_accuracy": 0.6730769230769231,
+        "applicability_accuracy": 0.984375,
+        "label_only_accuracy": 0.609375,
+        "quality": 0.6284855769230768
+      },
+      "diagnostics": [],
+      "errors": [],
+      "duration_ms": 279.233,
+      "invocations": 1,
+      "status": "ok"
+    },
+    {
+      "plugin_id": "quackguard.evidence_content",
+      "plugin_version": "0.2.0",
+      "input_schema_version": "1.3.1",
+      "metrics": {
+        "valid_structure_count": 64,
+        "evidence_units": 61,
+        "reference_units": 64,
+        "grounded_units": 6,
+        "grounded_fact_rate": 0.0,
+        "unsupported_fact_count": 79
+      },
+      "diagnostics": [
+        {
+          "audit_unit_id": "uec9d90d134e7bd39a0d3416c9d0628f1",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"outer_package\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uc6adebe94d8dd1bbe360263760a4bdd0",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\", \"bbox\": [0.15, 0.45, 0.35, 0.48]}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.15, 0.52, 0.55, 0.55]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753827\", \"bbox\": [0.425, 0.285, 0.67, 0.32]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.425, 0.395, 0.675, 0.43]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.425, 0.45, 0.675, 0.48]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "udf8f1afde39ab803cc45b8e03023e683",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u724a4c3ba490ef18dce8647e3d42fa37",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"status\": \"clear\", \"document_count\": 1}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u6e8bf232b71ff6e70e628944fbad51ab",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\", \"bbox\": [0.05, 0.45, 0.35, 0.48]}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.05, 0.49, 0.55, 0.52]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.35, 0.395, 0.38]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.095, 0.46, 0.45, 0.49]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-02-30\", \"bbox\": [0.095, 0.51, 0.48, 0.54]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uad647940352aa145a21fec18265ee486",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\"}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u5795173a64dcbc749884037b2221ed52",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\"}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ub2a2b7b15a46b368219594909aac5ea2",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"status\": \"clear\", \"document_count\": 1}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ube0f8028a8a1ed021d3023191d788147",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"status\": \"clear\", \"document_count\": 1}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ub8012080624938a19fe689f64c975e5d",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"batch_number\": {\"status\": \"value\", \"value\": \"20320229-753\"}, \"transport_record\": {\"status\": \"value\", \"value\": \"670934\"}, \"batch 备注\": {\"status\": \"value\", \"value\": \"K3\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u35a1478f37c0fa360b9c52dc0bffd9ec",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\", \"bbox\": [0.09, 0.45, 0.37, 0.48]}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-75382\", \"bbox\": [0.09, 0.51, 0.42, 0.54]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.406, 0.398, 0.434]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.095, 0.506, 0.292, 0.534]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.095, 0.556, 0.287, 0.584]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u14129f61966bfaacbad5c11c46f15163",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"back\", \"voided\": false, \"fields\": {\"net_weight\": {\"status\": \"value\", \"value\": \"750 g\"}}, \"texts\": {}, \"shapes\": {}}",
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"net_weight\": {\"status\": \"value\", \"value\": \"742.5 g\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u68bac81b7ba652fe53b6874064c2fb3a",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"certificate_pages\", \"carrier\": \"certificate_page\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\"}, \"batch_number\": {\"status\": \"value\", \"value\": \"K44\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u0980ddae209822e375a91ecad75386e9",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"certificate_pages\", \"carrier\": \"certificate_page\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"issued_date\": {\"status\": \"value\", \"value\": \"2029-01-01\"}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\"}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-12-31\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u15856353b26e87c3765190d08c92d882",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\"}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u20b847565a02d85f3e61ab7f22cb3bdf",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\"}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u5af0e1a688b053c4f078352d1960a948",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"batch_number\": {\"status\": \"value\", \"value\": \"20310229-753\"}, \"transport_record\": {\"status\": \"value\", \"value\": \"159556\"}, \"batch 备注\": {\"status\": \"value\", \"value\": \"K8\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u0327676440894e14d6e7b8d7642f0d09",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"batch_number\": {\"status\": \"value\", \"value\": \"K86\"}, \"quantity\": {\"status\": \"value\", \"value\": \"860006\"}}, \"texts\": {}, \"shapes\": {\"triangle_border\": {\"present\": true, \"count\": 1, \"center_x\": 0.5, \"center_y\": 0.5, \"height\": 0.25}, \"dot_inside\": {\"present\": true, \"count\": 1, \"center_x\": 0.75, \"center_y\": 0.5, \"height\": 0.05}}}"
+          ]
+        },
+        {
+          "audit_unit_id": "u8aa22e0319ec0e0363c3c319e031fd06",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"certificate_pages\", \"carrier\": \"certificate_page\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u7f60ca8a1b2e6fa9fcd015fb26fe37ab",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"outer_package\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"batch_number\": {\"status\": \"value\", \"value\": \"P53\"}, \"transport_record\": {\"status\": \"value\", \"value\": \"954903\"}, \"batch_note\": {\"status\": \"value\", \"value\": \"K76\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"front\", \"voided\": false, \"fields\": {}, \"texts\": {}, \"shapes\": {}}"
+          ]
+        },
+        {
+          "audit_unit_id": "u5efbbe5106e7225571ac6ab3c4d0664a",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"unreadable\", \"value\": null, \"bbox\": [0.0875, 0.2893, 0.2344, 0.3462]}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.0875, 0.3516, 0.9125, 0.4085]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.46, 0.39, 0.49]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.095, 0.58, 0.43, 0.61]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.095, 0.64, 0.44, 0.67]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ub99c3fe0483bf8ca9b08912458ccd3f5",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"back\", \"voided\": false, \"fields\": {\"net_weight\": {\"status\": \"value\", \"value\": \"750 g\"}}, \"texts\": {}, \"shapes\": {}}",
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"net_weight\": {\"status\": \"value\", \"value\": \"0.75 kg\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uacad3509c7458635ad08e059c417da11",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u73820032c6461475b019c9557333a540",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"keep_dry_cn\": {\"status\": \"value\", \"value\": \"保持干燥\"}, \"keep_dry_en\": {\"status\": \"value\", \"value\": \"Keep dry\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u5c3f07605bcf130f5e7c7b910dba8682",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"certificate_pages\", \"carrier\": \"certificate_page\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"issued_date\": {\"status\": \"value\", \"value\": \"2029-01-01\"}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\"}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-12-31\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u3a3d5fd62ff5da3a356dc0298488938e",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"missing\", \"value\": null}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.3, 0.4, 0.7, 0.5]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.312, 0.468, 0.45, 0.498]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.312, 0.588, 0.406, 0.618]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.312, 0.658, 0.418, 0.688]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u154c743f7e20ad7ca7366c608b058d0d",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u17f44a82b05c59f1e26fa8ae1db5b87f",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\"}}, \"texts\": {}, \"shapes\": {}}",
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\"}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ud94d8c1699a60961607fbbdc81df68a5",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"certificate_pages\", \"carrier\": \"certificate_page\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"issued_date\": {\"status\": \"value\", \"value\": \"2029-01-01\"}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\"}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-12-31\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u05baefb3f13f58475eb734209e13dcf2",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"batch_number\": {\"status\": \"value\", \"value\": \"K74\"}, \"transport_record\": {\"status\": \"value\", \"value\": \"254578\"}}, \"texts\": {}, \"shapes\": {\"triangle_border\": {\"present\": true, \"count\": 1}}}"
+          ]
+        },
+        {
+          "audit_unit_id": "ubfa553dc2c4eb24d4f195c2972b49170",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"front\", \"voided\": false, \"fields\": {}, \"texts\": {}, \"shapes\": {}}",
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\"}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753827\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u46f4eef4925130c6033afa097059bf3a",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": [
+            "{\"role\": \"certificate_pages\", \"carrier\": \"certificate_page\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\"}, \"batch_number\": {\"status\": \"value\", \"value\": \"K90\"}}, \"texts\": {}, \"shapes\": {}}"
+          ]
+        },
+        {
+          "audit_unit_id": "u408a4f8dea25cc64000d16aaea9e149f",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"net_weight\": {\"status\": \"value\", \"value\": \"750 g\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"back\", \"voided\": false, \"fields\": {}, \"texts\": {}, \"shapes\": {}}"
+          ]
+        },
+        {
+          "audit_unit_id": "u906c2da6d594aad38b8b41b9974af698",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\", \"bbox\": [0.0859, 0.295, 0.2424, 0.355]}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.0859, 0.365, 0.4924, 0.425]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753827\", \"bbox\": [0.1, 0.45, 0.35, 0.48]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.1, 0.58, 0.22, 0.61]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.1, 0.65, 0.24, 0.68]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ua9df5148546838d9e1ba5e1f51fd00de",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\", \"bbox\": [0.086, 0.45, 0.24, 0.48]}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.086, 0.51, 0.46, 0.54]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.375, 0.28, 0.625, 0.32]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.375, 0.42, 0.625, 0.46]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.375, 0.49, 0.625, 0.53]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u43262e78e45325ad844bb28d7b4613dd",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"missing\", \"value\": null}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.083, 0.278, 0.917, 0.389]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.49, 0.39, 0.53]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.095, 0.61, 0.37, 0.65]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.095, 0.67, 0.36, 0.71]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ud5a5b7e7c8fe4345b4e76ce590fc3f62",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\"}}, \"texts\": {}, \"shapes\": {}}",
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\"}, \"batch_number\": {\"status\": \"value\", \"value\": \"K12\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u1e7f62eb7d9f05912ca7a05a2b4beed8",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\", \"bbox\": [0.095, 0.35, 0.242, 0.405]}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.42, 0.49, 0.48]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.45, 0.38, 0.49]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.095, 0.57, 0.35, 0.61]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.095, 0.63, 0.36, 0.67]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u4681920aca631b890823a1ccc9cf268d",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"batch_number\": {\"status\": \"value\", \"value\": \"K81\"}, \"transport_record\": {\"status\": \"value\", \"value\": \"799472\"}}, \"texts\": {\"keep_dry_cn\": {\"status\": \"value\", \"value\": \"保持干燥\"}}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ub526b028f8c28232cec2cbf65898f5bc",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"batch_number\": {\"status\": \"value\", \"value\": \"K54\"}, \"transport_record\": {\"status\": \"value\", \"value\": \"179830\"}}, \"texts\": {}, \"shapes\": {\"triangle_border\": {\"present\": true, \"count\": 1, \"center_x\": 0.5, \"center_y\": 0.5, \"height\": 0.3}, \"dot_inside\": {\"present\": true, \"count\": 1, \"center_x\": 0.5, \"center_y\": 0.5, \"height\": 0.05}}}"
+          ]
+        },
+        {
+          "audit_unit_id": "u6e21a72241891c3527cfd935c5333af2",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"certificate_pages\", \"carrier\": \"certificate_page\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-268\"}, \"main_model\": {\"status\": \"value\", \"value\": \"EDU-753\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "udd7ef1fe4f683a85bcfdff9fc74a0074",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\", \"bbox\": [0.095, 0.4, 0.395, 0.45]}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.47, 0.495, 0.52]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.45, 0.39, 0.49]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.095, 0.56, 0.37, 0.59]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.095, 0.61, 0.37, 0.64]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ud9f5b911e66ece0b5752ee5f207d4a05",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"batch_number\": {\"status\": \"value\", \"value\": \"*****\"}, \"transport_record\": {\"status\": \"value\", \"value\": \"326513\"}, \"batch 备注\": {\"status\": \"value\", \"value\": \"K33\"}}, \"texts\": {}, \"shapes\": {}}"
+          ]
+        },
+        {
+          "audit_unit_id": "udc1b39756f5dd468b881948fb7aa8692",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"net_weight\": {\"status\": \"value\", \"value\": \"0.75 kg\"}}, \"texts\": {}, \"shapes\": {}}",
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"back\", \"voided\": false, \"fields\": {\"net_weight\": {\"status\": \"value\", \"value\": \"725 g\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uc7dd7e3b7d027feb69d162603fed912e",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"batch_number\": {\"status\": \"value\", \"value\": \"K7\"}, \"transport_record\": {\"status\": \"value\", \"value\": \"767166\"}}, \"texts\": {}, \"shapes\": {\"triangle_border\": {\"present\": true, \"count\": 1, \"center_x\": 0.5, \"center_y\": 0.5, \"height\": 0.2}}}"
+          ]
+        },
+        {
+          "audit_unit_id": "u4481c34e4e563def6794532f4893549c",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"attached_tag\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {}, \"texts\": {\"keep_dry_en\": {\"status\": \"value\", \"value\": \"keep dry\"}}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u9408e5d18fcf94aae8fe74c3b696eaba",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"missing\", \"value\": null}, \"material_code\": {\"status\": \"missing\", \"value\": null}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.34, 0.395, 0.37]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.095, 0.44, 0.355, 0.47]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.095, 0.48, 0.36, 0.51]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u3311ff1c32feb6a14602486a5184b104",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\", \"bbox\": [0.2, 0.45, 0.4, 0.52]}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-75382\", \"bbox\": [0.2, 0.53, 0.5, 0.6]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.375, 0.4167, 0.625, 0.4583]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.375, 0.5556, 0.5312, 0.5972]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.375, 0.625, 0.546875, 0.6667]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uc919f737cae5c83ee99e5ddbb153c63c",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"attached_tag\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uf2a3e6a350a73203392741fcddc25a7d",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"unreadable\", \"value\": null, \"bbox\": [0.1, 0.35, 0.3, 0.45]}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.1, 0.5, 0.55, 0.6]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.375, 0.28, 0.625, 0.32]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.375, 0.4, 0.625, 0.44]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.375, 0.46, 0.625, 0.5]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u463143f504a9b3bb8fb5fb712fd216b5",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"unreadable\", \"value\": null}, \"material_code\": {\"status\": \"unreadable\", \"value\": null}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.455, 0.395, 0.49]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.095, 0.555, 0.37, 0.59]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.095, 0.605, 0.36, 0.64]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u452af85c10b6584f281516541ded4d30",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"front\", \"voided\": false, \"fields\": {}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uc9368235c802004c3277e4efe11a701b",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u589f46ba447ce26938d368c87122871a",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\", \"bbox\": [0.55, 0.35, 0.65, 0.38]}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.55, 0.42, 0.85, 0.45]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.452, 0.463, 0.48]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.095, 0.531, 0.463, 0.559]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.095, 0.571, 0.463, 0.599]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ub47be305bbb79d76267c663ac4492091",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"batch_number\": {\"status\": \"value\", \"value\": \"P53\"}}, \"texts\": {}, \"shapes\": {}}",
+            "{\"role\": \"package_photos\", \"carrier\": \"outer_package\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"batch_number\": {\"status\": \"value\", \"value\": \"P53\"}, \"transport_record\": {\"status\": \"value\", \"value\": \"649025\"}, \"batch 备注\": {\"status\": \"value\", \"value\": \"K57\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ud5b9c34d79020154ed1df6b10b81b388",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\", \"bbox\": [0.095, 0.35, 0.242, 0.403]}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.425, 0.49, 0.48]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.65, 0.39, 0.68]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.095, 0.76, 0.405, 0.79]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-02-30\", \"bbox\": [0.095, 0.809, 0.405, 0.84]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u30afcc842eaf7f1127eeb334cf9962ce",
+          "issues": [],
+          "evidence_facts": 2,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"document_index\": 1, \"role\": \"package_photos\", \"voided\": false, \"inspection_complete\": true, \"carrier\": \"outer_package\", \"attached_to_package\": null, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\", \"bbox\": [0.095, 0.45, 0.24, 0.49]}, \"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.48, 0.42, 0.52]}}}",
+            "{\"document_index\": 1, \"role\": \"certificate_pages\", \"voided\": false, \"inspection_complete\": true, \"carrier\": null, \"attached_to_package\": null, \"fields\": {\"material_code\": {\"status\": \"value\", \"value\": \"QLAB-753826\", \"bbox\": [0.095, 0.361, 0.395, 0.389]}, \"covered_models\": {\"status\": \"value\", \"value\": [\"EDU-753\"]}, \"valid_from\": {\"status\": \"value\", \"value\": \"2029-01-01\", \"bbox\": [0.095, 0.451, 0.461, 0.479]}, \"valid_to\": {\"status\": \"value\", \"value\": \"2029-07-12\", \"bbox\": [0.095, 0.489, 0.509, 0.517]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uc1beaa46aee4a579ee599c37f462f014",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": null, \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"batch_number\": {\"status\": \"value\", \"value\": \"20320229-75\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uac91f4ce0dc62737d577c5fd11a7404d",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"certificate_pages\", \"carrier\": \"certificate_page\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\"}, \"main_model\": {\"status\": \"value\", \"value\": \"EDU-268\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "udb77849a47a9fb5b8717a3c06cd7c62e",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"package_photos\", \"carrier\": \"product_body\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"model\": {\"status\": \"value\", \"value\": \"EDU-753\"}, \"batch_number\": {\"status\": \"value\", \"value\": \"K8\"}}, \"texts\": {}, \"shapes\": {}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u32a765f6440a3403303a0b145b6dc3a6",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"certificate_pages\", \"carrier\": null, \"carrier_face\": null, \"voided\": false, \"fields\": {}, \"texts\": {}, \"shapes\": {\"dot_inside\": {\"present\": true, \"count\": 3, \"center_x\": [0.5, 0.33, 0.67], \"center_y\": [0.25, 0.75, 0.75]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u39d21b031bea2aff8149b77526419171",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"certificate_pages\", \"carrier\": \"certificate_page\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"T1\": {\"status\": \"value\", \"value\": \"P707\"}, \"T2\": {\"status\": \"value\", \"value\": \"P707\"}, \"T3\": {\"status\": \"value\", \"value\": \"P579\"}}, \"texts\": {}, \"shapes\": {\"dot_inside\": {\"present\": true, \"count\": 3, \"center_x\": [0.5, 0.5, 0.5], \"center_y\": [0.33333, 0.66667, 0.66667]}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ufc0dd6b9b6bbe78e80956bf9029fa692",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"certificate_pages\", \"carrier\": \"certificate_page\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"T1\": {\"status\": \"value\", \"value\": \"P687\"}, \"T2\": {\"status\": \"value\", \"value\": \"P282\"}}, \"texts\": {}, \"shapes\": {\"dot_inside\": {\"present\": true, \"count\": 2, \"center_x\": null, \"center_y\": null, \"height\": null}}}"
+          ],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uf5ae3e503008d3547346b90c12b2fe15",
+          "issues": [],
+          "evidence_facts": 1,
+          "supported_facts": 0,
+          "unsupported_facts": [
+            "{\"role\": \"certificate_pages\", \"carrier\": \"certificate_page\", \"carrier_face\": \"front\", \"voided\": false, \"fields\": {\"T1\": {\"status\": \"value\", \"value\": \"P213\"}, \"T2\": {\"status\": \"value\", \"value\": \"P487\"}, \"T3\": {\"status\": \"value\", \"value\": \"P253\"}}, \"texts\": {}, \"shapes\": {\"dot_inside\": {\"present\": true, \"count\": 2, \"center_x\": null, \"center_y\": null, \"height\": null}}}"
+          ],
+          "unverifiable_facts": []
+        }
+      ],
+      "errors": [],
+      "limitation": "内容核验匹配参考可见事实（材料页、文本与可选区域）；参考标注为不可读的区域单独记为unverifiable，不声称已完成图像OCR认证。",
+      "duration_ms": 274.482,
+      "invocations": 1,
+      "status": "ok"
+    }
+  ],
+  "manifest": "quackguard\\plugin_manifest.json",
+  "input_hashes": {
+    "before": {
+      "inputs": "96ef0116ad40d1e8303c6da4249cbdeebef571ad3ecc1ba49b82daafcac081e5",
+      "outputs": "142c367718a8409f124fffd1886f7ee7c461e883ae2593dadf2c1d1e3e8e2db4",
+      "references": "c1cc05e80d5a9833de21a9dbad016881f75244f32de0fcd8eb85f54c0fbe887f"
+    },
+    "after": {
+      "inputs": "96ef0116ad40d1e8303c6da4249cbdeebef571ad3ecc1ba49b82daafcac081e5",
+      "outputs": "142c367718a8409f124fffd1886f7ee7c461e883ae2593dadf2c1d1e3e8e2db4",
+      "references": "c1cc05e80d5a9833de21a9dbad016881f75244f32de0fcd8eb85f54c0fbe887f"
+    }
+  },
+  "input_unchanged": true,
+  "input_error": null
+}

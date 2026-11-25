@@ -1,0 +1,226 @@
+{
+  "first_run": {
+    "artifact_version": "av_a489476e2465379a03414735",
+    "records": 64,
+    "correct": 37,
+    "accuracy": 0.578125,
+    "applicability_accuracy": 0.984375,
+    "machine_review_rate": 0.859375,
+    "machine_accuracy": 0.6363636363636364,
+    "correct_decisive_coverage": 0.6730769230769231,
+    "quality": 0.606610576923077,
+    "error": 1,
+    "invalid": 0,
+    "missing": 0,
+    "extraneous": 0,
+    "error_codes": {
+      "invalid_model_output": 1
+    },
+    "reason_codes": {
+      "rule_violation": 34,
+      "evidence_insufficient": 8,
+      "rule_satisfied": 19,
+      "rule_not_applicable": 2
+    },
+    "confusion": {
+      "pass": {
+        "pass": 15,
+        "reject": 5,
+        "ambiguous": 3,
+        "error": 1,
+        "invalid": 0,
+        "missing": 0
+      },
+      "reject": {
+        "pass": 5,
+        "reject": 20,
+        "ambiguous": 3,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      },
+      "ambiguous": {
+        "pass": 1,
+        "reject": 9,
+        "ambiguous": 2,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      }
+    },
+    "annotation": {
+      "score": 0.0,
+      "correct": 0,
+      "total": 3,
+      "details": [
+        {
+          "annotation_id": "public-annotation-1",
+          "correct": false,
+          "issues": []
+        },
+        {
+          "annotation_id": "public-annotation-2",
+          "correct": false,
+          "issues": []
+        },
+        {
+          "annotation_id": "public-annotation-3",
+          "correct": false,
+          "issues": []
+        }
+      ]
+    }
+  },
+  "second_run": {
+    "artifact_version": "av_a489476e2465379a03414735",
+    "records": 64,
+    "correct": 39,
+    "accuracy": 0.609375,
+    "applicability_accuracy": 0.984375,
+    "machine_review_rate": 0.8125,
+    "machine_accuracy": 0.6730769230769231,
+    "correct_decisive_coverage": 0.6730769230769231,
+    "quality": 0.6284855769230768,
+    "error": 1,
+    "invalid": 0,
+    "missing": 0,
+    "extraneous": 0,
+    "error_codes": {
+      "invalid_model_output": 1
+    },
+    "reason_codes": {
+      "rule_violation": 32,
+      "evidence_insufficient": 11,
+      "rule_satisfied": 18,
+      "rule_not_applicable": 2
+    },
+    "confusion": {
+      "pass": {
+        "pass": 15,
+        "reject": 5,
+        "ambiguous": 4,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      },
+      "reject": {
+        "pass": 4,
+        "reject": 20,
+        "ambiguous": 3,
+        "error": 1,
+        "invalid": 0,
+        "missing": 0
+      },
+      "ambiguous": {
+        "pass": 1,
+        "reject": 7,
+        "ambiguous": 4,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      }
+    },
+    "annotation": {
+      "score": 0.0,
+      "correct": 0,
+      "total": 3,
+      "details": [
+        {
+          "annotation_id": "public-annotation-1",
+          "correct": false,
+          "issues": []
+        },
+        {
+          "annotation_id": "public-annotation-2",
+          "correct": false,
+          "issues": []
+        },
+        {
+          "annotation_id": "public-annotation-3",
+          "correct": false,
+          "issues": []
+        }
+      ]
+    }
+  },
+  "changed_units": 7,
+  "changes": [
+    {
+      "audit_unit_id": "ub8012080624938a19fe689f64c975e5d",
+      "before": [
+        "reject",
+        "completed"
+      ],
+      "after": [
+        "pass",
+        "completed"
+      ]
+    },
+    {
+      "audit_unit_id": "u5efbbe5106e7225571ac6ab3c4d0664a",
+      "before": [
+        "reject",
+        "completed"
+      ],
+      "after": [
+        "ambiguous",
+        "completed"
+      ]
+    },
+    {
+      "audit_unit_id": "uacad3509c7458635ad08e059c417da11",
+      "before": [
+        "pass",
+        "completed"
+      ],
+      "after": [
+        null,
+        "error"
+      ]
+    },
+    {
+      "audit_unit_id": "u9408e5d18fcf94aae8fe74c3b696eaba",
+      "before": [
+        "pass",
+        "completed"
+      ],
+      "after": [
+        "reject",
+        "completed"
+      ]
+    },
+    {
+      "audit_unit_id": "uf2a3e6a350a73203392741fcddc25a7d",
+      "before": [
+        "reject",
+        "completed"
+      ],
+      "after": [
+        "ambiguous",
+        "completed"
+      ]
+    },
+    {
+      "audit_unit_id": "u463143f504a9b3bb8fb5fb712fd216b5",
+      "before": [
+        "pass",
+        "completed"
+      ],
+      "after": [
+        "ambiguous",
+        "completed"
+      ]
+    },
+    {
+      "audit_unit_id": "u589f46ba447ce26938d368c87122871a",
+      "before": [
+        null,
+        "error"
+      ],
+      "after": [
+        "pass",
+        "completed"
+      ]
+    }
+  ]
+}

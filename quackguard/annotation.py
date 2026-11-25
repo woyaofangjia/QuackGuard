@@ -44,8 +44,6 @@ _STRICT_FORMATS = {
     "valid_to": lambda text: parse_date(text) is not None,
 }
 
-_FULL_FRAME = [0.0, 0.0, 1.0, 1.0]
-
 
 def _material_code_ok(text):
     if not isinstance(text, str):
@@ -68,19 +66,6 @@ def target_field(target):
     return None, None
 
 
-def _union_bbox(documents):
-    boxes = [valid_bbox(doc.get("bbox")) for doc in documents]
-    boxes = [box for box in boxes if box is not None]
-    if not boxes:
-        return list(_FULL_FRAME)
-    return [
-        min(box[0] for box in boxes),
-        min(box[1] for box in boxes),
-        max(box[2] for box in boxes),
-        max(box[3] for box in boxes),
-    ]
-
-
 def _select_document(facts, target, field):
     for fact in facts:
         if (
@@ -90,13 +75,13 @@ def _select_document(facts, target, field):
             continue
         documents = fact.get("documents")
         if not isinstance(documents, list) or not documents:
-            return None, []
+            return None
         for document in documents:
             fields = document.get("fields")
             if isinstance(fields, dict) and field in fields:
-                return document, documents
-        return documents[0], documents
-    return None, []
+                return document
+        return documents[0]
+    return None
 
 
 def _field_value(document, field):
@@ -121,7 +106,7 @@ def _field_value(document, field):
     return None, "unreadable", bbox
 
 
-def build_annotation_output(target, document, documents, review):
+def build_annotation_output(target, document, review):
     field, label = target_field(target)
     if field:
         text, status, bbox = _field_value(document, field)
@@ -131,9 +116,8 @@ def build_annotation_output(target, document, documents, review):
     if text is not None and include_name:
         text = label + "：" + text
     if bbox is None:
+        # 字段未给框时退回该文档自身的可见区域；仍无框则显式失败，不用整帧冒充。
         bbox = valid_bbox(document.get("bbox"))
-    if bbox is None:
-        bbox = _union_bbox(documents)
     return {
         "annotation_id": target["annotation_id"],
         "audit_unit_id": target["audit_unit_id"],
@@ -167,12 +151,17 @@ def annotate_target(gateway, policy, task, target, input_path, review=None):
         return None, fact_traces, AuditError(
             "unknown_annotation_target", target.get("target")
         )
-    document, documents = _select_document(facts, target, field)
+    document = _select_document(facts, target, field)
     if document is None:
         return None, fact_traces, AuditError(
             "fact_target_missing", target.get("material_id")
         )
-    output = build_annotation_output(target, document, documents, review_output)
+    output = build_annotation_output(target, document, review_output)
+    if output["bbox"] is None:
+        return None, fact_traces, AuditError(
+            "annotation_bbox_missing",
+            "模型未给出可核验的标注区域，不用整帧冒充",
+        )
     errors = annotation_errors(output, target, task)
     if errors:
         return None, fact_traces, AuditError("invalid_annotation_output", str(errors))

@@ -27,9 +27,10 @@ bbox是该document内容区域在整页内的归一化坐标，未知时null，�
 inspection_complete表示该文档规定检查区域是否完整清晰。
 包装或附签材料只提取标签，fields固定为model和material_code；
 证明文件fields固定为material_code、covered_models、valid_from、valid_to。
-每个字段结构为{"status":"value|unreadable|missing","value":...}。非value状态value必须为null；
-可加"bbox":[x1,y1,x2,y2]给出该字段原文或遮挡区域的归一化框，未知则省略，不猜测。
-value状态保留字段值原文，不填字段名。covered_models是完整型号字符串数组，其余为字符串。缺失仅在完整清晰范围内确认不存在时使用。
+每个字段结构为{"status":"value|unreadable|missing","value":...,"bbox":[x1,y1,x2,y2]}。非value状态value必须为null。
+每个字段都必须给出bbox：框住该字段文字行；不可读时框住遮挡、模糊或裁切区域；不得用整张图片、整个标签或证明文件区域代替。确实无法定位时才省略bbox。
+value状态保留字段值原文，不填字段名。covered_models是完整型号字符串数组，其余为字符串。
+只有在该文档完整清晰、确认字段根本不存在时才用missing；被遮挡、裁切、模糊或无法读清一律用unreadable，不得用missing代替。
 外包装上的标签carrier=outer_package；附签carrier=attached_tag。
 仅附签用attached_to_package表示是否同时清楚展示其与包装的固定连接；其他情况为null。
 证明文件carrier和attached_to_package均为null。

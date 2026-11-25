@@ -222,6 +222,9 @@ def write_review_page(path, policy, tasks, outputs, input_path):
             '<p class="meta">'
             f"<span>适用性：{_esc(output.get('applicability'))}</span>"
             f"<span>原因码：{_esc(output.get('reason_code'))}</span>"
+            f"<span>产物版本：{_esc(output.get('artifact_version'))}</span>"
+            f"<span>trace：{_esc(output.get('trace_id'))}</span>"
+            f"<span>规则源哈希：{_esc(str(rule.get('source_sha256', ''))[:16])}</span>"
             "</p>"
             f"<p>审核依据：{_esc(output.get('reason'))}</p>"
             "<details><summary>规则原文</summary>"

@@ -21,12 +21,16 @@
 - 本交付的公开集验收指标（GoldGateway 可见事实）：
   - 单元数 64；A=0.90625；U=0.903846；Q=0.905529；M=0.796875；机审正确率=0.921569。
   - 缺失、重复、额外、非法均为 0。
+- 真实模型运行（`glm-4v-flash`，见 `delivery/model_run/`）：A=0.609375（39/64）；U=0.673077；Q=0.628486；适用性正确率 0.984375；执行错误 1。
+- 标注公开样例真实运行：值/状态/标签/材料/页码 3/3 正确，但模型框坐标系统性偏移导致 IoU 不达标，得分 0/7。
 - 上述数字是公开开发集验收结果，用于核对接口与评分算术，不等同隐藏集成绩。
 
 ## 4. 轨迹与冻结
 
 - `delivery/traces/public_gold.trace.jsonl`：公开金标可见事实的抽取轨迹，含 `trace_id`、材料与事实；用于证据定位验收。
 - `delivery/traces/infer.trace.jsonl`：真实 CLI 推理轨迹；未配置模型时以显式 error 记录。
+- `delivery/annotations/`：标注输出、失败清单与事实轨迹；由公开金标可见事实驱动同一 `annotate` 实现，公开样例 3/3 正确、得分 7/7，用于验证标注链路，不计入正式成绩。
+- `delivery/evaluation.json` 与 `delivery/plugin_report.html`：两个评估插件的实际运行报告；`input_unchanged=true`、`errors=0`，输入只读与进程隔离可见。
 - `trace_id` 为运行标识，每次运行不同；冻结记录保留本次实际值，不承诺逐字节复现。
 - `delivery/artifacts/` 为本次 build 的冻结产物；`delivery/manifest_check.json` 记录 manifest 与实际哈希核对结果。
 

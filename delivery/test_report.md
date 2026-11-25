@@ -12,8 +12,8 @@
 python -m pytest tests -q
 ```
 
-- 结果：**90 passed，580 subtests passed**（D10 用例 9 个）。
-- 覆盖 D1–D10：构建、推理、标注、迭代、评估、比较、导出、插件、版本、回归与验收冻结。
+- 结果：**98 passed，580 subtests passed**（D10 用例 9 个，控制台用例 7 个）。
+- 覆盖 D1–D10：构建、推理、标注、迭代、评估、比较、导出、插件、版本、回归与验收冻结；以及本地控制台的导入/建设/审核联动、A/B 隔离、证据接口与路径限制。
 
 ## 3. 干净虚拟环境
 
@@ -24,7 +24,7 @@ python -m venv <临时目录>
 ```
 
 - `pip list` 仅有 `pip` 自身，未安装任何第三方包。
-- `unittest discover` 运行 **90 tests OK**。
+- `unittest discover` 运行 **98 tests OK**。
 
 ## 4. 官方 smoke
 
@@ -58,6 +58,13 @@ python "O2_AI商品审核官_资料包/04_最小对接样例/smoke.py"
 - 生成 `status.html`、`versions.html`、`review.html`、`iteration.html`、`plugin_report.html`。
 - 未配置模型：64 条中 62 条 `model_not_configured`，2 条 B001 `rule_not_applicable`；标注 3 条均显式失败，未产生伪标注。
 
+## 7.1 本地操作控制台
+
+- `python run.py console --workspace <目录>` 启动后，浏览器访问 `http://127.0.0.1:<端口>/`。
+- 页面含 8 个固定入口（规则导入、建设、审核、证据、标注、迭代、版本/回滚、插件）。
+- 实测：页面加载无 JavaScript 错误；审核表 64 行；点击任一行可显示规则原文、结论理由、材料图片与区域框、产物版本、trace 与规则源哈希。
+- A/B 工作区、SQLite、产物目录完全独立；`/media` 与 `/report` 只允许访问当前工作区或赛题材料目录内的文件。
+
 ## 8. 干净交付检查
 
 - 仓库根无 `.env`；`delivery/` 与源码无密钥赋值。
@@ -80,12 +87,16 @@ python "O2_AI商品审核官_资料包/04_最小对接样例/smoke.py"
 ## 11. glm-4v-flash 全量真实推理
 
 - 环境变量：`OPENAI_BASE_URL=https://open.bigmodel.cn/api/paas/v4`、`OPENAI_API_KEY`；只写入本机用户环境，未进入仓库或交付包。
-- 用 `delivery/config.json` 重建（`artifact_version=av_a489476e2465379a03414735`），对公开集 64 条全量真实推理，结果全部完成、0 错误：
+- 用 `delivery/config.json` 重建（`artifact_version=av_a489476e2465379a03414735`），对公开集 64 条全量真实推理：
   - accuracy=0.609375（39/64）
-  - machine_review_rate=0.875（56/64）
-  - machine_accuracy=0.660714
-  - applicability_accuracy=1.0
-  - quality=0.640024
+  - machine_review_rate=0.8125（52/64）
+  - machine_accuracy=0.673077
+  - applicability_accuracy=0.984375
+  - correct_decisive_coverage=0.673077
+  - quality=0.628486
+  - 执行错误 1（`invalid_model_output`），invalid/missing/extraneous 均为 0
+- 标注样例真实运行：3 条的值、状态、标签、材料、页码均正确；`glm-4v-flash` 返回的字段框存在系统性纵向偏移，IoU 0/3 达标，标注得分 0/7。该限制如实保留，未用整帧或文档框冒充。
+- 上述真实运行产物见 `delivery/model_run/`，两轮提示词对比见该目录 `metrics.json`（第一轮 Q=0.606611，修正后 Q=0.628486，7 个单元结论变化）。
 - 兼容性修复：
   1. `glm-4v-flash` 的 `max_tokens` 上限为 1024（原 4096 返回 HTTP 400）。
   2. 模型整体包裹的 Markdown 代码围栏在网关注入前剥离。
@@ -93,5 +104,6 @@ python "O2_AI商品审核官_资料包/04_最小对接样例/smoke.py"
   4. 无值字段省略 `value` 时补 `null`。
   5. 容忍 JSON 尾逗号。
   6. R 系列事实提示只输出识别到或无法辨认的键，缺失键省略，避免 1024 输出上限截断。
+  7. B001 事实提示要求每个字段给出文字行 bbox，并区分 `unreadable` 与 `missing`（遮挡/模糊/裁切一律 `unreadable`）。修正后公开集正确数 37→39，标注第 2 条结论由 `reject` 纠正为 `ambiguous`。
 - 证据插件：结构校验 64/64 通过；内容核验仅 6/64（模型事实文本与参考事实不同，属预期，不影响结论指标）。
 - 该次构建版本与冻结快照不同，仅用于验证模型链路；冻结快照 `delivery/artifacts/` 仍为离线构建。

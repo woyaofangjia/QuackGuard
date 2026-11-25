@@ -1,0 +1,576 @@
+{
+  "command": "evaluate",
+  "status": "ok",
+  "plugin_count": 2,
+  "enabled_count": 2,
+  "disabled_count": 0,
+  "invocations": 2,
+  "errors": 0,
+  "plugins": [
+    {
+      "plugin_id": "quackguard.conclusion",
+      "plugin_version": "0.1.0",
+      "input_schema_version": "1.3.1",
+      "metrics": {
+        "accuracy": 0.03125,
+        "machine_review_rate": 0.03125,
+        "machine_accuracy": 1.0,
+        "applicability_accuracy": 0.03125,
+        "label_only_accuracy": 0.03125,
+        "quality": 0.03341346153846154
+      },
+      "diagnostics": [],
+      "errors": [],
+      "duration_ms": 288.377,
+      "invocations": 1,
+      "status": "ok"
+    },
+    {
+      "plugin_id": "quackguard.evidence_content",
+      "plugin_version": "0.2.0",
+      "input_schema_version": "1.3.1",
+      "metrics": {
+        "valid_structure_count": 64,
+        "evidence_units": 0,
+        "reference_units": 64,
+        "grounded_units": 0,
+        "grounded_fact_rate": null,
+        "unsupported_fact_count": 0
+      },
+      "diagnostics": [
+        {
+          "audit_unit_id": "uec9d90d134e7bd39a0d3416c9d0628f1",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uc6adebe94d8dd1bbe360263760a4bdd0",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "udf8f1afde39ab803cc45b8e03023e683",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u724a4c3ba490ef18dce8647e3d42fa37",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u6e8bf232b71ff6e70e628944fbad51ab",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uad647940352aa145a21fec18265ee486",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u5795173a64dcbc749884037b2221ed52",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ub2a2b7b15a46b368219594909aac5ea2",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ube0f8028a8a1ed021d3023191d788147",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ub8012080624938a19fe689f64c975e5d",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u35a1478f37c0fa360b9c52dc0bffd9ec",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u14129f61966bfaacbad5c11c46f15163",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u68bac81b7ba652fe53b6874064c2fb3a",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u0980ddae209822e375a91ecad75386e9",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u15856353b26e87c3765190d08c92d882",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u20b847565a02d85f3e61ab7f22cb3bdf",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u5af0e1a688b053c4f078352d1960a948",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u0327676440894e14d6e7b8d7642f0d09",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u8aa22e0319ec0e0363c3c319e031fd06",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u7f60ca8a1b2e6fa9fcd015fb26fe37ab",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u5efbbe5106e7225571ac6ab3c4d0664a",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ub99c3fe0483bf8ca9b08912458ccd3f5",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uacad3509c7458635ad08e059c417da11",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u73820032c6461475b019c9557333a540",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u5c3f07605bcf130f5e7c7b910dba8682",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u3a3d5fd62ff5da3a356dc0298488938e",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u154c743f7e20ad7ca7366c608b058d0d",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u17f44a82b05c59f1e26fa8ae1db5b87f",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ud94d8c1699a60961607fbbdc81df68a5",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u05baefb3f13f58475eb734209e13dcf2",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ubfa553dc2c4eb24d4f195c2972b49170",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u46f4eef4925130c6033afa097059bf3a",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u408a4f8dea25cc64000d16aaea9e149f",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u906c2da6d594aad38b8b41b9974af698",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ua9df5148546838d9e1ba5e1f51fd00de",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u43262e78e45325ad844bb28d7b4613dd",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ud5a5b7e7c8fe4345b4e76ce590fc3f62",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u1e7f62eb7d9f05912ca7a05a2b4beed8",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u4681920aca631b890823a1ccc9cf268d",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ub526b028f8c28232cec2cbf65898f5bc",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u6e21a72241891c3527cfd935c5333af2",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "udd7ef1fe4f683a85bcfdff9fc74a0074",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ud9f5b911e66ece0b5752ee5f207d4a05",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "udc1b39756f5dd468b881948fb7aa8692",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uc7dd7e3b7d027feb69d162603fed912e",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u4481c34e4e563def6794532f4893549c",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u9408e5d18fcf94aae8fe74c3b696eaba",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u3311ff1c32feb6a14602486a5184b104",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uc919f737cae5c83ee99e5ddbb153c63c",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uf2a3e6a350a73203392741fcddc25a7d",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u463143f504a9b3bb8fb5fb712fd216b5",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u452af85c10b6584f281516541ded4d30",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uc9368235c802004c3277e4efe11a701b",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u589f46ba447ce26938d368c87122871a",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ub47be305bbb79d76267c663ac4492091",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ud5b9c34d79020154ed1df6b10b81b388",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u30afcc842eaf7f1127eeb334cf9962ce",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uc1beaa46aee4a579ee599c37f462f014",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uac91f4ce0dc62737d577c5fd11a7404d",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "udb77849a47a9fb5b8717a3c06cd7c62e",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u32a765f6440a3403303a0b145b6dc3a6",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "u39d21b031bea2aff8149b77526419171",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "ufc0dd6b9b6bbe78e80956bf9029fa692",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        },
+        {
+          "audit_unit_id": "uf5ae3e503008d3547346b90c12b2fe15",
+          "issues": [],
+          "evidence_facts": 0,
+          "supported_facts": 0,
+          "unsupported_facts": [],
+          "unverifiable_facts": []
+        }
+      ],
+      "errors": [],
+      "limitation": "内容核验匹配参考可见事实（材料页、文本与可选区域）；参考标注为不可读的区域单独记为unverifiable，不声称已完成图像OCR认证。",
+      "duration_ms": 300.152,
+      "invocations": 1,
+      "status": "ok"
+    }
+  ],
+  "manifest": "quackguard/plugin_manifest.json",
+  "input_hashes": {
+    "before": {
+      "inputs": "96ef0116ad40d1e8303c6da4249cbdeebef571ad3ecc1ba49b82daafcac081e5",
+      "outputs": "7fec3236b2d42be5972e87809f7938eb4d490c194d218b73d42494ea95944880",
+      "references": "c1cc05e80d5a9833de21a9dbad016881f75244f32de0fcd8eb85f54c0fbe887f"
+    },
+    "after": {
+      "inputs": "96ef0116ad40d1e8303c6da4249cbdeebef571ad3ecc1ba49b82daafcac081e5",
+      "outputs": "7fec3236b2d42be5972e87809f7938eb4d490c194d218b73d42494ea95944880",
+      "references": "c1cc05e80d5a9833de21a9dbad016881f75244f32de0fcd8eb85f54c0fbe887f"
+    }
+  },
+  "input_unchanged": true,
+  "input_error": null
+}

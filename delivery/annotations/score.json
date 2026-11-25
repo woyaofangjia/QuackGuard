@@ -1,0 +1,24 @@
+{
+  "annotation_score": 7.0,
+  "max_score": 7,
+  "correct": 3,
+  "total": 3,
+  "details": [
+    {
+      "annotation_id": "public-annotation-1",
+      "correct": true,
+      "issues": []
+    },
+    {
+      "annotation_id": "public-annotation-2",
+      "correct": true,
+      "issues": []
+    },
+    {
+      "annotation_id": "public-annotation-3",
+      "correct": true,
+      "issues": []
+    }
+  ],
+  "note": "公开标注样例的链路校验轨迹：用公开金标可见事实驱动同一 annotate 实现，只验证值/状态/标签/材料/页码/IoU 联合判定与产物连接，不计入系统正式成绩。"
+}
