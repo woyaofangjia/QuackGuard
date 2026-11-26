@@ -1,0 +1,78 @@
+{
+  "run": "model_run_2",
+  "artifact_version": "av_a489476e2465379a03414735",
+  "model": "glm-4v-flash",
+  "audit": {
+    "records": 64,
+    "correct": 38,
+    "error": 1,
+    "invalid": 0,
+    "missing": 0,
+    "extraneous": 0,
+    "accuracy": 0.59375,
+    "applicability_accuracy": 0.984375,
+    "machine_review_rate": 0.8125,
+    "machine_accuracy": 0.6730769230769231,
+    "correct_decisive_coverage": 0.6730769230769231,
+    "quality": 0.6175480769230769,
+    "confusion": {
+      "pass": {
+        "pass": 15,
+        "reject": 5,
+        "ambiguous": 4,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      },
+      "reject": {
+        "pass": 4,
+        "reject": 20,
+        "ambiguous": 4,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      },
+      "ambiguous": {
+        "pass": 2,
+        "reject": 6,
+        "ambiguous": 3,
+        "error": 1,
+        "invalid": 0,
+        "missing": 0
+      }
+    },
+    "error_codes": {
+      "invalid_model_output": 1
+    },
+    "reason_codes": {
+      "rule_satisfied": 19,
+      "rule_violation": 31,
+      "evidence_insufficient": 11,
+      "rule_not_applicable": 2
+    }
+  },
+  "annotation": {
+    "score": 0.0,
+    "correct": 0,
+    "records": 3,
+    "failures": 0,
+    "failure_codes": [],
+    "details": [
+      {
+        "annotation_id": "public-annotation-1",
+        "correct": false,
+        "issues": []
+      },
+      {
+        "annotation_id": "public-annotation-2",
+        "correct": false,
+        "issues": []
+      },
+      {
+        "annotation_id": "public-annotation-3",
+        "correct": false,
+        "issues": []
+      }
+    ]
+  }
+}

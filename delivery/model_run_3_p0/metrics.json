@@ -1,0 +1,71 @@
+{
+  "run": "model_run_3_p0",
+  "artifact_version": "av_a489476e2465379a03414735",
+  "audit": {
+    "records": 64,
+    "correct": 43,
+    "error": 1,
+    "invalid": 0,
+    "missing": 0,
+    "extraneous": 0,
+    "accuracy": 0.671875,
+    "applicability_accuracy": 0.984375,
+    "machine_review_rate": 0.765625,
+    "machine_accuracy": 0.7551020408163265,
+    "correct_decisive_coverage": 0.7115384615384616,
+    "quality": 0.6837740384615384,
+    "confusion": {
+      "pass": {
+        "pass": 14,
+        "reject": 4,
+        "ambiguous": 5,
+        "error": 1,
+        "invalid": 0,
+        "missing": 0
+      },
+      "reject": {
+        "pass": 2,
+        "reject": 23,
+        "ambiguous": 3,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      },
+      "ambiguous": {
+        "pass": 1,
+        "reject": 5,
+        "ambiguous": 6,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      }
+    },
+    "error_codes": {
+      "invalid_model_output": 1
+    }
+  },
+  "annotation": {
+    "score": 0.0,
+    "correct": 0,
+    "records": 3,
+    "failures": 0,
+    "failure_codes": [],
+    "details": [
+      {
+        "annotation_id": "public-annotation-1",
+        "correct": false,
+        "issues": []
+      },
+      {
+        "annotation_id": "public-annotation-2",
+        "correct": false,
+        "issues": []
+      },
+      {
+        "annotation_id": "public-annotation-3",
+        "correct": false,
+        "issues": []
+      }
+    ]
+  }
+}

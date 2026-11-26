@@ -366,7 +366,7 @@ CASES = [
     {"rule": "R026", "materials": [M("m1")], "metadata": {"declared_icon": "三角点标"}, "docs": {"m1": doc(shapes={"triangle_border": sh(True), "dot_inside": sh(True, count=1)})}, "label": "pass", "appl": "applicable"},
     {"rule": "R026", "materials": [M("m1")], "metadata": {"declared_icon": "三角点标"}, "docs": {"m1": doc(shapes={"triangle_border": sh(True), "dot_inside": sh(True, count=2)})}, "label": "reject", "appl": "applicable", "note": "点数不符"},
     {"rule": "R026", "materials": [M("m1")], "metadata": {"declared_icon": "三角点标"}, "docs": {"m1": doc(shapes={"triangle_border": sh(None)})}, "label": "ambiguous", "appl": "applicable"},
-    {"rule": "R026", "materials": [M("m1")], "label": "pass", "appl": "applicable", "note": "未申报三角点标"},
+    {"rule": "R026", "materials": [M("m1")], "label": "ambiguous", "appl": "applicable", "note": "未声明且无正面视图，不能直接判满足"},
 
     {"rule": "R027", "materials": [M("m1")], "docs": {"m1": doc(shapes={"circle_icon": sh(True, center_x=0.2), "square_icon": sh(True, center_x=0.5)})}, "label": "pass", "appl": "applicable", "note": "圆在方左"},
     {"rule": "R027", "materials": [M("m1")], "docs": {"m1": doc(shapes={"circle_icon": sh(True, center_x=0.5), "square_icon": sh(True, center_x=0.2)})}, "label": "reject", "appl": "applicable", "note": "圆在方右"},

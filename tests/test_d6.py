@@ -205,19 +205,15 @@ class D6Test(unittest.TestCase):
         self.assertEqual(reversed_box["label"], with_box["label"])
         self.assertEqual(reversed_box["evidence"][0].get("bbox"), None)
 
-    def test_annotate_reuses_review_label_and_fact_region(self):
+    def test_annotate_requires_field_bbox_not_document_region(self):
         output, traces, error = annotate_target(
             Gateway([document(BBOX)]), self.policy, TASK,
             self.target("提取指定材料中的型号完整文本行，包含字段名。"),
             self.rules,
         )
-        self.assertIsNone(error)
+        self.assertIsNone(output)
+        self.assertEqual(error.code, "annotation_bbox_missing")
         self.assertTrue(traces)
-        review = self.review([document(BBOX)])[0]
-        self.assertEqual(output["label"], review["label"])
-        self.assertEqual(output["value"], "型号：EDU-753")
-        self.assertEqual(output["status"], "value")
-        self.assertEqual(output["bbox"], BBOX)
 
     def test_field_bbox_used_for_evidence_and_annotation(self):
         line_box = [0.11, 0.18, 0.28, 0.23]
@@ -233,8 +229,10 @@ class D6Test(unittest.TestCase):
         self.assertEqual(output["bbox"], line_box)
 
     def test_annotate_invalid_value_and_unreadable_keep_review_label(self):
+        invalid_doc = document(BBOX, code="QLAB-75382")
+        invalid_doc["fields"]["material_code"]["bbox"] = BBOX
         invalid, _, error = annotate_target(
-            Gateway([document(BBOX, code="QLAB-75382")]), self.policy, TASK,
+            Gateway([invalid_doc]), self.policy, TASK,
             self.target("提取指定材料中的材料编号完整文本行，包含字段名。"),
             self.rules,
         )
@@ -242,8 +240,10 @@ class D6Test(unittest.TestCase):
         self.assertEqual(invalid["status"], "invalid_value")
         self.assertEqual(invalid["value"], "材料编号：QLAB-75382")
 
+        unreadable_doc = document(BBOX, model=None)
+        unreadable_doc["fields"]["model"]["bbox"] = BBOX
         unreadable, _, error = annotate_target(
-            Gateway([document(BBOX, model=None)]), self.policy, TASK,
+            Gateway([unreadable_doc]), self.policy, TASK,
             self.target("提取指定材料中的型号完整文本行，包含字段名。"),
             self.rules,
         )

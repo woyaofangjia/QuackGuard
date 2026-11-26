@@ -12,7 +12,7 @@
 python -m pytest tests -q
 ```
 
-- 结果：**98 passed，580 subtests passed**（D10 用例 9 个，控制台用例 7 个）。
+- 结果：**97 passed，580 subtests passed**（D10 用例 9 个，控制台用例 6 个）。
 - 覆盖 D1–D10：构建、推理、标注、迭代、评估、比较、导出、插件、版本、回归与验收冻结；以及本地控制台的导入/建设/审核联动、A/B 隔离、证据接口与路径限制。
 
 ## 3. 干净虚拟环境
@@ -96,7 +96,9 @@ python "O2_AI商品审核官_资料包/04_最小对接样例/smoke.py"
   - quality=0.628486
   - 执行错误 1（`invalid_model_output`），invalid/missing/extraneous 均为 0
 - 标注样例真实运行：3 条的值、状态、标签、材料、页码均正确；`glm-4v-flash` 返回的字段框存在系统性纵向偏移，IoU 0/3 达标，标注得分 0/7。该限制如实保留，未用整帧或文档框冒充。
-- 上述真实运行产物见 `delivery/model_run/`，两轮提示词对比见该目录 `metrics.json`（第一轮 Q=0.606611，修正后 Q=0.628486，7 个单元结论变化）。
+- 上述真实运行产物见 `delivery/model_run/`，提示词修正前后对比见该目录 `metrics.json`（第一轮 Q=0.606611，修正后 Q=0.628486，7 个单元结论变化）。
+- 第二次独立回跑（2026-11-26，`delivery/model_run_2/`）：accuracy=0.59375（38/64）、machine_review_rate=0.8125、machine_accuracy=0.673077、quality=0.617548，执行错误 1；6 个单元结论变化，属模型服务端输出波动；标注值/状态/标签 3/3 正确，框 IoU 0/3。
+- P0 修复后第三轮（`delivery/model_run_3_p0/`）：R026 公开集 4/4、B001 证明页缺载体字段可解析；accuracy=0.671875（43/64）、U=0.711538、quality=0.683774，执行错误 1（R050 重复 JSON 键）；标注仍为 0/7。
 - 兼容性修复：
   1. `glm-4v-flash` 的 `max_tokens` 上限为 1024（原 4096 返回 HTTP 400）。
   2. 模型整体包裹的 Markdown 代码围栏在网关注入前剥离。

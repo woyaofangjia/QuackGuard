@@ -447,6 +447,16 @@ class D2Test(unittest.TestCase):
             facts["documents"][0]["fields"]["covered_models"],
             {"status": "missing", "value": None},
         )
+        document = certificate()
+        document.pop("carrier")
+        document.pop("attached_to_package")
+        facts = parse_facts(payload(document), meta)
+        self.assertIsNone(facts["documents"][0]["carrier"])
+        self.assertIsNone(facts["documents"][0]["attached_to_package"])
+        self.assertEqual(
+            facts["documents"][0]["fields"]["covered_models"]["value"],
+            ["EDU-753"],
+        )
         trailing = payload(certificate())
         parsed = parse_facts(trailing[:-1] + ",}", meta)
         self.assertEqual(parsed["status"], "clear")

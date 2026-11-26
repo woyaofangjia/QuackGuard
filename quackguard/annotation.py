@@ -115,9 +115,6 @@ def build_annotation_output(target, document, review):
     include_name = "包含字段名" in (target.get("target") or "")
     if text is not None and include_name:
         text = label + "：" + text
-    if bbox is None:
-        # 字段未给框时退回该文档自身的可见区域；仍无框则显式失败，不用整帧冒充。
-        bbox = valid_bbox(document.get("bbox"))
     return {
         "annotation_id": target["annotation_id"],
         "audit_unit_id": target["audit_unit_id"],

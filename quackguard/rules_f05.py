@@ -76,10 +76,27 @@ def r025(task, materials, params):
     )
 
 
+def _inside_triangle(triangle, dot):
+    values = [
+        triangle.get("center_x"),
+        triangle.get("center_y"),
+        triangle.get("height"),
+        dot.get("center_x"),
+        dot.get("center_y"),
+    ]
+    if any(type(value) not in (int, float) for value in values):
+        return None
+    half = triangle["height"] / 2
+    return (
+        abs(dot["center_x"] - triangle["center_x"]) <= half
+        and abs(dot["center_y"] - triangle["center_y"]) <= half
+    )
+
+
 def r026(task, materials, params):
     evidence = _evidence(materials)
     declared = as_text(task["metadata"].get("declared_icon"))
-    if declared != "三角点标":
+    if declared is not None and declared != "三角点标":
         return applicable_result(
             "pass", "rule_satisfied", "未申报使用三角点标，本条未触发。", evidence
         )
@@ -90,19 +107,28 @@ def r026(task, materials, params):
             "ambiguous", "evidence_insufficient", "正面视图未提交，无法核对三角点标。", evidence
         )
     for material, document in front_docs:
-        triangle = _present(document, "triangle_border")
-        dot_shape = shval(document, "dot_inside")
-        dot = dot_shape.get("present")
-        dot_count = dot_shape.get("count")
-        dot_inside = dot_shape.get("inside")
-        if triangle is True and dot is True and dot_count == 1 and dot_inside is not False:
-            found_pass = True
-        elif (
-            triangle is False
-            or dot is False
-            or dot_inside is False
-            or (type(dot_count) is int and dot_count != 1)
-        ):
+        if document.get("inspection_complete") is not True:
+            found_unknown = True
+            continue
+        triangle_present = _present(document, "triangle_border")
+        dot_present = _present(document, "dot_inside")
+        if triangle_present is True and dot_present is True:
+            triangle = shval(document, "triangle_border")
+            dot = shval(document, "dot_inside")
+            dot_count = dot.get("count")
+            if type(dot_count) is int and dot_count != 1:
+                found_reject = True
+                continue
+            inside = dot.get("inside")
+            if type(inside) is not bool:
+                inside = _inside_triangle(triangle, dot)
+            if inside is True or inside is None:
+                # 结构与点数正确；坐标不可得时不额外猜测位置。
+                found_pass = True
+            else:
+                found_reject = True
+        elif triangle_present is True or dot_present is True:
+            # 三角边框与实心点缺一不可
             found_reject = True
         else:
             found_unknown = True
@@ -118,7 +144,7 @@ def r026(task, materials, params):
             evidence,
         )
     return applicable_result(
-        "ambiguous", "evidence_insufficient", "三角点标结构因遮挡无法确认。", evidence
+        "ambiguous", "evidence_insufficient", "三角点标结构因遮挡或不可辨认无法确认。", evidence
     )
 
 

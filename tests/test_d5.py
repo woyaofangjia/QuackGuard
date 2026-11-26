@@ -140,6 +140,8 @@ CASES = [
     ("R026", [M("m1")], {"m1": doc(shapes={"triangle_border": sh(True), "dot_inside": sh(True, count=1)})}, None, None, True, "pass", "applicable", "一边框一点"),
     ("R026", [M("m1")], {"m1": doc(shapes={"triangle_border": sh(True), "dot_inside": sh(True, count=2)})}, None, None, True, "reject", "applicable", "多个点"),
     ("R026", [M("m1")], {"m1": doc(shapes={"triangle_border": sh(True), "dot_inside": sh(True, count=1, inside=False)})}, None, None, True, "reject", "applicable", "点在框外"),
+    ("R026", [M("m1")], {"m1": doc(shapes={"triangle_border": sh(True, center_x=0.5, center_y=0.5, height=0.2), "dot_inside": sh(True, count=1, center_x=0.8, center_y=0.5)})}, None, None, True, "reject", "applicable", "坐标显示点在框外"),
+    ("R026", [M("m1")], {"m1": doc(shapes={"triangle_border": sh(True, center_x=0.5, center_y=0.5, height=0.2)})}, None, None, True, "reject", "applicable", "缺少实心点"),
     ("R026", [M("m1")], {"m1": doc(shapes={"triangle_border": sh(None)})}, None, None, True, "ambiguous", "applicable", "边框不可确认"),
     ("R026", [M("m1", "product_photos")], {"m1": doc()}, None, None, True, "ambiguous", "applicable", "无正面视图"),
 

@@ -1,0 +1,60 @@
+{
+  "report_version": "1.0",
+  "source": "delivery/model_run",
+  "model": {
+    "provider": "智谱 AI",
+    "name": "glm-4v-flash",
+    "base_url": "https://open.bigmodel.cn/api/paas/v4",
+    "api_key_source": "环境变量 OPENAI_API_KEY（未写入交付包）",
+    "max_tokens": 1024
+  },
+  "artifact_version": "av_a489476e2465379a03414735",
+  "audit": {
+    "units": 64,
+    "completed": 63,
+    "errors": 1,
+    "model_calls": 89,
+    "latency_ms": {
+      "sum": 598864.579,
+      "mean": 9357.259,
+      "max": 23929.73
+    }
+  },
+  "annotation": {
+    "targets": 3,
+    "outputs": 3,
+    "failures": 0,
+    "model_calls": 6
+  },
+  "plugins": [
+    {
+      "plugin_id": "quackguard.conclusion",
+      "plugin_version": "0.1.0",
+      "status": "ok",
+      "duration_ms": 279.233,
+      "errors": 0
+    },
+    {
+      "plugin_id": "quackguard.evidence_content",
+      "plugin_version": "0.2.0",
+      "status": "ok",
+      "duration_ms": 274.482,
+      "errors": 0
+    }
+  ],
+  "storage": {
+    "artifact_bytes": 487851,
+    "note": "仅统计 model_run 目录内文件，不含原始材料包"
+  },
+  "tokens": {
+    "prompt": null,
+    "completion": null,
+    "note": "网关未返回用量；未知保持 null，不按 0 补齐"
+  },
+  "cost_usd": null,
+  "notes": [
+    "自报 cost 不参与计分；用量与费用由组织方按需采集。",
+    "延迟取自 outputs.jsonl 的 latency_ms，为单条审核的本地墙钟耗时。",
+    "全部调用经外部环境变量注入的 Key 发起，交付包内不含密钥。"
+  ]
+}

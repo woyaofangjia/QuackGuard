@@ -119,9 +119,16 @@ def parse_facts(raw, material):
         allowed = required_document_fields | {"bbox"}
         if (
             not isinstance(document, dict)
-            or not required_document_fields <= set(document)
+            or not {"voided", "inspection_complete", "fields"} <= set(document)
             or set(document) - allowed
         ):
+            raise ValueError("Invalid document structure")
+        if role == "certificate_pages":
+            # 证明页的载体与连接字段按契约必须为 null，模型省略时补 null。
+            document = dict(document)
+            document.setdefault("carrier", None)
+            document.setdefault("attached_to_package", None)
+        if not required_document_fields <= set(document):
             raise ValueError("Invalid document structure")
         if (
             document["voided"] is not None
