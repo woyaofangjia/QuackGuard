@@ -128,9 +128,14 @@ def iter_docs(materials, roles=None, active=False):
 
 def carrier_of(document, material):
     carrier = document.get("carrier")
+    role = material.get("role")
+    # 模型常把包装/附签照片里的标签判成 product_body；材料角色更可靠。
+    if carrier == "product_body" and role == "package_photos":
+        return "outer_package"
+    if carrier == "product_body" and role == "tag_photos":
+        return "attached_tag"
     if isinstance(carrier, str) and carrier:
         return carrier
-    role = material.get("role")
     if role == "tag_photos":
         return "attached_tag"
     if role == "certificate_pages":

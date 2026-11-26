@@ -21,6 +21,7 @@ FACT_PROMPT = """只提取当前一张材料图像中的可见事实，不审核
 每个有独立边框的标签、每个图形区域、每页证明文件分别输出一个document。
 只输出严格JSON，不要代码围栏或解释。顶层结构：{"status":"clear|unreadable","documents":[...]}。
 整图无法检查时status=unreadable且documents=[]；清晰但无目标内容时documents=[]。
+只要图中存在标签、图形或证明页，就必须输出对应的document；不得因部分字段模糊而省略document，也不得把局部遮挡写成整图unreadable。
 每个document结构：
 {"voided":true|false|null,"inspection_complete":true|false,
  "carrier":"outer_package|attached_tag|product_body|instruction|certificate_page|null",
@@ -43,7 +44,7 @@ package_spec, certificate_spec, model_text_height, mark_height, circle_interior_
 每个字段结构{"status":"value|unreadable|missing","value":...}，非value时value必须为null；
 可加"bbox":[x1,y1,x2,y2]给出该字段原文或遮挡区域的归一化框，未知则省略，不猜测。
 value保留原文不填字段名；compatible_models、covered_models和fill_percentages为数组，其余为字符串。
-只输出本图实际识别到的字段：完整清晰范围内确认不存在的缺失字段直接省略，不写missing；无法辨认的字段必须写unreadable。
+只输出本图实际识别到的字段：字段读不清时写unreadable（value=null），只有document完整清晰且确认无此字段时才省略该键，不得用missing或无关整图判断代替。
 texts记录关键短文案是否出现，键如 warning_practice, indoor_only, outdoor_longterm,
 step1, step2, step3, keep_dry_cn, keep_dry_en, do_not_invert, invert_phrase,
 removable_in_storage, non_removable_in_use, charge_reading, contents_list, old_model_relation；

@@ -102,6 +102,7 @@ CASES = [
     # R021 型号与材料编号同标签
     ("R021", [M("m1")], {"m1": doc(fields={"model": fv("EDU-753"), "material_code": fv("QLAB-1")}, fields_on_same_label=True)}, None, None, True, "pass", "applicable", "同标签"),
     ("R021", [M("m1")], {"m1": doc(fields={"model": fv("EDU-753"), "material_code": fv("QLAB-1")}, fields_on_same_label=False)}, None, None, True, "reject", "applicable", "同框但分标签"),
+    ("R021", [M("m1")], {"m1": doc(carrier="product_body", fields={"model": fv("EDU-753"), "material_code": fv("QLAB-1")}, fields_on_same_label=True)}, None, None, True, "pass", "applicable", "包装照片被误判为 product_body 时按载体回退"),
     ("R021", [M("a"), M("b")], {"a": doc(fields={"model": fv("EDU-753")}), "b": doc(fields={"material_code": fv("QLAB-1")})}, None, None, True, "reject", "applicable", "分散在两张标签"),
     ("R021", [M("m1")], {"m1": doc(fields={"model": fu(), "material_code": fv("QLAB-1")})}, None, None, True, "ambiguous", "applicable", "字段读不清"),
     ("R021", [M("m1", "product_photos")], {"m1": doc()}, None, None, True, "ambiguous", "applicable", "无标签视图"),
