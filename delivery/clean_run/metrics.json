@@ -1,0 +1,41 @@
+{
+ "ran_at": "2026-11-27",
+ "environment": "Windows + Python 3.13.5; python -S -E; no PYTHONPATH; no QUACKGUARD_MODEL_CACHE; real API",
+ "build_artifact_version": "av_a489476e2465379a03414735",
+ "records": 64,
+ "execution_errors": 0,
+ "conclusion": {
+  "accuracy": 0.890625,
+  "machine_review_rate": 0.875,
+  "machine_accuracy": 0.875,
+  "applicability_accuracy": 1.0,
+  "label_only_accuracy": 0.890625,
+  "quality": 0.9061298076923077
+ },
+ "evidence": {
+  "evidence_units": 62,
+  "grounded_units": 46,
+  "grounded_fact_rate": 0.9476439790575916,
+  "localized_fact_rate": 0.5193370165745856,
+  "misaligned_fact_count": 87,
+  "unsupported_fact_count": 10
+ },
+ "delivery_recorded": {
+  "accuracy": 0.90625,
+  "quality": 0.922837
+ },
+ "delta": {
+  "accuracy": -0.015625,
+  "quality": -0.016707
+ },
+ "changed_units": [
+  {
+   "audit_unit_id": "u0327676440894e14d6e7b8d7642f0d09",
+   "rule": "R026@3.0",
+   "delivery": "reject",
+   "clean_rerun": "pass",
+   "gold": "reject"
+  }
+ ],
+ "note": "干净环境真实 API 复跑，用于验证不依赖本机残留；57/64 与交付 58/64 的差异来自模型服务端波动。"
+}

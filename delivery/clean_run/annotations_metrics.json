@@ -1,0 +1,14 @@
+{
+ "ran_at": "2026-11-27",
+ "environment": "Windows + Python 3.13.5; python -E; no QUACKGUARD_MODEL_CACHE; real API; OCR deps from var/ocrdeps",
+ "records": 3,
+ "failures": 0,
+ "score": 7.0,
+ "points_max": 7,
+ "iou": {
+  "public-annotation-1": 0.7182,
+  "public-annotation-2": 0.6187,
+  "public-annotation-3": 0.6043
+ },
+ "note": "需同时存在仓库根目录的 quackguard_ocr/ 与 RapidOCR 依赖；只装 rapidocr 而缺 quackguard_ocr 时会静默回退模型框（0/7）。"
+}
