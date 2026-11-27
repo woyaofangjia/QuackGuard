@@ -1,7 +1,7 @@
 {
   "status": "ready",
   "protocol_version": "1.3.1",
-  "artifact_version": "av_2275824ec1ba861a0c0018cb",
+  "artifact_version": "av_a489476e2465379a03414735",
   "rule_versions": 62,
   "implementation_status_counts": {
     "implemented": 62
@@ -24,5 +24,5 @@
       "gap": "原文未定义“较小”的尺寸范围或判别方法；附签方案无法唯一判定时返回 ambiguous。"
     }
   ],
-  "build_id": null
+  "build_id": "9914a766478148a3acb9abcc238c0cb4"
 }

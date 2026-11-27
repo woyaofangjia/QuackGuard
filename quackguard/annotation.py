@@ -8,6 +8,7 @@ from .contracts import annotation_errors, input_errors
 from .errors import AuditError
 from .inference import review_task
 from .io_utils import rows, write_json, write_jsonl
+from .grounding import locate_with_thinking
 from .model_gateway import ModelGateway
 from .rule_common import (
     normalize_text,
@@ -127,7 +128,9 @@ def build_annotation_output(target, document, review):
     }
 
 
-def annotate_target(gateway, policy, task, target, input_path, review=None):
+def annotate_target(
+    gateway, policy, task, target, input_path, review=None, locate=None
+):
     if review is None:
         review = review_task(gateway, policy, task, input_path)
     review_output, traces = review
@@ -154,6 +157,11 @@ def annotate_target(gateway, policy, task, target, input_path, review=None):
             "fact_target_missing", target.get("material_id")
         )
     output = build_annotation_output(target, document, review_output)
+    if output["bbox"] is None and locate is not None:
+        bbox, locate_trace = locate()
+        fact_traces.append(locate_trace)
+        if bbox is not None:
+            output["bbox"] = bbox
     if output["bbox"] is None:
         return None, fact_traces, AuditError(
             "annotation_bbox_missing",
@@ -169,7 +177,15 @@ def _optional_int(value):
     return isinstance(value, int) and not isinstance(value, bool)
 
 
-def annotate(input_path, targets_path, artifacts_path, out_path, base_url, api_key):
+def annotate(
+    input_path,
+    targets_path,
+    artifacts_path,
+    out_path,
+    base_url,
+    api_key,
+    locate_fallback=False,
+):
     policy = load_policy(artifacts_path)
     gateway = ModelGateway(
         model=policy.get("model"),
@@ -216,9 +232,30 @@ def annotate(input_path, targets_path, artifacts_path, out_path, base_url, api_k
                 gateway, policy, task, input_path
             )
             traces.extend(reviews[task["audit_unit_id"]][1])
-        output, _, error = annotate_target(
+        locate = None
+        if locate_fallback:
+            material = next(
+                (
+                    item
+                    for item in task["materials"]
+                    if item["material_id"] == target["material_id"]
+                    and item["page_index"] == target["page_index"]
+                ),
+                None,
+            )
+            if material is not None:
+                locate = lambda: locate_with_thinking(
+                    material, target, input_path, base_url, api_key
+                )
+        output, target_traces, error = annotate_target(
             gateway, policy, task, target, input_path,
             review=reviews[task["audit_unit_id"]],
+            locate=locate,
+        )
+        traces.extend(
+            trace
+            for trace in target_traces
+            if trace.get("kind") == "locate_with_thinking"
         )
         if error:
             failures.append({

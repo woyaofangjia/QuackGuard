@@ -1,0 +1,7 @@
+[
+  {
+    "annotation_id": "public-annotation-3",
+    "error_code": "annotation_bbox_missing",
+    "detail": "模型未给出可核验的标注区域，不用整帧冒充"
+  }
+]

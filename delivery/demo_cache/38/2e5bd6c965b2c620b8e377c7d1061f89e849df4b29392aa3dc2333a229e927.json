@@ -1,0 +1,1 @@
+{"content": "{\n  \"status\": \"clear\",\n  \"pairs\": [\n    {\n      \"component_id\": \"T2\",\n      \"model\": \"P707\",\n      \"status\": \"value\"\n    },\n    {\n      \"component_id\": \"T3\",\n      \"model\": \"P579\",\n      \"status\": \"value\"\n    },\n    {\n      \"component_id\": \"T1\",\n      \"model\": \"P871\",\n      \"status\": \"value\"\n    }\n  ]\n}"}

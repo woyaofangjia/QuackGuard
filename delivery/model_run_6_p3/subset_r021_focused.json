@@ -1,0 +1,51 @@
+{
+  "name": "p03_r021",
+  "rule": [
+    "R021"
+  ],
+  "records": 4,
+  "correct": 2,
+  "errors": 0,
+  "rows": [
+    {
+      "unit": "udf8f1afde",
+      "rule": "R021",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "型号与材料编号分散在两张标签上。",
+      "correct": true
+    },
+    {
+      "unit": "u5795173a6",
+      "rule": "R021",
+      "gold": "reject",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "型号与材料编号位于同一标签。",
+      "correct": false
+    },
+    {
+      "unit": "u15856353b",
+      "rule": "R021",
+      "gold": "ambiguous",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "型号与材料编号位于同一标签。",
+      "correct": false
+    },
+    {
+      "unit": "u20b847565",
+      "rule": "R021",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "型号与材料编号位于同一标签。",
+      "correct": true
+    }
+  ]
+}

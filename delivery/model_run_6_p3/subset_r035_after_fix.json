@@ -1,0 +1,51 @@
+{
+  "name": "p1_textkeys2",
+  "rule": [
+    "R035"
+  ],
+  "records": 4,
+  "correct": 2,
+  "errors": 0,
+  "rows": [
+    {
+      "unit": "u73820032c",
+      "rule": "R035",
+      "gold": "pass",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "缺少语言声明要求的关键句。",
+      "correct": false
+    },
+    {
+      "unit": "u4681920ac",
+      "rule": "R035",
+      "gold": "pass",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "缺少语言声明要求的关键句。",
+      "correct": false
+    },
+    {
+      "unit": "u4481c34e4",
+      "rule": "R035",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "缺少语言声明要求的关键句。",
+      "correct": true
+    },
+    {
+      "unit": "uc919f737c",
+      "rule": "R035",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "缺少语言声明要求的关键句。",
+      "correct": true
+    }
+  ]
+}

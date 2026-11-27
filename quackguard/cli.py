@@ -101,6 +101,11 @@ def parser():
         action="store_true",
         help="目标产物已存在且哈希未变时跳过构建",
     )
+    commands.choices["annotate"].add_argument(
+        "--locate-fallback",
+        action="store_true",
+        help="可选：模型未给出字段框时，用定向定位模型补一次框",
+    )
     commands.choices["activate"].add_argument(
         "--gate",
         default=None,
@@ -233,6 +238,7 @@ def execute(args, store):
             args.out,
             base_url=os.environ.get("OPENAI_BASE_URL"),
             api_key=os.environ.get("OPENAI_API_KEY"),
+            locate_fallback=args.locate_fallback,
         )
     if args.command == "iterate":
         return iterate(args.base, args.feedback, args.input, args.out, store=store)

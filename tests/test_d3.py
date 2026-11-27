@@ -683,7 +683,15 @@ class D3Test(unittest.TestCase):
                     output["applicability"], gold["applicability"], gold["case_name"]
                 )
                 self.assertEqual(prediction_errors(output, task), [])
-                self.assertTrue(all("parsed_facts" in t for t in traces))
+                main_traces = [
+                    trace for trace in traces
+                    if trace.get("kind") not in (
+                        "matrix_extraction", "label_boundary", "keep_dry"
+                    )
+                ]
+                self.assertTrue(
+                    main_traces and all("parsed_facts" in t for t in main_traces)
+                )
 
     def test_public_regression_contract_only(self):
         input_path = PUBLIC / "inputs" / "audit_inputs.jsonl"

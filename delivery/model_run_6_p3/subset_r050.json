@@ -1,0 +1,91 @@
+{
+  "name": "p01_r050",
+  "rule": [
+    "R050"
+  ],
+  "records": 8,
+  "correct": 6,
+  "errors": 1,
+  "rows": [
+    {
+      "unit": "u68bac81b7",
+      "rule": "R050",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "证明组件表component_id与型号配对和申报清单不一致，或有缺失/多出。",
+      "correct": true
+    },
+    {
+      "unit": "u46f4eef49",
+      "rule": "R050",
+      "gold": "ambiguous",
+      "pred": "ambiguous",
+      "status": "completed",
+      "error": null,
+      "reason": "部分组件配对不可读，无法逐项核对。",
+      "correct": true
+    },
+    {
+      "unit": "u6e21a7224",
+      "rule": "R050",
+      "gold": "reject",
+      "pred": null,
+      "status": "error",
+      "error": "model_http_error",
+      "reason": "HTTP 429 {\"error\":{\"code\":\"1305\",\"message\":\"该模型当前访问量过大，请您稍后再试\"}}",
+      "correct": false
+    },
+    {
+      "unit": "uac91f4ce0",
+      "rule": "R050",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "证明组件表配对与申报清单逐项一致。",
+      "correct": true
+    },
+    {
+      "unit": "u32a765f64",
+      "rule": "R050",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "证明组件表配对与申报清单逐项一致。",
+      "correct": true
+    },
+    {
+      "unit": "u39d21b031",
+      "rule": "R050",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "证明组件表component_id与型号配对和申报清单不一致，或有缺失/多出。",
+      "correct": true
+    },
+    {
+      "unit": "ufc0dd6b9b",
+      "rule": "R050",
+      "gold": "ambiguous",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "证明组件表component_id与型号配对和申报清单不一致，或有缺失/多出。",
+      "correct": false
+    },
+    {
+      "unit": "uf5ae3e503",
+      "rule": "R050",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "证明组件表component_id与型号配对和申报清单不一致，或有缺失/多出。",
+      "correct": true
+    }
+  ]
+}

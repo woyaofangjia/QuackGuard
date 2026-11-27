@@ -1,0 +1,74 @@
+{
+  "units": [
+    {
+      "unit": "ube0f8028a",
+      "rule": "R010",
+      "old_error": "invalid_model_output",
+      "new_status": "completed",
+      "new_error": null,
+      "new_label": "pass",
+      "new_applicability": "applicable",
+      "gold": "pass",
+      "gold_applicability": "applicable",
+      "correct": true,
+      "responses": 2
+    },
+    {
+      "unit": "u032767644",
+      "rule": "R026",
+      "old_error": "invalid_model_output",
+      "new_status": "completed",
+      "new_error": null,
+      "new_label": "ambiguous",
+      "new_applicability": "applicable",
+      "gold": "reject",
+      "gold_applicability": "applicable",
+      "correct": false,
+      "responses": 2
+    },
+    {
+      "unit": "u43262e78e",
+      "rule": "B001",
+      "old_error": "invalid_model_output",
+      "new_status": "error",
+      "new_error": "invalid_model_output",
+      "new_label": null,
+      "new_applicability": null,
+      "gold": "reject",
+      "gold_applicability": "applicable",
+      "correct": false,
+      "responses": 2
+    },
+    {
+      "unit": "udb77849a4",
+      "rule": "R060",
+      "old_error": "invalid_model_output",
+      "new_status": "completed",
+      "new_error": null,
+      "new_label": "ambiguous",
+      "new_applicability": "applicable",
+      "gold": "pass",
+      "gold_applicability": "applicable",
+      "correct": false,
+      "responses": 2
+    }
+  ],
+  "metrics": [
+    {
+      "name": "thinking_raw",
+      "correct": 44,
+      "error": 4,
+      "accuracy": 0.6875,
+      "correct_decisive_coverage": 0.7307692307692307,
+      "quality": 0.7004807692307692
+    },
+    {
+      "name": "thinking_repaired",
+      "correct": 45,
+      "error": 1,
+      "accuracy": 0.703125,
+      "correct_decisive_coverage": 0.75,
+      "quality": 0.7171874999999999
+    }
+  ]
+}

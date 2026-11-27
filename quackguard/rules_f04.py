@@ -146,6 +146,23 @@ def r020(task, materials, params):
 
 def r021(task, materials, params):
     evidence = _evidence(materials)
+    verdicts = {
+        material.get("same_label_verdict")
+        for material in materials
+        if material.get("same_label_verdict")
+    }
+    if "same" in verdicts:
+        return applicable_result(
+            "pass", "rule_satisfied", "型号与材料编号位于同一标签。", evidence
+        )
+    if "separate" in verdicts:
+        return applicable_result(
+            "reject", "rule_violation", "型号与材料编号分散在两张标签上。", evidence
+        )
+    if "unclear" in verdicts:
+        return applicable_result(
+            "ambiguous", "evidence_insufficient", "无法确认两个字段是否位于同一标签。", evidence
+        )
     same_label_docs = []
     model_docs = []
     code_docs = []

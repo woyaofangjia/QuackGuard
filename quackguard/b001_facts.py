@@ -32,6 +32,8 @@ inspection_complete表示该文档规定检查区域是否完整清晰。
 value状态保留字段值原文，不填字段名。covered_models是完整型号字符串数组，其余为字符串。
 只有在该文档完整清晰、确认字段根本不存在时才用missing；被遮挡、裁切、模糊或无法读清一律用unreadable，不得用missing代替。
 外包装上的标签carrier=outer_package；附签carrier=attached_tag。
+判断依据：标签印在包装盒表面、与盒体共面时为outer_package；
+标签是独立纸片/挂牌、轮廓在盒体之外、通过细线或绳与盒体连接时为attached_tag。
 仅附签用attached_to_package表示是否同时清楚展示其与包装的固定连接；其他情况为null。
 证明文件carrier和attached_to_package均为null。
 当前材料角色：{role}。"""
@@ -51,6 +53,8 @@ def _validate_field(name, value):
             raise ValueError(f"Non-value field must be null: {name}")
         return
     if name == "covered_models":
+        if isinstance(value["value"], str) and value["value"].strip():
+            value["value"] = [value["value"].strip()]
         if not isinstance(value["value"], list) or not all(
             isinstance(item, str) and item.strip() for item in value["value"]
         ):

@@ -1,0 +1,252 @@
+{
+  "name": "p02_carrier",
+  "rule": [
+    "B001",
+    "R060"
+  ],
+  "records": 24,
+  "correct": 21,
+  "errors": 0,
+  "rows": [
+    {
+      "unit": "uec9d90d13",
+      "rule": "R060",
+      "gold": "ambiguous",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "型号位于外包装，满足非较小练习盒要求。",
+      "correct": false
+    },
+    {
+      "unit": "uc6adebe94",
+      "rule": "B001",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "证明文件材料编号与包装标签不一致。",
+      "correct": true
+    },
+    {
+      "unit": "u6e8bf232b",
+      "rule": "B001",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "有效截止日不是合法YYYY-MM-DD公历日期。",
+      "correct": true
+    },
+    {
+      "unit": "u35a1478f3",
+      "rule": "B001",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签材料编号不是QLAB-加6位数字的严格格式；证明文件材料编号与包装标签不一致。",
+      "correct": true
+    },
+    {
+      "unit": "u7f60ca8a1",
+      "rule": "R060",
+      "gold": "ambiguous",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "完整清晰范围内缺少型号字段。",
+      "correct": false
+    },
+    {
+      "unit": "u5efbbe510",
+      "rule": "B001",
+      "gold": "ambiguous",
+      "pred": "ambiguous",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签字段model不可确认。",
+      "correct": true
+    },
+    {
+      "unit": "uacad3509c",
+      "rule": "B001",
+      "gold": "reject",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签与关联证明文件满足全部适用要求。",
+      "correct": false
+    },
+    {
+      "unit": "u3a3d5fd62",
+      "rule": "B001",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签字段model缺失。",
+      "correct": true
+    },
+    {
+      "unit": "u154c743f7",
+      "rule": "B001",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "申报条件category明确不符合B001适用范围。",
+      "correct": true
+    },
+    {
+      "unit": "u906c2da6d",
+      "rule": "B001",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "证明文件材料编号与包装标签不一致。",
+      "correct": true
+    },
+    {
+      "unit": "ua9df51485",
+      "rule": "B001",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签与关联证明文件满足全部适用要求。",
+      "correct": true
+    },
+    {
+      "unit": "u43262e78e",
+      "rule": "B001",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签字段model缺失。",
+      "correct": true
+    },
+    {
+      "unit": "u1e7f62eb7",
+      "rule": "B001",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签与关联证明文件满足全部适用要求。",
+      "correct": true
+    },
+    {
+      "unit": "udd7ef1fe4",
+      "rule": "B001",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签与关联证明文件满足全部适用要求。",
+      "correct": true
+    },
+    {
+      "unit": "u9408e5d18",
+      "rule": "B001",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签与关联证明文件满足全部适用要求。",
+      "correct": true
+    },
+    {
+      "unit": "u3311ff1c3",
+      "rule": "B001",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签材料编号不是QLAB-加6位数字的严格格式；证明文件材料编号与包装标签不一致。",
+      "correct": true
+    },
+    {
+      "unit": "uf2a3e6a35",
+      "rule": "B001",
+      "gold": "ambiguous",
+      "pred": "ambiguous",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签字段model不可确认。",
+      "correct": true
+    },
+    {
+      "unit": "u463143f50",
+      "rule": "B001",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签与关联证明文件满足全部适用要求。",
+      "correct": true
+    },
+    {
+      "unit": "uc9368235c",
+      "rule": "B001",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "申报条件category明确不符合B001适用范围。",
+      "correct": true
+    },
+    {
+      "unit": "u589f46ba4",
+      "rule": "B001",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签与关联证明文件满足全部适用要求。",
+      "correct": true
+    },
+    {
+      "unit": "ub47be305b",
+      "rule": "R060",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "完整清晰范围内缺少型号字段。",
+      "correct": true
+    },
+    {
+      "unit": "ud5b9c34d7",
+      "rule": "B001",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "有效截止日不是合法YYYY-MM-DD公历日期。",
+      "correct": true
+    },
+    {
+      "unit": "u30afcc842",
+      "rule": "B001",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "包装标签与关联证明文件满足全部适用要求。",
+      "correct": true
+    },
+    {
+      "unit": "udb77849a4",
+      "rule": "R060",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "型号位于外包装，满足非较小练习盒要求。",
+      "correct": true
+    }
+  ]
+}

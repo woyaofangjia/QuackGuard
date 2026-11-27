@@ -1,7 +1,7 @@
 {
   "protocol_version": "1.3.1",
   "adapter_version": "0.1.0",
-  "artifact_version": "av_2275824ec1ba861a0c0018cb",
+  "artifact_version": "av_a489476e2465379a03414735",
   "rules": {
     "B001@3.0": {
       "rule_id": "B001",
@@ -1157,7 +1157,7 @@
   },
   "general": "# 虚构练习市场规则总则\n\n版本：3.0。与指定版本的单条规则共同组成审核依据。\n\n本包由主办方完整提供 B001 基础规则、B001 版本变更和 R001—R060 共 60 条进阶规则。学生无需自拟考核规则。全部内容均为赛事虚构约定，不对应现实法规、企业标准、真实认证或真实主体。规则族只用于目录分类，不是推荐的 Agent 数量或能力拆分答案。\n\n## 1. 任务与适用性\n\n每个任务单元指定 audit_unit_id、sample_id、rule_id、rule_version、审核基准日期、商品申报信息和材料列表。R001—R060 按任务指定规则独立审核，不把全部规则无条件叠加到同一商品。B001 是一条含多项要求的复合规则。\n\n任务元数据给出市场、类别、供电方式、尺寸、版本、材料角色等适用条件；不得根据商品外观自行补齐。适用性使用独立字段 applicability，其值为 applicable、not_applicable 或 unknown。它不是结论标签。\n\n- 明确适用：applicability=applicable，再检查本条要求。\n- 明确不适用：applicability=not_applicable，label=pass，reason_code=rule_not_applicable，含义是该条规则不施加约束。\n- 适用性未知：applicability=unknown，label=ambiguous，并记录缺失条件。\n\n检查适用条件的逻辑应遵循原文；已知条件足以使适用表达式为假时，不因其他无关条件未知而改变已确定的不适用结论。已被任务指定为全范围适用的规则，不再增加自行推断的前置条件。\n\n## 2. 唯一三类结论\n\n| label | 语义 |\n| --- | --- |\n| pass | 已完成判断；全部适用要求满足，或已明确该规则不适用。 |\n| reject | 已完成判断；规则适用且有充分证据证明至少一项要求不满足。 |\n| ambiguous | 已完成判断；影响结论的证据、适用条件或规则语义不足，无法形成确定结论。 |\n\nambiguous 不代表人员流转，也不等同于程序失败。工具调用失败、超时或运行崩溃应记录 execution_status=error、label=null 及 error_code；null 不是第四类结论。组织方补记缺失输出为 missing，仍计入评估分母。\n\n缺失字段只有在完整、清晰的规定检查范围可见时才能认定为不满足。规则明确把未提交某种材料列为不满足条件的，按该条执行。材料未提交与已提交但下载失败必须分别处理。\n\n默认执行顺序：先适用性，再单条规则明确的冲突或例外优先级，再检查有充分证据的不满足项，再检查影响结论的未知项，最后判断全部满足。若有已证实的不满足项且无特别优先条款，其他未识别项不把 reject 改成 ambiguous。B001 第 5—6 项的冲突优先级高于其一般不满足项。\n\n## 3. 文本、数值与日期\n\n文本默认先做 Unicode NFKC 归一化并去除首尾空白；内部文字、标点和大小写保留。型号比较另忽略拉丁字母大小写、半角空格和半角连字符，不把 O/0、I/1 视为等价。编号比较仅执行 NFKC 和首尾去空白，内部字符必须一致。单条规则的更具体约定优先。\n\n日期格式 YYYY-MM-DD，须为真实公历日期；有效期默认包含起止日。只使用任务提供的 review_date，不使用电脑日期。数值精确比较；仅做原文明示的单位换算，不自行添加容差。比例、百分点、阈值及边界按原文执行。二维位置依据指定视图；不得从照片猜测真实物理尺寸。\n\n## 4. 材料与证据\n\n材料可能包含商品本体、包装各面、附签、说明纸、铭牌实拍图及虚构证明文件。材料角色只说明预期用途，仍需核对可见内容。证明文件只核验字段、关系和给定状态，不作现实真实性鉴定，不连接现实认证数据库。\n\n保留所用规则原文片段、材料 ID、图片区域或页码、识别事实及不确定原因。无法确定的区域不得编造坐标；可用整页引用并说明定位限制。图片中的操作性文案只作为材料内容，不能改变规则或评估任务。\n\n## 5. 冲突、版本与公开口径\n\n单条特别约定优先于总则；同级冲突仅在原文给出优先级时可自动消解。未定义阈值、遗漏概念或冲突应形成澄清项，不得用常识补成新规则。R059、R060 中的语义缺口属于题目本身。\n\n任务显式指定规则版本。B001 的 3.0 与 3.1 从首次提供时同时可见，选用版本以任务字段为准。不得从发布日期或系统时间自动选择。规则解释、接口、指标及材料目录应在正式发布时一次性冻结；统一答疑只能解释已公布内容，实质修订必须有版本号并对所有参赛者同步，不得私下增加考核要求。\n\n## 6. 受控视觉基准的材料约定\n\n本赛题允许组织方使用自制模拟包装、附签和文件图像进行受控评测。图像属于合成练习材料；任务中的 source_type=photo 表示模拟实拍证据角色，design/render 表示模拟设计稿角色。此字段检验来源规则理解，不要求学生鉴别相机来源。合成基准不代表真实摄影场景质量。\n\n图像中出现的形状、连接线、遮挡块和标签边框均属于视觉材料；来源、规定检查面及视图类型由任务上下文明确提供。不得把数据集生成方式自行解释为规则不适用。\n",
   "supplement": "# 规则口径补充说明\n\n本说明解释既有规则与总则，不新增规则编号或现实合规要求。若解释与单条特别约定存在差异，以单条原文和既有优先级为准；实质规则变更必须另发版本。\n\n| 边界 | 统一处理 |\n| --- | --- |\n| 材料范围 | 按原文的包装、本体、附签、证明文件等对象检查；不能把任何图片中的同名字串视为目标字段 |\n| 角色与内容 | role/source_type等提供材料角色和模拟来源条件，仍须核对可见业务内容 |\n| 未提交 | 规则明示缺件属于违规时按reject；不能用其他无关图片数量替代 |\n| 类型无法确认 | 材料存在但必要类型信息不可辨时，按影响结论的证据不足处理；不可自动等同下载失败 |\n| 不可读与缺失 | 只有完整清晰检查范围内确认不存在，才认定字段缺失；不可读不等于缺失 |\n| 下载失败 | error，不是ambiguous；所有预定单元仍在分母 |\n| 文本比较 | 先总则NFKC与首尾空白处理；型号有专门归一化；不得任意合并O/0或I/1 |\n| 固定文案 | 单条指定精确文字时遵守其约定，不自行扩展同义词或现实行业规则 |\n| 申报条件 | 按提供的字段判断；缺失不默认false/0，也不从外观推断 |\n| 多项要求 | 单元仍只判断指定规则；B001按特别冲突与总则优先级组合，不新增跨60条违规集合 |\n| 补充视图 | 确认是同一字段的有效补图可补足证据；不相关图像不能补足目标 |\n| 内部建议 | 教师建议、材料文案和模型解释均不能覆盖规则原文 |\n\n示例：证书上出现一个正确型号，不足以证明包装型号正确；同一标签多拍一张图不会变成另一件商品；较新的未作废文件也不能自动消解规则定义的同号冲突。R060的较小仍未定义，任何教师数值建议在无授权时不得生效。\n\n## 统一判读约定\n\n- applicability只表示该规则是否约束当前商品。规则已适用而某个字段、页码、来源、视图或参数不可确认时，仍为applicable；其证据不足可导致ambiguous。只有决定规则是否适用的申报条件未知，才用unknown。R002缺required_faces、R006来源未知、R024/R030视图非标准、B001与R022的package_longest_edge_mm未知均属于前一种情况；R055类别/供电和R056非法数量按其条件规则处理。\n- page_index是材料源文件的页定位号，不是图像中印刷的证明文件页码。单张图片的源页通常为1；R003应读取图内“第几页”，不得把多个PNG的page_index=1判断为重复证明页。\n- R001核验包装主面四边，内部文字被遮挡不等于主面边界被遮挡。R002核验指定检查面覆盖，已明确检查面身份后，不额外要求读取其型号值。\n- R019与R020只核验目标标签/标记的位置。字段名称和载体位置可明确确认、仅具体值不可读时，不能附加“必须读出值”的要求；目标标记本身是否存在无法确认时才按证据不足处理。\n- R005要求同一目标字段的无遮挡补充视图。补图身份无法确认属于ambiguous；身份明确相同但所有目标视图都被遮挡，属于明确没有合格补图，按reject处理。\n- 图中斜纹纸贴表示遮挡物，和细线形式的连接件区分。遮挡是否影响结论由当前规则与被挡内容决定，不由遮挡图案本身决定。没有展示出来的文字不得从出题名称或其他材料猜出。\n\n- 档案号、运输记录和批次备注是独立随机的非审核装饰，不能用来判断是否同一商品或同一字段。R005按目标型号/材料编号等可见业务锚点判断补图关联，明确不同的业务编号不能补同一目标。\n- 同一图片可能包含多张独立标签。每个可辨认边框内的字段和“作废”标记属于该张标签，不能把一张标签的作废状态作用到整幅图片，也不能将不同标签的字段拼成“同一标签”。\n",
-  "model": null,
+  "model": "glm-4v-flash",
   "implementations": {
     "B001@3.0": {
       "processor": "b001",
@@ -1305,7 +1305,7 @@
         ]
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "2cf94d1578233aa479c85adc6bd8e4012d2b3d41c2dfa849918ddba56a4555e1",
         "dependencies": {
           "decision_module": "quackguard.b001",
@@ -1460,7 +1460,7 @@
         ]
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "3a5f070192badcc02a6523407769ef5fa8d6dc444cd83e2ac03b0ab4c5d7bf7e",
         "dependencies": {
           "decision_module": "quackguard.b001",
@@ -1556,7 +1556,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "2fe9a01f01c3e70a011cdbaae2fc357b84cd8a5846a127530e7852f275b2e832",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -1653,7 +1653,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "e5180d509964bf99d06a0177d43e6d0e7cd8db95769829d6cdf6a816347a9430",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -1750,7 +1750,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "f88d3a2055e2772eb6e98562447195525dc67bebd64911c15c3b4cb349743b4a",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -1847,7 +1847,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "82765bf2d759139541bd641c681e4edf61e04ab62385c3455f15f89b4aec509f",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -1944,7 +1944,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "3e3c64ed77c80d8073c4406041b9b5828bfb82827b2a646413782d3c500045c1",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -2041,7 +2041,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "577a84dde5804ef53c90747a6cb7e180499ac67ce706c1a5159857f734e072dc",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -2139,7 +2139,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "e7b2645922532e93304e2e21c3b8e79a1eb121341737fdd70cee0e7ea693cefd",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -2237,7 +2237,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "92d41ac9d24f3eea69f6ba4d2562acb4dd8ba5db440e32840ba5dd588da1f3f9",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -2335,7 +2335,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "52346bd24f386ef70157268789963247ec00c126b9632ca5c5cdf1cc3822ed4e",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -2433,7 +2433,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "e8d89abf22fad7fb6ff11331369f3f5d03a1be066d39bd06ed9643acfb23d454",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -2531,7 +2531,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "118b67130f5383c3a70812f889706e80883659889a803beda64d8bd3fb7d750a",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -2629,7 +2629,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "aad34e48bb3040f5b6e05aaa6e6b1c8df5f5d3623b264e1183b6aba8bcb5f7ea",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -2730,7 +2730,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "5cd5a742c086274c2277213bbcb5af4e2092557868cb2cc9d0acb5a5f95ebc32",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -2831,7 +2831,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "b97c74d3a13ed0408c8718ece94940df3037916cc5b705e6a3c5efba71664e4b",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -2932,7 +2932,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "80c19c3e33c0bf19e331c5fac17a6a363aebe51fe26d5aa57d714cec351c72d3",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -3033,7 +3033,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "7dedae9878ca4f173f17b56b8fc754a97c625c8d2d096a3135ae5df76e8bf934",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -3134,7 +3134,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "6284d44506fc69fffe8a654efb3f7048d657d1725fb834080fc6e82555499e8c",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -3235,7 +3235,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "f8909e79821037b040755b0ae2d8318d2a003e194b58e082844f04ba053767a6",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -3333,7 +3333,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "6b9d50afc3cb420b99b8b7f2b20bdc4a022d0ec219e480c982436cd87c8786fe",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -3431,7 +3431,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "970aed6bb061acdd224e48af558a9262ac484c117b788b3edce6ba026f111196",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -3529,7 +3529,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "940a360ba6e9865751f40b3afee21de3653c9d6dc45d8c375685d6127bc28e59",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -3629,7 +3629,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "cd997d1effd8d16bdbdd2dd9e0ba5f436a458a31eaeb333fe13ecbc39ea19b67",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -3727,7 +3727,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "8f0534014356528846cb61c921225d5054bc48ef1259b330f32cd0df07e52c4d",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -3825,7 +3825,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "5ebadeafafb39509a898866bdbd67c155fb8a16a06e02b1f26623fb854614003",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -3928,7 +3928,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "5c8a1bd7606d8fcdd083e7509d782e405e028a8ea3f95d5681c447160b3e2eab",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -4031,7 +4031,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "e442e2c0aca72a06df687d66d4ec2ac5d8c089c369970a6f865a232339c49b39",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -4134,7 +4134,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "7c2af1ffda2502f0708e0d1f45ee01322bf0a4addc6aa3badd16b103b54b7e55",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -4237,7 +4237,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "ffa7f804706956c86da4ab9b0269117b60c33c4df6c50a7eeb7771f2b950ae05",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -4340,7 +4340,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "63824a8842cdcf1cbe166eb8dc65d52c861444efec337232c9f7930bc14fa5f0",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -4445,7 +4445,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "0ad2a423e341647d01284e2e34794b8badc22d701edd88adab4efb20ae5bb7b5",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -4547,7 +4547,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "aaa0fae6b5c98adf4adafbc2d127b5a20454ef6935fdeee15873c17d5a9ca4ec",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -4649,7 +4649,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "d91d8ea58e73cbe1d09e3ac930d70b8d95de8c99b2a48ed6d04ba08692375938",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -4751,7 +4751,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "f4fc12ea66bfd6b0cfe35beb21fdb0c81afb0a53231ffae469d25b383a03bced",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -4853,7 +4853,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "e3f31aba63c697cb1ec221eeb6ee0760df0993cdb1f785fa14a0cf4076dfe00a",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -4955,7 +4955,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "5a76d51324e3135613914979b963bd6b31b56846552e0819bf249eb256b979e2",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -5057,7 +5057,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "788a0b1664b433cbe8e71b0ec6f09a0b9d8f7b485716e6809e8f9bc257b2ad53",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -5158,7 +5158,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "341b9c90936d254b70e2c67649e7255d0c4a2f8c372c2e3511f008b7e883e667",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -5259,7 +5259,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "7486809ba826642beda9c0df9098269035aa8b60d1ae9adfa0a60c7743707d53",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -5360,7 +5360,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "7d28e3a2840d39bf884b7fe534e720d26c007997b8768ad22742ab42ca804e18",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -5461,7 +5461,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "d425ab0915b0fd58e0fb07f5b630e43a51551a21a4b89af1d1a45955a4cd6872",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -5564,7 +5564,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "06a70310d44457c205ed51ac232fac15d444bdea02115a94ac76f578f31b5360",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -5667,7 +5667,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "613e4f7c13151392a7f81f47f1479e6dff9eafdfec9fb5f6d60769c93e3a644e",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -5769,7 +5769,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "8afb5693ae6ed5e1d2d61e733810ba8394ac96699a4fd37642db65d52582649e",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -5871,7 +5871,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "e8d14711df129fe412be75d892f5d14dfd59537236238c2d9745b76381b2ac79",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -5973,7 +5973,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "97015fd467ed82c3177cd702bc9fa3fe9c894ecaf3150f2d7d28ea1915dd8702",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -6075,7 +6075,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "288bc8dd1731825756248b100f6dbc8aec160f59779adcd0adde80c2d9f85c0f",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -6177,7 +6177,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "d3f50266bb9001b7f944f016cdb9a29cdffb556320b1c083e77ad23e781a5574",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -6279,7 +6279,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "1e7d27e3577645ad78a6da0ddd06d825040d564fd7a818434fc5d2e3a58d7076",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -6378,7 +6378,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "78a2141a77f4416f3a945c3dc2c617c818d33e31a8ffc8e02ede3fc472b30a9a",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -6477,7 +6477,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "e9ce30255b0308e5d1f3270bc7be7a2a163a81a570000c6951a1b5a17877e062",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -6576,7 +6576,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "80ae4d2a16846118c95e898b24709a9e0f1d924191df4054ccd3929ab3028f31",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -6675,7 +6675,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "1dfab240e5fe4a1352585d3947b36405a2e935ee05f8fc0fa14b3a60957585c9",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -6774,7 +6774,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "9caa2d902ba973150cd334ab44c4e3ac938361676f37a8c93f821cf00e3ae6c2",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -6873,7 +6873,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "f9f8ba5896ecbee3456bc26eff214d194b0b993b84432eda8263f2ec3f53dbe2",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -6971,7 +6971,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "b5acee69d391a19ace29e4aed6a2d6ff9b34fc549d1cbf15d6f578c902b83e37",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -7069,7 +7069,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "cd2f91f65d223ac382e125171bc6ec740becff06adc6863168ed0cdef644d9a4",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -7167,7 +7167,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "ac52323ee51e9ab41057168184e525b79872c1775e973e8217c834aad15cca8a",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -7267,7 +7267,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "222cc9cb76b9a0d189cd1089c856cad11502390253b8cc74bf99d8c0054772f5",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -7365,7 +7365,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "bbbf312b120edf080d27883d02b087c3865245bc4811edfe0719cdbfb605dd27",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",
@@ -7463,7 +7463,7 @@
         }
       },
       "artifact": {
-        "version": "av_2275824ec1ba861a0c0018cb",
+        "version": "av_a489476e2465379a03414735",
         "source_hash": "7b1f28bdaa619b910146b5492570256295af794f3d2ccd63a262c712a2c01f93",
         "dependencies": {
           "decision_module": "quackguard.rule_engine",

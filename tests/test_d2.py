@@ -448,6 +448,16 @@ class D2Test(unittest.TestCase):
             {"status": "missing", "value": None},
         )
         document = certificate()
+        document["fields"]["covered_models"] = {
+            "status": "value",
+            "value": "EDU-753",
+        }
+        facts = parse_facts(payload(document), meta)
+        self.assertEqual(
+            facts["documents"][0]["fields"]["covered_models"]["value"],
+            ["EDU-753"],
+        )
+        document = certificate()
         document.pop("carrier")
         document.pop("attached_to_package")
         facts = parse_facts(payload(document), meta)

@@ -1,0 +1,43 @@
+{
+  "score": 0.0,
+  "details": [
+    {
+      "annotation_id": "public-annotation-1",
+      "pred_bbox": [
+        0.14,
+        0.19,
+        0.32,
+        0.24
+      ],
+      "gold_bbox": [
+        0.11597222222222223,
+        0.1824074074074074,
+        0.28125,
+        0.22870370370370371
+      ],
+      "iou": 0.4888,
+      "value_ok": true,
+      "status_ok": true,
+      "label_ok": true
+    },
+    {
+      "annotation_id": "public-annotation-2",
+      "pred_bbox": [
+        0.185,
+        0.193,
+        0.275,
+        0.227
+      ],
+      "gold_bbox": [
+        0.11597222222222223,
+        0.1824074074074074,
+        0.2423611111111111,
+        0.22870370370370371
+      ],
+      "iou": 0.2802,
+      "value_ok": true,
+      "status_ok": true,
+      "label_ok": true
+    }
+  ]
+}

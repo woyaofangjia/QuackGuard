@@ -13,14 +13,70 @@ MISSING = {"status": "missing", "value": None}
 _TRAILING_COMMA_RE = re.compile(r",(\s*[}\]])")
 
 
+def _balance_json(text):
+    stack = []
+    in_string = False
+    escaped = False
+    output = []
+    for char in text:
+        if in_string:
+            output.append(char)
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                in_string = False
+            continue
+        if char == '"':
+            in_string = True
+            output.append(char)
+        elif char in "{[":
+            stack.append(char)
+            output.append(char)
+        elif char in "}]":
+            if stack:
+                stack.pop()
+            output.append(char)
+        else:
+            output.append(char)
+    if in_string:
+        output.append('"')
+    for opener in reversed(stack):
+        output.append("}" if opener == "{" else "]")
+    return "".join(output)
+
+
 def load_model_json(raw):
-    """解析模型原始输出；容忍尾逗号这类常见 JSON 语法瑕疵。"""
+    """解析模型原始输出；容忍尾逗号、截断括号这类常见 JSON 瑕疵。"""
     from .contracts import strict_loads
 
-    try:
-        return strict_loads(raw)
-    except ValueError:
-        return strict_loads(_TRAILING_COMMA_RE.sub(r"\1", raw))
+    candidates = [raw, _TRAILING_COMMA_RE.sub(r"\1", raw)]
+    for candidate in list(candidates):
+        candidates.append(_balance_json(candidate))
+    for candidate in candidates:
+        try:
+            return strict_loads(candidate)
+        except ValueError:
+            continue
+    # 最后兜底：模型偶尔在完整对象后追加解释文字、重复输出或重复键；
+    # 只取第一个完整 JSON 值（重复键以后值覆盖），避免整条记录判为解析失败。
+    def invalid_constant(value):
+        raise ValueError("Non-finite JSON constant: " + value)
+
+    decoder = json.JSONDecoder(parse_constant=invalid_constant)
+    for text in (raw.lstrip(), _balance_json(raw).lstrip()):
+        starts = [0, text.find("{")]
+        for start in starts:
+            if start < 0:
+                continue
+            try:
+                value, _ = decoder.raw_decode(text[start:])
+            except ValueError:
+                continue
+            if isinstance(value, (dict, list)):
+                return value
+    raise ValueError("Invalid model JSON")
 
 
 def normalize_text(value):

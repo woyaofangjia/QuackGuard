@@ -1,0 +1,311 @@
+{
+  "baseline": {
+    "name": "p1_baseline",
+    "correct": 48,
+    "records": 64,
+    "error": 0,
+    "accuracy": 0.75,
+    "applicability_accuracy": 1.0,
+    "correct_decisive_coverage": 0.8269230769230769,
+    "quality": 0.773076923076923,
+    "error_codes": {},
+    "confusion": {
+      "pass": {
+        "pass": 18,
+        "reject": 4,
+        "ambiguous": 2,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      },
+      "reject": {
+        "pass": 3,
+        "reject": 25,
+        "ambiguous": 0,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      },
+      "ambiguous": {
+        "pass": 3,
+        "reject": 4,
+        "ambiguous": 5,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      }
+    },
+    "latency_ms": {
+      "mean": 10056.14191093764,
+      "p50": 9844.325400001253,
+      "p95": 18654.582300001493,
+      "max": 20987.971300000936
+    }
+  },
+  "p3": {
+    "name": "p3",
+    "correct": 58,
+    "records": 64,
+    "error": 0,
+    "accuracy": 0.90625,
+    "applicability_accuracy": 1.0,
+    "correct_decisive_coverage": 0.9615384615384616,
+    "quality": 0.9228365384615383,
+    "error_codes": {},
+    "confusion": {
+      "pass": {
+        "pass": 24,
+        "reject": 0,
+        "ambiguous": 0,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      },
+      "reject": {
+        "pass": 2,
+        "reject": 26,
+        "ambiguous": 0,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      },
+      "ambiguous": {
+        "pass": 2,
+        "reject": 2,
+        "ambiguous": 8,
+        "error": 0,
+        "invalid": 0,
+        "missing": 0
+      }
+    },
+    "latency_ms": {
+      "mean": 10903.127292187775,
+      "p50": 10493.578000001435,
+      "p95": 19324.680300000182,
+      "max": 28498.483600000327
+    }
+  },
+  "per_rule": {
+    "B001": {
+      "p1": {
+        "correct": 18,
+        "total": 20
+      },
+      "p3": {
+        "correct": 19,
+        "total": 20
+      },
+      "delta": 1
+    },
+    "R005": {
+      "p1": {
+        "correct": 2,
+        "total": 4
+      },
+      "p3": {
+        "correct": 4,
+        "total": 4
+      },
+      "delta": 2
+    },
+    "R010": {
+      "p1": {
+        "correct": 2,
+        "total": 4
+      },
+      "p3": {
+        "correct": 4,
+        "total": 4
+      },
+      "delta": 2
+    },
+    "R014": {
+      "p1": {
+        "correct": 4,
+        "total": 4
+      },
+      "p3": {
+        "correct": 3,
+        "total": 4
+      },
+      "delta": -1
+    },
+    "R021": {
+      "p1": {
+        "correct": 1,
+        "total": 4
+      },
+      "p3": {
+        "correct": 2,
+        "total": 4
+      },
+      "delta": 1
+    },
+    "R026": {
+      "p1": {
+        "correct": 4,
+        "total": 4
+      },
+      "p3": {
+        "correct": 4,
+        "total": 4
+      },
+      "delta": 0
+    },
+    "R035": {
+      "p1": {
+        "correct": 4,
+        "total": 4
+      },
+      "p3": {
+        "correct": 4,
+        "total": 4
+      },
+      "delta": 0
+    },
+    "R041": {
+      "p1": {
+        "correct": 3,
+        "total": 4
+      },
+      "p3": {
+        "correct": 4,
+        "total": 4
+      },
+      "delta": 1
+    },
+    "R048": {
+      "p1": {
+        "correct": 3,
+        "total": 4
+      },
+      "p3": {
+        "correct": 4,
+        "total": 4
+      },
+      "delta": 1
+    },
+    "R050": {
+      "p1": {
+        "correct": 4,
+        "total": 8
+      },
+      "p3": {
+        "correct": 7,
+        "total": 8
+      },
+      "delta": 3
+    },
+    "R060": {
+      "p1": {
+        "correct": 3,
+        "total": 4
+      },
+      "p3": {
+        "correct": 3,
+        "total": 4
+      },
+      "delta": 0
+    }
+  },
+  "fixed": [
+    {
+      "audit_unit_id": "u9408e5d18fcf94aae8fe74c3b696eaba",
+      "rule_id": "B001",
+      "case": "79毫米附签",
+      "gold": "pass",
+      "p1": "ambiguous",
+      "p3": "pass"
+    },
+    {
+      "audit_unit_id": "ubfa553dc2c4eb24d4f195c2972b49170",
+      "rule_id": "R005",
+      "case": "不同编号补图",
+      "gold": "reject",
+      "p1": "pass",
+      "p3": "reject"
+    },
+    {
+      "audit_unit_id": "ud5a5b7e7c8fe4345b4e76ce590fc3f62",
+      "rule_id": "R005",
+      "case": "补图关联键不清",
+      "gold": "ambiguous",
+      "p1": "pass",
+      "p3": "ambiguous"
+    },
+    {
+      "audit_unit_id": "ub2a2b7b15a46b368219594909aac5ea2",
+      "rule_id": "R010",
+      "case": "主型号匹配",
+      "gold": "pass",
+      "p1": "reject",
+      "p3": "pass"
+    },
+    {
+      "audit_unit_id": "u452af85c10b6584f281516541ded4d30",
+      "rule_id": "R010",
+      "case": "主型号不清",
+      "gold": "ambiguous",
+      "p1": "reject",
+      "p3": "ambiguous"
+    },
+    {
+      "audit_unit_id": "u20b847565a02d85f3e61ab7f22cb3bdf",
+      "rule_id": "R021",
+      "case": "同标签",
+      "gold": "pass",
+      "p1": "ambiguous",
+      "p3": "pass"
+    },
+    {
+      "audit_unit_id": "ub99c3fe0483bf8ca9b08912458ccd3f5",
+      "rule_id": "R041",
+      "case": "一致",
+      "gold": "pass",
+      "p1": "reject",
+      "p3": "pass"
+    },
+    {
+      "audit_unit_id": "ud94d8c1699a60961607fbbdc81df68a5",
+      "rule_id": "R048",
+      "case": "撤回早于签发",
+      "gold": "ambiguous",
+      "p1": "reject",
+      "p3": "ambiguous"
+    },
+    {
+      "audit_unit_id": "uac91f4ce0dc62737d577c5fd11a7404d",
+      "rule_id": "R050",
+      "case": "正确配对",
+      "gold": "pass",
+      "p1": "reject",
+      "p3": "pass"
+    },
+    {
+      "audit_unit_id": "u46f4eef4925130c6033afa097059bf3a",
+      "rule_id": "R050",
+      "case": "一项不可读",
+      "gold": "ambiguous",
+      "p1": "reject",
+      "p3": "ambiguous"
+    },
+    {
+      "audit_unit_id": "u32a765f6440a3403303a0b145b6dc3a6",
+      "rule_id": "R050",
+      "case": "矩阵关系恢复 match",
+      "gold": "pass",
+      "p1": "reject",
+      "p3": "pass"
+    }
+  ],
+  "broken": [
+    {
+      "audit_unit_id": "ud9f5b911e66ece0b5752ee5f207d4a05",
+      "rule_id": "R014",
+      "case": "批次遮挡",
+      "gold": "ambiguous",
+      "p1": "ambiguous",
+      "p3": "reject"
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 {
   "command": "selection_freeze",
   "decision": "baseline",
-  "baseline_artifact_version": "av_2275824ec1ba861a0c0018cb",
-  "baseline_root_sha256": "e5f41f9db34bf984c1aea87e3bdfd8f65b6d727588cf651a4e8628866d9a3091",
+  "baseline_artifact_version": "av_a489476e2465379a03414735",
+  "baseline_root_sha256": "7f943888587c61090aa9611bf9905c91ae415aa81a13549aa4e50f1f634747af",
   "candidate_artifact_version": "av_a80de7291b9b55c33274c8e9",
   "candidate_artifact_hash": "b43655ac251d8a5ea5ab5a18a21f1108d4127f12642e9e3ee774c63014c9ace9",
   "gate": {
@@ -16,10 +16,10 @@
   },
   "rollback": {
     "status": "rolled_back",
-    "baseline_version": "av_2275824ec1ba861a0c0018cb",
-    "active_version": "av_2275824ec1ba861a0c0018cb",
-    "root_sha256": "e5f41f9db34bf984c1aea87e3bdfd8f65b6d727588cf651a4e8628866d9a3091",
-    "expected_sha256": "e5f41f9db34bf984c1aea87e3bdfd8f65b6d727588cf651a4e8628866d9a3091"
+    "baseline_version": "av_a489476e2465379a03414735",
+    "active_version": "av_a489476e2465379a03414735",
+    "root_sha256": "7f943888587c61090aa9611bf9905c91ae415aa81a13549aa4e50f1f634747af",
+    "expected_sha256": "7f943888587c61090aa9611bf9905c91ae415aa81a13549aa4e50f1f634747af"
   },
   "reason": "候选仅为澄清记录，不改变判定；验收后回滚基线作为交付活动版本。",
   "reviewers": {

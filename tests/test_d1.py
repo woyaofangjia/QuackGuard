@@ -8,6 +8,9 @@ import unittest
 from pathlib import Path
 
 from quackguard.annotation import annotate_target
+from quackguard.grounding import locate_with_thinking
+from quackguard.model_gateway import _strip_code_fence
+from quackguard.rule_common import load_model_json
 from quackguard.artifact_hash import path_digest, tree_digest
 from quackguard.artifacts import load_policy
 from quackguard.contracts import input_errors, prediction_errors, read_rows
@@ -247,6 +250,96 @@ class D1Test(unittest.TestCase):
             _strip_code_fence('```json\n{"a": 1}\n```'), '{"a": 1}'
         )
         self.assertEqual(_strip_code_fence('{"a": 1}'), '{"a": 1}')
+        self.assertEqual(
+            _strip_code_fence(
+                '<think>先分析图片，再输出。</think>\n<answer>{"a": 1}</answer>'
+            ),
+            '{"a": 1}',
+        )
+
+    def test_truncated_json_is_repaired(self):
+        self.assertEqual(load_model_json('{"a": [1, 2'), {"a": [1, 2]})
+        self.assertEqual(load_model_json('{"a": 1,}'), {"a": 1})
+
+    def test_json_with_trailing_prose_or_duplicates_is_repaired(self):
+        self.assertEqual(load_model_json('{"a": 1}\n再补充说明：忽略'), {"a": 1})
+        self.assertEqual(load_model_json('核对结果：{"a": 1}'), {"a": 1})
+        self.assertEqual(load_model_json('{"a": 1}{"b": 2}'), {"a": 1})
+        self.assertEqual(load_model_json('{"a": 1, "a": 2}'), {"a": 2})
+
+    def test_locate_with_thinking_returns_bbox(self):
+        material = {
+            "material_id": "m1",
+            "page_index": 0,
+            "relative_path": "x.png",
+            "role": "package_photos",
+        }
+        target = {
+            "annotation_id": "a1",
+            "material_id": "m1",
+            "page_index": 0,
+            "target": "型号",
+        }
+
+        class FakeGateway:
+            def messages(self, prompt, task, input_path):
+                return []
+
+            def complete(self, messages):
+                return '{"bbox": [0.1, 0.2, 0.3, 0.4]}'
+
+        bbox, trace = locate_with_thinking(
+            material, target, "x", None, None, gateway=FakeGateway()
+        )
+        self.assertEqual(bbox, [0.1, 0.2, 0.3, 0.4])
+        self.assertEqual(trace["kind"], "locate_with_thinking")
+
+    def test_locate_rejects_full_frame(self):
+        material = {
+            "material_id": "m1",
+            "page_index": 0,
+            "relative_path": "x.png",
+            "role": "package_photos",
+        }
+        target = {"annotation_id": "a1", "target": "型号"}
+
+        class FakeGateway:
+            def messages(self, prompt, task, input_path):
+                return []
+
+            def complete(self, messages):
+                return '{"bbox": [0, 0, 1, 1]}'
+
+        bbox, trace = locate_with_thinking(
+            material, target, "x", None, None, gateway=FakeGateway()
+        )
+        self.assertIsNone(bbox)
+        self.assertEqual(trace["rejected"], "bbox_too_large")
+
+    def test_locate_parses_pixel_array_box(self):
+        from quackguard.grounding import _image_size
+        from quackguard.io_utils import material_bytes
+
+        task = read_rows(SAMPLE / "inputs" / "tasks.jsonl")[0]
+        material = task["materials"][0]
+        input_path = SAMPLE / "inputs" / "tasks.jsonl"
+        width, height = _image_size(material_bytes(input_path, material))
+        target = {"annotation_id": "a1", "target": "型号"}
+
+        class FakeGateway:
+            def messages(self, prompt, task, input_path):
+                return []
+
+            def complete(self, messages):
+                return '{"bbox":[[126,194,283,233]]}'
+
+        bbox, trace = locate_with_thinking(
+            material, target, input_path, None, None, gateway=FakeGateway()
+        )
+        self.assertEqual(bbox, [
+            round(126 / width, 6), round(194 / height, 6),
+            round(283 / width, 6), round(233 / height, 6),
+        ])
 
     def test_annotation_failure_keeps_model_traces(self):
         baseline = self.dir / "baseline"

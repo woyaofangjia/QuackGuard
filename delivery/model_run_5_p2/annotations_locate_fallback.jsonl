@@ -1,0 +1,2 @@
+{"annotation_id": "public-annotation-1", "audit_unit_id": "ua9df5148546838d9e1ba5e1f51fd00de", "material_id": "m3b1c834ad3bf498cc7d110de18fccfc5", "page_index": 1, "value": "型号：EDU-753", "status": "value", "label": "pass", "bbox": [0.14, 0.19, 0.32, 0.24]}
+{"annotation_id": "public-annotation-2", "audit_unit_id": "uf2a3e6a350a73203392741fcddc25a7d", "material_id": "m81dd90e4bd2f9f50276c7ce1a647f6f1", "page_index": 1, "value": null, "status": "unreadable", "label": "ambiguous", "bbox": [0.185, 0.193, 0.275, 0.227]}

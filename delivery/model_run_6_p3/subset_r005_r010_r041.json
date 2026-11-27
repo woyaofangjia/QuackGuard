@@ -1,0 +1,133 @@
+{
+  "name": "p04_recheck",
+  "rule": [
+    "R005",
+    "R010",
+    "R041"
+  ],
+  "records": 12,
+  "correct": 12,
+  "errors": 0,
+  "rows": [
+    {
+      "unit": "u724a4c3ba",
+      "rule": "R010",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "主型号与申报型号不一致；兼容型号不能替代主型号。",
+      "correct": true
+    },
+    {
+      "unit": "uad6479403",
+      "rule": "R005",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "主视图待核验字段未被遮挡，无需补图。",
+      "correct": true
+    },
+    {
+      "unit": "ub2a2b7b15",
+      "rule": "R010",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "主型号与申报型号一致。",
+      "correct": true
+    },
+    {
+      "unit": "ube0f8028a",
+      "rule": "R010",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "主型号与申报型号一致。",
+      "correct": true
+    },
+    {
+      "unit": "u14129f619",
+      "rule": "R041",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "正面与背面标称重量相差不超过较大值的1%。",
+      "correct": true
+    },
+    {
+      "unit": "ub99c3fe04",
+      "rule": "R041",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "正面与背面标称重量相差不超过较大值的1%。",
+      "correct": true
+    },
+    {
+      "unit": "u17f44a82b",
+      "rule": "R005",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "已提供同一字段无遮挡的补充视图。",
+      "correct": true
+    },
+    {
+      "unit": "ubfa553dc2",
+      "rule": "R005",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "补图材料编号与被遮挡视图不一致，不属于同一字段补图。",
+      "correct": true
+    },
+    {
+      "unit": "u408a4f8de",
+      "rule": "R041",
+      "gold": "ambiguous",
+      "pred": "ambiguous",
+      "status": "completed",
+      "error": null,
+      "reason": "正面或背面标称重量读不清。",
+      "correct": true
+    },
+    {
+      "unit": "ud5a5b7e7c",
+      "rule": "R005",
+      "gold": "ambiguous",
+      "pred": "ambiguous",
+      "status": "completed",
+      "error": null,
+      "reason": "补图是否属于同一字段不能确认（关联键不清）。",
+      "correct": true
+    },
+    {
+      "unit": "udc1b39756",
+      "rule": "R041",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "正面与背面标称重量相差超过较大值的1%。",
+      "correct": true
+    },
+    {
+      "unit": "u452af85c1",
+      "rule": "R010",
+      "gold": "ambiguous",
+      "pred": "ambiguous",
+      "status": "completed",
+      "error": null,
+      "reason": "主型号读不清，兼容型号不能替代。",
+      "correct": true
+    }
+  ]
+}

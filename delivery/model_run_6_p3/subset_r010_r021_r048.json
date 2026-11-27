@@ -1,0 +1,133 @@
+{
+  "name": "p13_p03_alias",
+  "rule": [
+    "R010",
+    "R021",
+    "R048"
+  ],
+  "records": 12,
+  "correct": 9,
+  "errors": 0,
+  "rows": [
+    {
+      "unit": "udf8f1afde",
+      "rule": "R021",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "型号与材料编号未同时标明，或不在同一标签。",
+      "correct": true
+    },
+    {
+      "unit": "u724a4c3ba",
+      "rule": "R010",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "主型号与申报型号不一致；兼容型号不能替代主型号。",
+      "correct": true
+    },
+    {
+      "unit": "u5795173a6",
+      "rule": "R021",
+      "gold": "reject",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "型号与材料编号位于同一标签。",
+      "correct": false
+    },
+    {
+      "unit": "ub2a2b7b15",
+      "rule": "R010",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "主型号与申报型号一致。",
+      "correct": true
+    },
+    {
+      "unit": "ube0f8028a",
+      "rule": "R010",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "主型号与申报型号一致。",
+      "correct": true
+    },
+    {
+      "unit": "u0980ddae2",
+      "rule": "R048",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "审核基准日期在撤回日当天或之后，证明已撤回。",
+      "correct": true
+    },
+    {
+      "unit": "u15856353b",
+      "rule": "R021",
+      "gold": "ambiguous",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "型号与材料编号位于同一标签。",
+      "correct": false
+    },
+    {
+      "unit": "u20b847565",
+      "rule": "R021",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "型号与材料编号位于同一标签。",
+      "correct": true
+    },
+    {
+      "unit": "u8aa22e031",
+      "rule": "R048",
+      "gold": "pass",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "审核基准日期早于撤回日，可继续按有效期判断。",
+      "correct": true
+    },
+    {
+      "unit": "u5c3f07605",
+      "rule": "R048",
+      "gold": "reject",
+      "pred": "reject",
+      "status": "completed",
+      "error": null,
+      "reason": "审核基准日期在撤回日当天或之后，证明已撤回。",
+      "correct": true
+    },
+    {
+      "unit": "ud94d8c169",
+      "rule": "R048",
+      "gold": "ambiguous",
+      "pred": "ambiguous",
+      "status": "completed",
+      "error": null,
+      "reason": "撤回日合法但早于签发日，撤回关系异常。",
+      "correct": true
+    },
+    {
+      "unit": "u452af85c1",
+      "rule": "R010",
+      "gold": "ambiguous",
+      "pred": "pass",
+      "status": "completed",
+      "error": null,
+      "reason": "主型号与申报型号一致。",
+      "correct": false
+    }
+  ]
+}

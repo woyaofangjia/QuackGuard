@@ -1,0 +1,1 @@
+{"content": "{\n  \"status\": \"clear\",\n  \"pairs\": [\n    {\n      \"component_id\": \"a\",\n      \"model\": \"EDU-753\",\n      \"status\": \"value\"\n    },\n    {\n      \"component_id\": \"b\",\n      \"model\": null,\n      \"status\": \"unreadable\"\n    }\n  ]\n}"}

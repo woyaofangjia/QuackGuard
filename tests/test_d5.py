@@ -17,14 +17,18 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from quackguard.artifacts import build, load_policy
 from quackguard.comparison import compare_results
 from quackguard.contracts import prediction_errors, read_rows
 from quackguard.export import export_results
 from quackguard.inference import review_task
-from quackguard.rule_facts import field_unreadable as fu, field_value as fv
-
+from quackguard.rule_facts import (
+    extract_facts,
+    field_unreadable as fu,
+    field_value as fv,
+)
 ROOT = Path(__file__).resolve().parents[1]
 PACK = ROOT / "O2_AI商品审核官_资料包"
 PUBLIC = PACK / "03_公开开发集"
@@ -340,7 +344,8 @@ class D5Test(unittest.TestCase):
             "metadata": meta,
             "materials": materials,
         }
-        return review_task(DictGateway(documents), self.policy, task, "unused.jsonl") + (task,)
+        with mock.patch("quackguard.rule_facts.time.sleep"):
+            return review_task(DictGateway(documents), self.policy, task, "unused.jsonl") + (task,)
 
     def _metadata(self, rule_id, note):
         if rule_id == "R022":
@@ -395,7 +400,13 @@ class D5Test(unittest.TestCase):
                     output.get("reason"),
                 )
                 self.assertEqual(prediction_errors(output, task), [])
-                self.assertEqual(len(traces), len(materials))
+                main_traces = [
+                    trace for trace in traces
+                    if trace.get("kind") not in (
+                        "matrix_extraction", "label_boundary", "keep_dry"
+                    )
+                ]
+                self.assertEqual(len(main_traces), len(materials))
 
     def test_every_judged_rule_has_pass_reject_ambiguous(self):
         labels = {}
@@ -405,6 +416,173 @@ class D5Test(unittest.TestCase):
             self.assertIn("pass", labels[rule_id], rule_id)
             self.assertIn("reject", labels[rule_id], rule_id)
             self.assertIn("ambiguous", labels[rule_id], rule_id)
+
+
+class FieldAliasTest(unittest.TestCase):
+    def test_chinese_field_names_are_normalized(self):
+        from quackguard.rule_facts import parse_facts
+
+        raw = json.dumps({
+            "status": "clear",
+            "documents": [{
+                "voided": False,
+                "inspection_complete": True,
+                "carrier": "certificate_page",
+                "attached_to_package": None,
+                "fields": {
+                    "签发日": {"status": "value", "value": "2029-01-01"},
+                    "有效起始日": {"status": "value", "value": "2029-01-01"},
+                    "有效截止日": {"status": "value", "value": "2029-12-31"},
+                },
+            }],
+        }, ensure_ascii=False)
+        facts = parse_facts(raw, M("c", "certificate_pages"))
+        fields = facts["documents"][0]["fields"]
+        self.assertIn("issued_date", fields)
+        self.assertIn("valid_from", fields)
+        self.assertIn("valid_to", fields)
+        self.assertNotIn("签发日", fields)
+
+    def test_text_keys_in_fields_are_moved(self):
+        from quackguard.rule_facts import parse_facts
+
+        raw = json.dumps({
+            "status": "clear",
+            "documents": [{
+                "voided": False,
+                "inspection_complete": True,
+                "carrier": "outer_package",
+                "attached_to_package": None,
+                "fields": {"keep_dry_cn": {"status": "value", "value": "保持干燥"}},
+                "texts": {},
+            }],
+        }, ensure_ascii=False)
+        facts = parse_facts(raw, M("p", "package_photos"))
+        document = facts["documents"][0]
+        self.assertNotIn("keep_dry_cn", document["fields"])
+        self.assertEqual(document["texts"]["keep_dry_cn"]["value"], "保持干燥")
+
+    def test_label_verdict_is_parsed_and_used(self):
+        from quackguard.rule_facts import parse_label_verdict
+        from quackguard.rules_f04 import r021
+
+        self.assertEqual(parse_label_verdict('{"verdict":"same"}'), "same")
+        with self.assertRaises(ValueError):
+            parse_label_verdict('{"verdict":"maybe"}')
+        materials = [{
+            "material_id": "m1",
+            "page_index": 1,
+            "role": "package_photos",
+            "documents": [],
+            "same_label_verdict": "separate",
+        }]
+        result = r021({}, materials, {})
+        self.assertEqual(result["label"], "reject")
+
+
+class KeepDryTest(unittest.TestCase):
+    class Gateway:
+        def messages(self, prompt, visual_task, input_path):
+            return {
+                "prompt": prompt,
+                "material_id": visual_task["materials"][0]["material_id"],
+            }
+
+        def complete(self, messages):
+            if messages["prompt"].startswith("只判断当前图像中是否出现"):
+                return (
+                    '{"keep_dry_cn":{"status":"value","value":"保持干燥"},'
+                    '"keep_dry_en":{"status":"value","value":"Keep dry"}}'
+                )
+            return json.dumps({
+                "status": "clear",
+                "documents": [{
+                    "voided": False,
+                    "inspection_complete": True,
+                    "carrier": "outer_package",
+                    "attached_to_package": None,
+                    "fields": {},
+                }],
+            }, ensure_ascii=False)
+
+    def test_keep_dry_texts_are_merged(self):
+        task = {
+            "audit_unit_id": "unit",
+            "rule_id": "R035",
+            "materials": [M("p", "package_photos")],
+        }
+        facts, _ = extract_facts(self.Gateway(), task, "unused", "t")
+        texts = facts[0]["documents"][0]["texts"]
+        self.assertEqual(texts["keep_dry_cn"]["value"], "保持干燥")
+        self.assertEqual(texts["keep_dry_en"]["value"], "Keep dry")
+
+
+class MatrixExtractionTest(unittest.TestCase):
+    class Gateway:
+        def __init__(self, matrix):
+            self.matrix = matrix
+
+        def messages(self, prompt, visual_task, input_path):
+            return {
+                "prompt": prompt,
+                "material_id": visual_task["materials"][0]["material_id"],
+            }
+
+        def complete(self, messages):
+            if messages["prompt"].startswith("只读取当前图像中的"):
+                return self.matrix
+            return json.dumps({
+                "status": "clear",
+                "documents": [{
+                    "voided": False,
+                    "inspection_complete": True,
+                    "carrier": "certificate_page",
+                    "attached_to_package": None,
+                    "fields": {},
+                }],
+            }, ensure_ascii=False)
+
+    def run_extract(self, matrix):
+        task = {
+            "audit_unit_id": "unit",
+            "rule_id": "R050",
+            "materials": [M("c", "certificate_pages")],
+        }
+        return extract_facts(self.Gateway(matrix), task, "unused", "t")
+
+    def test_matrix_pairs_are_merged(self):
+        facts, traces = self.run_extract(
+            '{"status":"clear","pairs":'
+            '[{"component_id":"T1","model":"P279","status":"value"}]}'
+        )
+        components = facts[0]["documents"][0]["components"]
+        self.assertEqual(components, [
+            {"component_id": "T1", "model": "P279", "status": "value"},
+        ])
+        kinds = [trace.get("kind") for trace in traces]
+        self.assertEqual(kinds.count("matrix_extraction"), 1)
+
+    def test_matrix_failure_is_non_blocking(self):
+        from unittest import mock
+
+        with mock.patch("quackguard.rule_facts.time.sleep"):
+            facts, traces = self.run_extract("not json")
+        self.assertEqual(facts[0]["documents"][0]["components"], [])
+        matrix_trace = next(
+            trace for trace in traces if trace.get("kind") == "matrix_extraction"
+        )
+        self.assertIn("error", matrix_trace)
+
+    def test_unreadable_rows_become_unreadable_pairs(self):
+        facts, _ = self.run_extract(
+            '{"status":"clear","pairs":'
+            '[{"component_id":"T1","model":"P279","status":"value"}],'
+            '"unreadable_rows":["T3"]}'
+        )
+        self.assertEqual(facts[0]["documents"][0]["components"], [
+            {"component_id": "T1", "model": "P279", "status": "value"},
+            {"component_id": "T3", "model": None, "status": "unreadable"},
+        ])
 
 
 class ComparisonExportTest(unittest.TestCase):
