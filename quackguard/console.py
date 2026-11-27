@@ -556,6 +556,7 @@ async function openUnit(id){
     +'<h3 style="font-size:14px;margin:14px 0 6px">材料与可用区域</h3><div class="grid">'+mats+'</div>'+evHtml;
   (o.evidence||[]).forEach(e=>{
     const svg=$('bx-'+e.material_id);if(!svg||!e.bbox)return;
+    svg.setAttribute('viewBox','0 0 1 1');svg.setAttribute('preserveAspectRatio','none');
     const b=e.bbox;const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
     rect.setAttribute('x',b[0]);rect.setAttribute('y',b[1]);
     rect.setAttribute('width',Math.max(b[2]-b[0],0.001));rect.setAttribute('height',Math.max(b[3]-b[1],0.001));
@@ -576,7 +577,7 @@ async function run(action,payload){
   const box=map[action]||('msg-'+action);
   try{
     const res=await api('/api/action',{action,payload:payload||{}});
-    show(box,res,res.code===0);
+    show(box,res,res.code===0||res.code===undefined);
     await refresh();
     if(action==='plugins'||action==='plugin_state')guardPlugins();
   }catch(e){show(box,{error:String(e)},false);}
