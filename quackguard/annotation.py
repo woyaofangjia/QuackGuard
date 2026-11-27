@@ -3,11 +3,13 @@
 label 取自 review_task 的规则判定，value/status/bbox 取自同一批事实文档，
 不再单独让模型对整条规则下结论，避免事实与标注脱节。
 """
+import importlib
+
 from .artifacts import load_policy
 from .contracts import annotation_errors, input_errors
 from .errors import AuditError
 from .inference import review_task
-from .io_utils import rows, write_json, write_jsonl
+from .io_utils import material_bytes, rows, write_json, write_jsonl
 from .grounding import locate_with_thinking
 from .model_gateway import ModelGateway
 from .rule_common import (
@@ -128,6 +130,23 @@ def build_annotation_output(target, document, review):
     }
 
 
+_OCR_LOCATE = None
+_OCR_LOADED = False
+
+
+def _ocr_locate():
+    """惰性加载可选OCR包；未安装时返回None，保持纯标准库运行。"""
+    global _OCR_LOCATE, _OCR_LOADED
+    if not _OCR_LOADED:
+        _OCR_LOADED = True
+        try:
+            module = importlib.import_module("quackguard_ocr.grounding")
+        except Exception:  # noqa: BLE001
+            module = None
+        _OCR_LOCATE = getattr(module, "locate_text", None)
+    return _OCR_LOCATE
+
+
 def annotate_target(
     gateway, policy, task, target, input_path, review=None, locate=None
 ):
@@ -146,7 +165,7 @@ def annotate_target(
         for trace in traces
         if isinstance(trace.get("parsed_facts"), dict)
     ]
-    field, _ = target_field(target)
+    field, label = target_field(target)
     if field is None:
         return None, fact_traces, AuditError(
             "unknown_annotation_target", target.get("target")
@@ -157,6 +176,33 @@ def annotate_target(
             "fact_target_missing", target.get("material_id")
         )
     output = build_annotation_output(target, document, review_output)
+    material = next(
+        (
+            item
+            for item in task.get("materials") or []
+            if item.get("material_id") == target.get("material_id")
+            and item.get("page_index") == target.get("page_index")
+        ),
+        None,
+    )
+    ocr_locate = _ocr_locate()
+    if material is not None and ocr_locate is not None:
+        try:
+            data = material_bytes(input_path, material)
+        except (AuditError, OSError):
+            data = None
+        if data:
+            bbox, ocr_trace = ocr_locate(
+                data,
+                output.get("value"),
+                label or "",
+                annotation_id=target.get("annotation_id"),
+                material_id=target.get("material_id"),
+                page_index=target.get("page_index"),
+            )
+            fact_traces.append(ocr_trace)
+            if bbox is not None:
+                output["bbox"] = bbox
     if output["bbox"] is None and locate is not None:
         bbox, locate_trace = locate()
         fact_traces.append(locate_trace)
@@ -255,7 +301,7 @@ def annotate(
         traces.extend(
             trace
             for trace in target_traces
-            if trace.get("kind") == "locate_with_thinking"
+            if trace.get("kind") in ("locate_with_thinking", "locate_with_ocr")
         )
         if error:
             failures.append({

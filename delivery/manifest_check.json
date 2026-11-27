@@ -29,7 +29,17 @@
     "trace_rows": 101,
     "ok": true
   },
-  "public_outputs": "D:\\QuackGuard\\delivery\\traces\\public_gold.outputs.jsonl",
-  "public_traces": "D:\\QuackGuard\\delivery\\traces\\public_gold.trace.jsonl",
+  "public_outputs": "delivery/traces/public_gold.outputs.jsonl",
+  "public_traces": "delivery/traces/public_gold.trace.jsonl",
+  "public_outputs_note": "public_outputs/public_traces 为金标可见事实驱动的 manifest/trace 一致性回放，不代表模型准确率；真实模型结果见 real_run。",
+  "real_run": {
+    "outputs": "delivery/model_run_6_p3/outputs.jsonl",
+    "traces": "delivery/model_run_6_p3/outputs.trace.jsonl",
+    "metrics": "delivery/model_run_6_p3/metrics.json",
+    "artifact_version": "av_a489476e2465379a03414735",
+    "records": 64,
+    "execution_errors": 0,
+    "quality": 0.922837
+  },
   "ok": true
 }

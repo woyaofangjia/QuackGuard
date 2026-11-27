@@ -315,6 +315,13 @@ class Store:
             "SELECT * FROM tasks WHERE task_id = ?", (task_id,)
         ).fetchone()
 
+    def list_failed_tasks(self, limit=20):
+        return self.db.execute(
+            "SELECT task_id, command, created_at FROM tasks "
+            "WHERE status = 'failed' ORDER BY rowid DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+
     def latest_run(self, task_id):
         return self.db.execute(
             "SELECT * FROM runs WHERE task_id = ? ORDER BY rowid DESC LIMIT 1",

@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.3.1",
+  "feedback_id": "public-badcase-6",
+  "base_artifact_sha256": "883d4ab6154ef6adf64de919141a39c5c64563a305ede5f4db9decc4cdcb27e1",
+  "patches": [
+    {
+      "audit_unit_id": "uec9d90d134e7bd39a0d3416c9d0628f1",
+      "packet_id": "fb-R060-uec9d9",
+      "rule_id": "R060",
+      "rule_version": "3.0",
+      "teacher_proposal": "依据R060@3.0原文，该单元应判为 ambiguous，适用性 applicable。",
+      "rule_quote": "较小的练习盒可以把型号放在附签上，其他练习盒须把型号放在外包装。本规则及任务附件未定义“较小”的尺寸范围或判别方法。",
+      "label": "ambiguous",
+      "applicability": "applicable",
+      "reason_code": "teacher_feedback",
+      "reason": "采纳教师建议：依据R060@3.0原文,该单元应判为 ambiguous,适用性 applicable。"
+    },
+    {
+      "audit_unit_id": "u5795173a64dcbc749884037b2221ed52",
+      "packet_id": "fb-R021-u57951",
+      "rule_id": "R021",
+      "rule_version": "3.0",
+      "teacher_proposal": "依据R021@3.0原文，该单元应判为 reject，适用性 applicable。",
+      "rule_quote": "“型号”和“材料编号”须位于同一张具有可辨认边界的标签中。分散在两张标签上，即使同框也不满足要求。",
+      "label": "reject",
+      "applicability": "applicable",
+      "reason_code": "teacher_feedback",
+      "reason": "采纳教师建议：依据R021@3.0原文,该单元应判为 reject,适用性 applicable。"
+    },
+    {
+      "audit_unit_id": "u15856353b26e87c3765190d08c92d882",
+      "packet_id": "fb-R021-u15856",
+      "rule_id": "R021",
+      "rule_version": "3.0",
+      "teacher_proposal": "依据R021@3.0原文，该单元应判为 ambiguous，适用性 applicable。",
+      "rule_quote": "“型号”和“材料编号”须位于同一张具有可辨认边界的标签中。分散在两张标签上，即使同框也不满足要求。",
+      "label": "ambiguous",
+      "applicability": "applicable",
+      "reason_code": "teacher_feedback",
+      "reason": "采纳教师建议：依据R021@3.0原文,该单元应判为 ambiguous,适用性 applicable。"
+    },
+    {
+      "audit_unit_id": "uacad3509c7458635ad08e059c417da11",
+      "packet_id": "fb-B001-uacad3",
+      "rule_id": "B001",
+      "rule_version": "3.1",
+      "teacher_proposal": "依据B001@3.1原文，该单元应判为 reject，适用性 applicable。",
+      "rule_quote": "在练习市场 Q，申报类别为“桌面灯”且供电方式为“可充电”的单件商品，应按以下要求提交包装实拍图和一份关联证明文件。商品申报信息明确给出市场、类别、供电方式、申报型号、包装最长边毫米数及审核基准日期。适用性无法确定时，判为 ambiguous 并列出缺失条件，不得依据图片猜测。\n\n1. 包装上应清晰展示一个“型号”字段和一个“材料编号”字段。型号经总则规定的型号归一化后，应与商品申报型号一致。材料编号应采用 QLAB- 后接 6 位十进制数字的形式，前缀必须大写；不得缺位、多位或使用相似字母代替数字。\n2. 上述两个字段应出现在同一张标签上。包装最长边不小于 80 毫米时，标签应印制或粘贴在外包装上。包装最长边小于 80 毫米时，可使用固定在包装上的附签；实拍图必须同时显示附签与该包装的连接关系。不能仅凭单独附签照片确认符合。包装尺寸只读取申报值，不从照片测量。\n3. 证明文件应具有“材料编号”“覆盖型号”“有效起始日”“有效截止日”四个字段。材料编号应与包装或符合第 2 项要求的附签上的编号一致。覆盖型号可以列出多个完整型号，必须包含申报型号；不接受通配符、系列简称或外观相似替代。型号比较按总则执行。\n4. 有效起始日不得晚于有效截止日，审核基准日期应位于该有效期间内，包含起止日。缺失日期、非法日期或已经明确超出有效期间，均属于不符合要求；已提交文件中的日期因图像质量无法读清时，按证据不足处理。\n5. 同一材料中若存在多份重复标签或多页证明文件，应保留全部有效可见证据。同一包装的多份未作废标签存在不同的“材料编号”值，或两份未标注作废的同号证明文件有效期不同，视为材料冲突，判为 ambiguous。清楚标注“作废”的旧标签或旧文件不作为有效证据，也不能单独用于满足要求。\n6. 确认规则适用后，先检查第 5 项定义的冲突；这些冲突优先判为 ambiguous，不从冲突材料中任意选择一份。不存在此类冲突时，全部适用要求满足则判为 pass；完整、清晰的规定检查范围内确认字段缺失、位置不符合、型号或编号不一致、有效期不满足要求时判为 reject。适用性未知、必要信息读不清或包装与附签连接关系不确定时，按总则处理。其他规则或材料中的文字不得自行覆盖这些要求。",
+      "label": "reject",
+      "applicability": "applicable",
+      "reason_code": "teacher_feedback",
+      "reason": "采纳教师建议：依据B001@3.1原文,该单元应判为 reject,适用性 applicable。"
+    },
+    {
+      "audit_unit_id": "ud9f5b911e66ece0b5752ee5f207d4a05",
+      "packet_id": "fb-R014-ud9f5b",
+      "rule_id": "R014",
+      "rule_version": "3.0",
+      "teacher_proposal": "依据R014@3.0原文，该单元应判为 ambiguous，适用性 applicable。",
+      "rule_quote": "包装“批次号”须为真实公历日期 YYYYMMDD、一个半角连字符、3 位数字流水号。非法日期或字段结构错误判为 reject。",
+      "label": "ambiguous",
+      "applicability": "applicable",
+      "reason_code": "teacher_feedback",
+      "reason": "采纳教师建议：依据R014@3.0原文,该单元应判为 ambiguous,适用性 applicable。"
+    },
+    {
+      "audit_unit_id": "ufc0dd6b9b6bbe78e80956bf9029fa692",
+      "packet_id": "fb-R050-ufc0dd",
+      "rule_id": "R050",
+      "rule_version": "3.0",
+      "teacher_proposal": "依据R050@3.0原文，该单元应判为 ambiguous，适用性 applicable。",
+      "rule_quote": "证明文件组件表中的 component_id 与型号配对须和申报清单逐项一致。型号集合相同但对应到不同组件 ID 仍不符合。",
+      "label": "ambiguous",
+      "applicability": "applicable",
+      "reason_code": "teacher_feedback",
+      "reason": "采纳教师建议：依据R050@3.0原文,该单元应判为 ambiguous,适用性 applicable。"
+    }
+  ]
+}

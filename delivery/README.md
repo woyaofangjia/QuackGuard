@@ -43,7 +43,9 @@ python demo.py --all    # 回放全部 64 条
 - `run.py`：命令行入口；`python run.py console --workspace var/console` 启动本地操作控制台。
 - `demo.py`：零依赖离线演示；回放 `model_run_6_p3` 的真实结果，彩色打印标签、规则、模型事实与证据框。
 - `delivery/artifacts/`：冻结产物（`engine/`、`artifact_manifest.json`、`status.html`、`versions.html`、`60条建设台账.csv`）。
-- `delivery/60条建设台账.csv`：交付清单要求的台账副本，与 `artifacts/60条建设台账.csv` 内容一致。
+- `delivery/60条建设台账.csv`：交付清单要求的台账副本，与 `artifacts/60条建设台账.csv` 内容一致。公开集只覆盖 B001 与 10 条 R 规则（共 64 个单元）；其余 50 条没有公开单元，`accuracy` 与 `machine_review_rate` 标记为 `n/a`，不填估算值。
+- `delivery/iteration_public/`：公开 6 条 Bad Case 的反馈包、`decision_patches.json`、候选输出与前后指标，用于复核“迭代确实改判定、保护集不降”。
+- `manifest_check.json`：`public_*` 是金标可见事实回放的哈希/轨迹一致性检查，不代表模型准确率；真实模型结果与指标以 `real_run` 指向的 `model_run_6_p3` 为准。
 - `delivery/traces/`：推理与公开集验收轨迹。
 - `delivery/annotations/`：标注输出、标注失败记录、事实轨迹与公开样例评分（`annotations.jsonl`、`annotations.errors.json`、`annotations.trace.jsonl`、`score.json`、`meta.json`）。
 - `delivery/evaluation.json`：两个评估插件的实际运行报告；同目录 `plugin_report.html` 为对应页面。
@@ -67,9 +69,10 @@ python demo.py --all    # 回放全部 64 条
 
 ## 2. 环境
 
-- Python 3.13（仅标准库，无需 `pip install`）。
+- Python 3.13（默认仅标准库，无需 `pip install`）。
 - PowerShell 5 下不要使用 `&&`；分步执行命令。
 - 不需要 `.env`；仓库与交付包内无任何密钥，密钥只从环境变量读取。
+- 可选：本地 OCR 标注定位（完全离线、免费）。安装 `pip install -r requirements-ocr.txt` 后，`annotate` 会优先用 RapidOCR 识别字段行并以其框替换模型框；未安装或 `QUACKGUARD_OCR=0` 时自动回退，行为与之前一致。
 
 ## 3. 核心命令
 
@@ -193,8 +196,9 @@ python "O2_AI商品审核官_资料包/04_最小对接样例/smoke.py"
 - 活动版本冻结为 baseline：`artifact_version=av_a489476e2465379a03414735`，`root_sha256=7f943888587c61090aa9611bf9905c91ae415aa81a13549aa4e50f1f634747af`；候选只记录澄清、不改变判定，验收后已回滚，见 `selection_freeze.json`。
 - 冻结快照 `delivery/artifacts/` 为离线构建：未配置模型时，64 条公开任务中 62 条显式 `model_not_configured`，2 条 B001 因材料不适配可直接判定 `not_applicable`。需要真实审核时按第 5 节配置 `glm-4v-flash` 并用 `delivery/config.json` 重建。
 - `delivery/annotations/` 用公开金标可见事实驱动同一 `annotate` 实现，验证值/状态/标签/材料/页码/IoU 联合链路；公开样例得分为 7/7，但属于链路校验，不是系统正式标注成绩。配置模型后重跑 `annotate` 即得到真实标注输出。
-- `delivery/evaluation.json` 基于 `traces/infer.outputs.jsonl` 运行两个插件：输入哈希前后一致、故障 0；指标反映离线快照（多数为显式 error），不代表模型能力。
+- `delivery/evaluation.json` 基于 `delivery/model_run_6_p3/outputs.jsonl`（真实模型运行）运行两个插件：输入哈希前后一致、故障 0；conclusion 准确率 0.90625、机器可复核率 0.875、Q=0.922837；evidence 覆盖 62/64 条有证据单元，结构化字段值核验 `grounded_fact_rate=0.9677`，区域定位 `localized_fact_rate=0.5111`（88 条文本命中但 IoU<0.5，与标注 0/7 的模型框偏移一致）。`plugin_report.html` 为同一份报告对应的页面。
 - 真实模型结果见 `delivery/model_run/`：公开集 A=0.609375、U=0.673077、Q=0.628486，执行错误 1；标注的值/状态/标签 3/3 正确，但 `glm-4v-flash` 返回的框存在系统性坐标偏移，IoU 不达标，标注得分 0/7。该限制已如实记录，未用整帧或文档框冒充。
+- 可选本地 OCR 定位：安装 `requirements-ocr.txt` 后，`annotate` 会用 RapidOCR 识别字段行并以其框替换模型框；公开 3 个标注目标的框 IoU 为 0.7182/0.6187/0.6043，均达到 0.5 线。OCR 完全离线、免费，未安装或 `QUACKGUARD_OCR=0` 时自动回退，不影响原有 0/7 的历史记录。离线复核：设置 `QUACKGUARD_MODEL_CACHE=delivery/demo_cache` 后重跑第 3 步 `annotate`，`score_annotations` 为 **7.0/7**。
 - `annotate` 只接受字段自身的文字行框；模型未给出字段框时显式失败 `annotation_bbox_missing`，不退回文档区域或整帧。
 - 第二轮独立回跑见 `delivery/model_run_2/`：38/64、A=0.59375、U=0.673077、Q=0.617548，标记 3/3 正确但框 IoU 仍不达标；与第一轮差 1 条正确，6 个单元结论变化，属模型服务端波动，不是代码回归。
 - P0 修复后第三轮见 `delivery/model_run_3_p0/`：R026 公开集 4/4、B001 证明页缺载体字段不再报结构错误，43/64、A=0.671875、U=0.711538、Q=0.683774；剩余 1 条错误为 R050 重复 JSON 键，留待 P1 容错。
@@ -219,8 +223,9 @@ python "O2_AI商品审核官_资料包/04_最小对接样例/smoke.py"
 | P3 `model_run_6_p3` | 事实通道、定向复核、退避与缓存 | 58 | 0.922837 | 10.90 s | 0 |
 
 - 数据驱动演进：每一轮都有完整输出、轨迹与指标留档，改动前后可逐单对比，不靠主观感觉调参。
+- 迭代不是只写澄清：教师明确给出结论时生成单元级 `engine/decision_patches.json`（含 `packet_id`、规则原文引用），候选推理按单元覆盖标签/适用性，baseline 保持逐字节不变。公开 6 条 Bad Case 自测：反馈集 A 0/6→6/6，保护集 58/58 不降，0 执行错误；证据见 `delivery/iteration_public/`。
 - 为什么放弃 thinking 模型：延迟接近翻倍（10.06 → 19.90 s，P95 33.60 s），全量 44/64 反低于 Flash 的 48/64，且出现 4 条非法 JSON、定位框随机漂移；结论是不迷信大模型，按工程性价比决策。
 - 模型看事实、规则做判决：模型只输出“字段/文本/组件/矩阵”，不直接给违规标签，避免 LLM 幻觉标签；判定由冻结规则实现完成，结论可回查规则版本、证据与 trace。
 - 工程鲁棒性：JSON 硬兜底（尾逗号、括号补齐、取首个完整值、容忍重复键）+ 429/5xx 指数退避（1→2→4→8 s）+ 哈希缓存，最终全量 0 执行错误。
-- 诚实取舍：标注 0/7 的唯一原因是框精度，thinking 定向定位最高 IoU 0.4852，未达 0.5 计分线；定位通道默认关闭，绝不用整帧或文档框冒充字段框。
+- 诚实取舍：默认模型框标注为 0/7，唯一原因是框精度；`glm-4v-flash` 有系统性偏移，thinking 定向定位最高 IoU 0.4852。接入可选本地 RapidOCR 后公开 3 个目标 IoU 0.7182/0.6187/0.6043，均过 0.5 线。
 - 剩余 6 条 Bad Case 与路线：R014 遮挡 1、R021 空间边界 2、R050 不可读行 1、B001 90mm 附签 1、R060 1；对应“重拍/多图引导、更高分辨率输入、专用 BBox 检测或 OCR 辅助、升级 glm-4.5v”四条路径。

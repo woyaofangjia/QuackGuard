@@ -1,0 +1,27 @@
+{
+ "feedback_id": "public-badcase-6",
+ "note": "公开 6 条 Bad Case 自测，用于证明补丁生效；官方隐藏反馈与保护集由组织方评测。",
+ "feedback": {
+  "units": 6,
+  "baseline_accuracy": 0.0,
+  "candidate_accuracy": 1.0,
+  "baseline_quality": 0.0,
+  "candidate_quality": 1.0
+ },
+ "protection": {
+  "units": 58,
+  "baseline_accuracy": 1.0,
+  "candidate_accuracy": 1.0,
+  "baseline_quality": 1.0,
+  "candidate_quality": 1.0
+ },
+ "all": {
+  "units": 64,
+  "baseline_accuracy": 0.90625,
+  "candidate_accuracy": 1.0,
+  "baseline_quality": 0.922837,
+  "candidate_quality": 1.0
+ },
+ "patched": 6,
+ "execution_errors": 0
+}

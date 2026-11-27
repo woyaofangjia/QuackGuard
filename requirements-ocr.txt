@@ -1,0 +1,4 @@
+# 可选依赖：本地 OCR 证据定位（完全离线、免费）。
+# 安装后 annotate 会自动用 OCR 框替换偏移的模型框；未安装时行为不变。
+# 该包会一并安装 opencv-python、numpy、onnxruntime 等运行库。
+rapidocr_onnxruntime==1.2.3

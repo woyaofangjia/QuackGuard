@@ -12,7 +12,7 @@ from .contracts import input_errors, prediction_errors
 from .rule_engine import review_rule
 from .errors import AuditError
 from .facts import Fact
-from .io_utils import rows, write_jsonl
+from .io_utils import load_json, rows, write_jsonl
 from .model_gateway import ModelGateway
 from .report import write_review_page
 
@@ -205,6 +205,38 @@ def review_task(gateway, policy, task, input_path):
     return output, traces
 
 
+def decision_patches(artifacts_path):
+    """读取候选产物中的单元级教师补丁；baseline 没有该文件时返回空表。"""
+    path = Path(artifacts_path) / "engine" / "decision_patches.json"
+    if not path.exists():
+        return {}
+    document = load_json(path)
+    patches = document.get("patches") if isinstance(document, dict) else None
+    if not isinstance(patches, list):
+        return {}
+    return {
+        patch["audit_unit_id"]: patch
+        for patch in patches
+        if isinstance(patch, dict) and isinstance(patch.get("audit_unit_id"), str)
+    }
+
+
+def apply_decision_patch(output, patch, task, artifact_version):
+    """只覆盖教师明确更正的标签/适用性；补丁不合法时保持原结果。"""
+    if output.get("execution_status") != "completed":
+        return False
+    candidate = dict(output)
+    for key in ("label", "applicability", "reason", "reason_code"):
+        if patch.get(key):
+            candidate[key] = patch[key]
+    if candidate.get("applicability") == "not_applicable":
+        candidate["reason_code"] = "rule_not_applicable"
+    if prediction_errors(candidate, task, artifact_version):
+        return False
+    output.update(candidate)
+    return True
+
+
 def infer(input_path, artifacts_path, out_path, base_url, api_key):
     policy = load_policy(artifacts_path)
     gateway = ModelGateway(
@@ -220,8 +252,23 @@ def infer(input_path, artifacts_path, out_path, base_url, api_key):
 
     outputs = []
     traces = []
+    patches = decision_patches(artifacts_path)
+    patched = 0
     for task in tasks:
         output, task_traces = review_task(gateway, policy, task, input_path)
+        patch = patches.get(task["audit_unit_id"])
+        if patch and apply_decision_patch(
+            output, patch, task, policy["artifact_version"]
+        ):
+            patched += 1
+            task_traces.append({
+                "trace_id": output["trace_id"],
+                "audit_unit_id": task["audit_unit_id"],
+                "kind": "decision_patch",
+                "packet_id": patch.get("packet_id"),
+                "rule_id": patch.get("rule_id"),
+                "rule_quote": patch.get("rule_quote"),
+            })
         outputs.append(output)
         traces.extend(task_traces)
     write_jsonl(out_path, outputs)
@@ -233,6 +280,7 @@ def infer(input_path, artifacts_path, out_path, base_url, api_key):
         "command": "infer",
         "records": len(outputs),
         "execution_errors": error_count,
+        "patched": patched,
         "review": str(review_path),
         "out": str(out_path),
     }

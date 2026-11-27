@@ -345,6 +345,48 @@ class D8PluginTest(unittest.TestCase):
         )
         self.assertEqual(diagnostics["u-supported"]["unsupported_facts"], [])
 
+    def test_evidence_content_reads_structured_field_values(self):
+        structured = json.dumps({
+            "fields": {
+                "model": {
+                    "status": "value",
+                    "value": "EDU-753",
+                    "bbox": [0.1, 0.1, 0.2, 0.2],
+                }
+            }
+        })
+        misaligned = json.dumps({
+            "fields": {
+                "model": {
+                    "status": "value",
+                    "value": "EDU-753",
+                    "bbox": [0.7, 0.7, 0.8, 0.8],
+                }
+            }
+        })
+        inputs = [task("u-structured"), task("u-misaligned")]
+        outputs = [
+            prediction("u-structured", structured, [0.1, 0.1, 0.2, 0.2]),
+            prediction("u-misaligned", misaligned, [0.1, 0.1, 0.2, 0.2]),
+        ]
+        references = []
+        for unit_id in ("u-structured", "u-misaligned"):
+            item = reference(unit_id)
+            item["evidence"][0]["visible_facts"] = [{
+                "text": "型号：EDU-753",
+                "readable": True,
+                "bbox": [0.1, 0.1, 0.2, 0.2],
+            }]
+            references.append(item)
+        report = evidence(inputs, outputs, references, {})
+
+        metrics = report["metrics"]
+        self.assertEqual(metrics["grounded_units"], 2)
+        self.assertEqual(metrics["grounded_fact_rate"], 1.0)
+        self.assertEqual(metrics["misaligned_fact_count"], 1)
+        self.assertEqual(metrics["localized_fact_rate"], 0.5)
+        self.assertEqual(metrics["unsupported_fact_count"], 0)
+
     def test_evidence_reports_reference_errors(self):
         missing = prediction("u-missing", "型号：A", [0.1, 0.1, 0.2, 0.2])
         missing["evidence"][0]["material_id"] = "m2"

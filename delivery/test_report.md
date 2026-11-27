@@ -12,7 +12,7 @@
 python -m pytest tests -q
 ```
 
-- 结果：**109 passed，583 subtests passed**。
+- 结果：**118 passed，583 subtests passed**（D10 冻结时为 109；此后新增 OCR 定位、结构化事实与迭代补丁测试 9 项）。
 - 覆盖 D1–D10：构建、推理、标注、迭代、评估、比较、导出、插件、版本、回归与验收冻结；以及本地控制台的导入/建设/审核联动、A/B 隔离、证据接口与路径限制。
 
 ## 3. 干净虚拟环境
@@ -24,7 +24,7 @@ python -m venv <临时目录>
 ```
 
 - `pip list` 仅有 `pip` 自身，未安装任何第三方包。
-- `unittest discover` 运行 **109 tests OK**。
+- `unittest discover` 运行 **118 tests OK**（当前仓库；D10 冻结时为 109）。
 
 ## 4. 官方 smoke
 
@@ -41,14 +41,14 @@ python "O2_AI商品审核官_资料包/04_最小对接样例/smoke.py"
 
 来自 `delivery/manifest_check.json`：
 
-- `ok=true`；`artifact_version=av_2275824ec1ba861a0c0018cb`。
+- `ok=true`；`artifact_version=av_a489476e2465379a03414735`。D10 冻结时记录为 `av_2275…`；最终交付按 `delivery/config.json` 重建为 `av_a489…`，本节数字按当前 `manifest_check.json` 更新，历史阶段以 `model_run_*` 为准。
 - manifest 条目 62；实际文件哈希不匹配 0；版本不匹配 0；重复条目 0。
 - 公开集输出 64 条；缺失 0、重复 0、额外 0、版本不匹配 0。
 - trace 缺失 0；2 条 B001 `rule_not_applicable` 无需事实轨迹，已单独记录；其余输出均可按 `trace_id` 回查，轨迹行 89。
 
 ## 6. 两人独立验收
 
-- 评审 A、B 各自独立目录与数据库，16 项产品任务均 **16/16 通过**，通过向量一致。
+- 评审 A、B 为同一冻结规则下的程序化双轮（各自独立目录与数据库，非外部真人），16 项产品任务均 **16/16 通过**，通过向量一致。
 - 插件故障：健康插件 `ok`；崩溃 `plugin_failed`；超时 `plugin_timeout`；禁用 `disabled` 且调用 0；输入哈希不变。
 - 详见 `delivery/acceptance/acceptance.md`。
 
@@ -73,7 +73,7 @@ python "O2_AI商品审核官_资料包/04_最小对接样例/smoke.py"
 
 ## 9. 冻结选择
 
-- 交付活动版本：baseline `av_2275824ec1ba861a0c0018cb`。
+- 交付活动版本：baseline `av_a489476e2465379a03414735`。
 - 候选 `av_a80de7291b9b55c33274c8e9` 仅为澄清记录，门槛全零；验收后回滚 baseline。
 - 详见 `delivery/selection_freeze.json`。
 

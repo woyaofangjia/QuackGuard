@@ -1,3 +1,6 @@
+"""内置评估插件：结论质量与证据内容核验。"""
+
+import json
 import unicodedata
 
 from .contracts import iou, prediction_errors
@@ -52,39 +55,79 @@ def _reference_facts(references):
     return index
 
 
-def _classify_fact(evidence, facts_by_page):
-    """判定证据事实：supported、unverifiable（参考标注不可读）或None。"""
-    if not isinstance(evidence.get("fact"), str):
-        return None
-    target = _normalized(evidence["fact"])
+def _claims(evidence):
+    """把evidence.fact拆成可核验文本断言；结构化事实取fields中status=value的值。"""
+    fact = evidence.get("fact")
+    if not isinstance(fact, str) or not fact.strip():
+        return []
+    text = fact.strip()
+    payload = None
+    if text.startswith("{"):
+        try:
+            payload = json.loads(text)
+        except ValueError:
+            payload = None
+    if isinstance(payload, dict) and isinstance(payload.get("fields"), dict):
+        claims = []
+        for field in payload["fields"].values():
+            if not isinstance(field, dict) or field.get("status") != "value":
+                continue
+            value = field.get("value")
+            values = value if isinstance(value, list) else [value]
+            for item in values:
+                if isinstance(item, bool) or not isinstance(item, (str, int, float)):
+                    continue
+                item_text = str(item).strip()
+                if not item_text:
+                    continue
+                claims.append({
+                    "fact": item_text,
+                    "bbox": field.get("bbox"),
+                    "material_id": evidence.get("material_id"),
+                    "page_index": evidence.get("page_index"),
+                })
+        return claims
+    return [{
+        "fact": fact,
+        "bbox": evidence.get("bbox"),
+        "material_id": evidence.get("material_id"),
+        "page_index": evidence.get("page_index"),
+    }]
+
+
+def _classify_claim(claim, facts_by_page):
+    """判定断言：supported、misaligned（文本命中但区域不符）、unverifiable或None。"""
+    target = _normalized(claim["fact"])
     if not target:
         return None
-    key = (evidence.get("material_id"), evidence.get("page_index"))
+    key = (claim.get("material_id"), claim.get("page_index"))
     facts = facts_by_page.get(key, [])
+    matched = []
     for fact in facts:
         if fact.get("readable") is False:
             continue
-        if _normalized(fact["text"]) != target:
-            continue
-        reference_bbox = fact.get("bbox")
-        output_bbox = evidence.get("bbox")
-        if reference_bbox and output_bbox and iou(output_bbox, reference_bbox) < 0.5:
-            continue
+        text = fact.get("text")
+        if isinstance(text, str) and target in _normalized(text):
+            matched.append(fact)
+    if matched:
+        output_bbox = claim.get("bbox")
+        reference_boxes = [fact.get("bbox") for fact in matched if fact.get("bbox")]
+        if output_bbox and reference_boxes:
+            if max(iou(output_bbox, box) for box in reference_boxes) < 0.5:
+                return "misaligned"
         return "supported"
     for fact in facts:
         if fact.get("readable") is not False:
             continue
-        reference_bbox = fact.get("bbox")
-        output_bbox = evidence.get("bbox")
-        if reference_bbox and output_bbox and iou(output_bbox, reference_bbox) < 0.5:
-            continue
-        return "unverifiable"
+        text = fact.get("text")
+        if isinstance(text, str) and target in _normalized(text):
+            return "unverifiable"
     if key in facts_by_page and not any(
         fact.get("readable") is not False for fact in facts
     ):
         # 参考仅覆盖该页区域、未给出可读文本（如形状类证据）。
         return "unverifiable"
-    return None
+    return "unsupported"
 
 
 def evidence(inputs, outputs, references, context):
@@ -100,6 +143,7 @@ def evidence(inputs, outputs, references, context):
     reference_units = 0
     grounded_units = 0
     supported_facts = 0
+    misaligned_fact_count = 0
     unsupported_facts = 0
 
     for output in outputs:
@@ -132,19 +176,24 @@ def evidence(inputs, outputs, references, context):
             reference_units += 1
 
         supported = 0
+        misaligned = []
         unsupported = []
         unverifiable = []
         for item in rows:
             if not isinstance(item, dict):
                 continue
-            outcome = _classify_fact(item, facts_by_page)
-            if outcome == "supported":
-                supported += 1
-            elif outcome == "unverifiable":
-                unverifiable.append(item.get("fact"))
-            else:
-                unsupported.append(item.get("fact"))
+            for claim in _claims(item):
+                outcome = _classify_claim(claim, facts_by_page)
+                if outcome == "supported":
+                    supported += 1
+                elif outcome == "misaligned":
+                    misaligned.append(claim["fact"])
+                elif outcome == "unverifiable":
+                    unverifiable.append(claim["fact"])
+                elif outcome == "unsupported":
+                    unsupported.append(claim["fact"])
         supported_facts += supported
+        misaligned_fact_count += len(misaligned)
         unsupported_facts += len(unsupported)
 
         if (
@@ -153,6 +202,7 @@ def evidence(inputs, outputs, references, context):
             and not issues
             and rows
             and not unsupported
+            and (supported or misaligned)
         ):
             grounded_units += 1
 
@@ -161,11 +211,13 @@ def evidence(inputs, outputs, references, context):
             "issues": issues,
             "evidence_facts": len(rows),
             "supported_facts": supported,
+            "misaligned_facts": misaligned,
             "unsupported_facts": unsupported,
             "unverifiable_facts": unverifiable,
         })
 
-    graded_facts = supported_facts + unsupported_facts
+    graded_facts = supported_facts + misaligned_fact_count + unsupported_facts
+    content_supported = supported_facts + misaligned_fact_count
     return {
         "plugin_id": "quackguard.evidence_content",
         "plugin_version": "0.2.0",
@@ -176,15 +228,19 @@ def evidence(inputs, outputs, references, context):
             "reference_units": reference_units,
             "grounded_units": grounded_units,
             "grounded_fact_rate": (
-                supported_facts / graded_facts if graded_facts else None
+                content_supported / graded_facts if graded_facts else None
             ),
+            "localized_fact_rate": (
+                supported_facts / content_supported if content_supported else None
+            ),
+            "misaligned_fact_count": misaligned_fact_count,
             "unsupported_fact_count": unsupported_facts,
         },
         "diagnostics": diagnostics,
         "errors": [],
         "limitation": (
-            "内容核验匹配参考可见事实（材料页、文本与可选区域）；"
-            "参考标注为不可读的区域单独记为unverifiable，"
-            "不声称已完成图像OCR认证。"
+            "内容核验匹配参考可见事实（材料页与文本），结构化事实按其字段值逐项核验；"
+            "文本命中但区域IoU<0.5单独记为misaligned，并以localized_fact_rate报告；"
+            "参考标注为不可读的区域记为unverifiable，不声称已完成图像OCR认证。"
         ),
     }

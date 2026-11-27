@@ -33,6 +33,50 @@ VERIFY_MARKERS = ("核查", "核对", "复核", "确认一下", "请检查", "�
 CONFIRM_MARKERS = ("确认按原文", "按原文执行", "采纳原文", "确认原文")
 KEEP_MARKERS = ("保持现状", "维持现状", "无需修改", "不需修改", "保持不变")
 
+LABEL_DIRECTIVE = re.compile(
+    r"(?:应判为|应判|判为|判定为|结论应为|结论为|改为|改成|应为)"
+    r"\s*[：:]?\s*(pass|reject|ambiguous|通过|合格|拒绝|不合格|不明确|无法判断|存疑)",
+    re.IGNORECASE,
+)
+APPLICABILITY_DIRECTIVE = re.compile(
+    r"(?:适用性|applicability)\s*(?:应为|为|是|改成|改为)?\s*[：:]?\s*"
+    r"(not_applicable|applicable|unknown|不适用|适用|未知)",
+    re.IGNORECASE,
+)
+LABELS = {
+    "pass": "pass", "通过": "pass", "合格": "pass",
+    "reject": "reject", "拒绝": "reject", "不合格": "reject",
+    "ambiguous": "ambiguous", "不明确": "ambiguous",
+    "无法判断": "ambiguous", "存疑": "ambiguous",
+}
+APPLICABILITIES = {
+    "applicable": "applicable", "适用": "applicable",
+    "not_applicable": "not_applicable", "不适用": "not_applicable",
+    "unknown": "unknown", "未知": "unknown",
+}
+
+
+def _directive_patch(proposal):
+    """解析教师明确给出的结论更正；仅接受可枚举的标签/适用性。"""
+    label = LABEL_DIRECTIVE.search(proposal)
+    applicability = APPLICABILITY_DIRECTIVE.search(proposal)
+    if label is None and applicability is None:
+        return None
+    patch = {
+        "reason": "采纳教师建议：" + proposal,
+        "reason_code": "teacher_feedback",
+    }
+    if label is not None:
+        patch["label"] = LABELS[label.group(1).lower()]
+    if applicability is not None:
+        patch["applicability"] = APPLICABILITIES[applicability.group(1).lower()]
+        if patch["applicability"] == "unknown":
+            patch.setdefault("label", "ambiguous")
+        elif patch["applicability"] == "not_applicable":
+            patch.setdefault("label", "pass")
+            patch["reason_code"] = "rule_not_applicable"
+    return patch
+
 
 def _checked_packet(packet):
     if not isinstance(packet, dict):
@@ -117,12 +161,12 @@ def _decide(item, task, rule):
     proposal = unicodedata.normalize("NFKC", item["teacher_proposal"]).strip()
     source = unicodedata.normalize("NFKC", item["teacher_source"]).strip()
     if task is None:
-        return "defer", "反馈单元不在REPAIR_JSONL中，无法解析规则并引用原文。", []
+        return "defer", "反馈单元不在REPAIR_JSONL中，无法解析规则并引用原文。", [], None
     errors = input_errors(task)
     if errors:
-        return "defer", "反馈单元输入不合法：" + ",".join(errors), []
+        return "defer", "反馈单元输入不合法：" + ",".join(errors), [], None
     if rule is None:
-        return "defer", "反馈单元指定的规则不在baseline产物中。", []
+        return "defer", "反馈单元指定的规则不在baseline产物中。", [], None
     citation = _citation(rule)
     source_state = _source_state(source, task)
     if source_state is False:
@@ -132,6 +176,7 @@ def _decide(item, task, rule):
                 task["rule_id"], task["rule_version"]
             ),
             [citation],
+            None,
         )
     proposal_numbers = _proposal_numbers(proposal)
     rule_numbers = set(NUMBER.findall(rule["rule_text"]))
@@ -143,31 +188,44 @@ def _decide(item, task, rule):
                 ",".join(sorted(unsupported))
             ),
             [citation],
+            None,
+        )
+    patch = _directive_patch(proposal)
+    if patch is not None and source_state is not False:
+        return (
+            "accept",
+            "教师明确给出结论更正，采纳为可回滚的单元级补丁；其他单元不受影响。",
+            [citation],
+            patch,
         )
     if _has(CONFIRM_MARKERS, proposal) and source_state is True:
         return (
             "accept",
             "建议引用同一规则原文并确认按原文执行，采纳为澄清记录，不改变判定逻辑。",
             [citation],
+            None,
         )
     if _has(VERIFY_MARKERS, proposal):
         return (
             "defer",
             "建议仅要求核查，未给出可执行改动或判定依据，待教师澄清。",
             [citation],
+            None,
         )
     if _has(STRONG_CHANGE_MARKERS, proposal) or _has(NORMATIVE_MARKERS, proposal):
         return (
             "reject",
             "建议要求改动规则口径，但规则原文未支持该改动；拒绝以保持baseline。",
             [citation],
+            None,
         )
     if _has(KEEP_MARKERS, proposal):
-        return "reject", "建议维持现状，baseline已按规则原文执行，无需改动。", [citation]
+        return "reject", "建议维持现状，baseline已按规则原文执行，无需改动。", [citation], None
     return (
         "defer",
         "建议无法由规则原文和可核验材料唯一确认，保留baseline等待澄清。",
         [citation],
+        None,
     )
 
 
@@ -190,9 +248,25 @@ def _apply_accepts(candidate_root, policy, base_hash, feedback_id, accepted):
             "rule_version": item["rule_version"],
             "proposal": item["teacher_proposal"],
             "rule_quote": item["rule_citations"][0]["quote"],
-            "change": "clarification_only",
+            "change": item.get("change", "clarification_only"),
         }
         for item in accepted
+    ]
+    patches = [
+        {
+            "audit_unit_id": item["audit_unit_id"],
+            "packet_id": item["packet_id"],
+            "rule_id": item["rule_id"],
+            "rule_version": item["rule_version"],
+            "teacher_proposal": item["teacher_proposal"],
+            "rule_quote": item["rule_citations"][0]["quote"],
+            "label": item["patch"].get("label"),
+            "applicability": item["patch"].get("applicability"),
+            "reason_code": item["patch"]["reason_code"],
+            "reason": item["patch"]["reason"],
+        }
+        for item in accepted
+        if item.get("change") == "decision_patch"
     ]
     notes_doc = {
         "schema_version": PROTOCOL_VERSION,
@@ -201,12 +275,23 @@ def _apply_accepts(candidate_root, policy, base_hash, feedback_id, accepted):
         "notes": notes,
     }
     write_json(candidate_root / "engine" / "iteration_notes.json", notes_doc)
+    if patches:
+        write_json(
+            candidate_root / "engine" / "decision_patches.json",
+            {
+                "schema_version": PROTOCOL_VERSION,
+                "feedback_id": feedback_id,
+                "base_artifact_sha256": base_hash,
+                "patches": patches,
+            },
+        )
 
     candidate_version = "av_" + digest_obj({
         "base_artifact_version": policy["artifact_version"],
         "base_artifact_sha256": base_hash,
         "accepted_packet_ids": [item["packet_id"] for item in accepted],
         "notes": notes,
+        "patches": patches,
     })[:24]
     updated = copy.deepcopy(policy)
     updated["artifact_version"] = candidate_version
@@ -301,7 +386,7 @@ def iterate(base_path, feedback_path, input_path, out_path, store=None):
         if task is not None:
             key = task["rule_id"] + "@" + task["rule_version"]
             rule = policy["rules"].get(key)
-        decision, reason, citations = _decide(item, task, rule)
+        decision, reason, citations, patch = _decide(item, task, rule)
         record = {
             "packet_id": item["packet_id"],
             "audit_unit_id": item["audit_unit_id"],
@@ -312,7 +397,10 @@ def iterate(base_path, feedback_path, input_path, out_path, store=None):
             "decision": decision,
             "reason": reason,
             "rule_citations": citations,
+            "change": "decision_patch" if patch else "clarification_only",
         }
+        if patch:
+            record["patch"] = patch
         decisions.append(record)
         if decision == "accept":
             accepted.append(record)

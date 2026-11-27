@@ -15,6 +15,7 @@ from urllib.parse import parse_qs, urlparse
 from .cli import main as cli_main
 from .errors import AuditError
 from .io_utils import load_json, numbered_rows_lenient, rows, write_json
+from .storage import Store
 
 ROOT = Path(__file__).resolve().parents[1]
 PACK = ROOT / "O2_AI商品审核官_资料包"
@@ -132,6 +133,17 @@ def units(workspace):
             "artifact_version": row.get("artifact_version"),
         })
     return {"records": len(result), "units": result}
+
+
+def failed_tasks(workspace):
+    p = paths(workspace)
+    if not p["db"].exists():
+        return {"tasks": []}
+    store = Store(p["db"])
+    try:
+        return {"tasks": [dict(row) for row in store.list_failed_tasks()]}
+    finally:
+        store.close()
 
 
 def _task_index():
@@ -295,9 +307,25 @@ def _action(workspace, action, payload):
     if action == "compare":
         _require_file(p["artifacts"] / "engine" / "policy.json", "baseline产物")
         _require_file(p["candidate"] / "engine" / "policy.json", "候选产物")
+        input_path = payload.get("input") or str(TASKS)
+        _require_file(input_path, "审核输入")
+        old_out = p["root"] / "compare_baseline.jsonl"
+        new_out = p["root"] / "compare_candidate.jsonl"
+        old = _result(base + [
+            "infer", "--input", input_path, "--artifacts", p["artifacts"],
+            "--out", old_out,
+        ])
+        if old.get("code"):
+            return old
+        new = _result(base + [
+            "infer", "--input", input_path, "--artifacts", p["candidate"],
+            "--out", new_out,
+        ])
+        if new.get("code"):
+            return new
         return _result([
-            "compare", "--old", p["artifacts"], "--new", p["candidate"],
-            "--input", payload.get("input") or str(TASKS),
+            "compare", "--old", old_out, "--new", new_out,
+            "--input", input_path,
             "--references", payload.get("references") or str(REFERENCES),
             "--out", p["compare"],
         ])
@@ -449,6 +477,15 @@ details summary{cursor:pointer;font-weight:600}
   <a href="/report?name=review.html" target="_blank"><button type="button">审核结果页</button></a>
   <a href="/report?name=plugin_report.html" target="_blank"><button type="button">插件评估页</button></a>
 </div>
+<div class="row">
+  <input type="text" id="flt-text" placeholder="搜索单元 ID / 规则 / 理由" size="28" oninput="applyUnitFilter()">
+  <select id="flt-rule" onchange="applyUnitFilter()"><option value="">全部规则</option></select>
+  <select id="flt-label" onchange="applyUnitFilter()">
+    <option value="">全部结论</option><option value="pass">pass</option><option value="reject">reject</option>
+    <option value="ambiguous">ambiguous</option><option value="error">error</option>
+  </select>
+  <span id="flt-count" class="muted"></span>
+</div>
 <div id="msg-infer" class="msg"></div>
 <table><thead><tr><th>审核单元</th><th>规则</th><th>结论</th><th>适用性</th><th>状态</th></tr></thead>
 <tbody id="units"></tbody></table></section>
@@ -481,7 +518,8 @@ details summary{cursor:pointer;font-weight:600}
   <button onclick="run('rollback',{})">回滚到 baseline</button>
   <a href="/report?name=activate.html" target="_blank"><button type="button">激活记录</button></a>
 </div>
-<div class="row"><input type="text" id="task-id" placeholder="失败任务 ID（重试用）" size="40">
+<div class="row"><select id="task-id" style="min-width:340px"><option value="">选择失败任务</option></select>
+  <button type="button" onclick="loadFailed()">刷新</button>
   <button onclick="run('retry',{task_id:val('task-id')})">重试失败任务</button></div>
 <div id="msg-version" class="msg"></div></section>
 
@@ -520,18 +558,47 @@ async function refresh(){
   $('cnt-badge').textContent=s.records+' 条输出 · 标注 '+s.annotations;
   if(s.plugins&&s.plugins.length)renderPlugins(s.plugins);
   loadUnits();
+  loadFailed();
 }
 async function loadUnits(){
   const data=await api('/api/units');
   const body=$('units');
-  if(!data.units.length){body.innerHTML='<tr><td colspan="5" class="muted">暂无输出，先运行审核。</td></tr>';return;}
-  body.innerHTML=data.units.map(u=>'<tr class="click" onclick="openUnit(\\''+esc(u.audit_unit_id)+'\\')">'
+  const select=$('flt-rule');const current=select.value;
+  if(!data.units.length){body.innerHTML='<tr><td colspan="5" class="muted">暂无输出，先运行审核。</td></tr>';select.innerHTML='<option value="">全部规则</option>';$('flt-count').textContent='显示 0 / 0';return;}
+  const rules=[...new Set(data.units.map(u=>u.rule_id))].sort();
+  select.innerHTML='<option value="">全部规则</option>'+rules.map(r=>'<option value="'+esc(r)+'">'+esc(r)+'</option>').join('');
+  select.value=rules.indexOf(current)>=0?current:'';
+  body.innerHTML=data.units.map(u=>'<tr class="click" data-rule="'+esc(u.rule_id)+'" data-label="'+esc(u.label||'error')+'" data-text="'+esc([u.audit_unit_id,u.rule_id,u.rule_version,u.label,u.applicability,u.execution_status,u.reason_code].join(' ').toLowerCase())+'" onclick="openUnit(\\''+esc(u.audit_unit_id)+'\\')">'
     +'<td><code>'+esc(u.audit_unit_id)+'</code></td>'
     +'<td>'+esc(u.rule_id)+'@'+esc(u.rule_version)+'</td>'
     +'<td><span class="lab '+(u.label||'error')+'">'+esc(u.label||u.execution_status)+'</span></td>'
     +'<td>'+esc(u.applicability)+'</td><td>'+esc(u.execution_status)+'</td></tr>').join('');
+  applyUnitFilter();
+}
+function applyUnitFilter(){
+  const q=val('flt-text').trim().toLowerCase();const rule=val('flt-rule');const label=val('flt-label');
+  let shown=0,total=0;
+  document.querySelectorAll('#units tr[data-rule]').forEach(tr=>{total++;
+    const ok=(!rule||tr.dataset.rule===rule)&&(!label||tr.dataset.label===label)&&(!q||tr.dataset.text.indexOf(q)>=0);
+    tr.hidden=!ok;if(ok)shown++;
+  });
+  $('flt-count').textContent='显示 '+shown+' / '+total;
+}
+async function loadFailed(){
+  const select=$('task-id');if(!select)return;
+  const current=select.value;const data=await api('/api/failed');const tasks=data.tasks||[];
+  select.innerHTML='<option value="">'+(tasks.length?'选择失败任务':'暂无失败任务')+'</option>'
+    +tasks.map(t=>'<option value="'+esc(t.task_id)+'">'+esc(t.task_id)+' · '+esc(t.command)+'</option>').join('');
+  if(tasks.some(t=>t.task_id===current))select.value=current;
+}
+function toIterate(){
+  const id=val('iter-unit');
+  if(!id){alert('请先在审核表点击一条记录');return;}
+  document.querySelector('nav button[data-p="p6"]').click();
+  $('iter-proposal').focus();
 }
 async function openUnit(id){
+  $('iter-unit').value=id;
   document.querySelector('nav button[data-p="p4"]').click();
   const d=await api('/api/unit?id='+encodeURIComponent(id));
   if(d.error_code){$('detail').innerHTML='<p class="msg err">'+esc(d.detail)+'</p>';return;}
@@ -550,6 +617,7 @@ async function openUnit(id){
     +'<span>适用性：'+esc(o.applicability)+'</span>'
     +'<span>产物版本：<code>'+esc(d.artifact_version)+'</code></span>'
     +'<span>trace：<code>'+esc(d.trace_id)+'</code></span>'
+    +'<span><button type="button" onclick="toIterate()">带入迭代</button></span>'
     +'<span>规则源哈希：<code>'+esc(r.source_sha256||'-')+'</code></span></section>'
     +'<p>审核理由：'+esc(o.reason)+'</p>'
     +'<details><summary>规则原文</summary><pre>'+esc(r.rule_text)+'</pre></details>'
@@ -631,6 +699,8 @@ class Handler(BaseHTTPRequestHandler):
                 self._send(200, state(self.workspace))
             elif path == "/api/units":
                 self._send(200, units(self.workspace))
+            elif path == "/api/failed":
+                self._send(200, failed_tasks(self.workspace))
             elif path == "/api/unit":
                 self._send(200, unit_detail(
                     self.workspace, query.get("id", "")
